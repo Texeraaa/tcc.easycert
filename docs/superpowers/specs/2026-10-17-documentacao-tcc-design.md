@@ -50,8 +50,8 @@ A documentação é a **fonte de verdade do projeto**. Depois dela, qualquer dec
 | `dominio/fluxo-aprovacao.md` | Ciclo `Pendente → Aprovado/Indeferido com justificativa`; emissão de relatório consolidado; QRCode para eventos internos. |
 | `ARCHITECTURE.md` | Fluxo fim-a-fim (aluno submete → avaliador analisa → horas lançadas → relatório/declaração emitida). Componentes de alto nível: portal-aluno, painel-coordenador, módulo-documentos, dashboard-gerencial. |
 | `MODULES.md` | Esboço dos 4 módulos funcionais acima + pacotes compartilhados em `packages/`. |
-| `DATABASE.md` | Postgres confirmado. ORM = pendência. Entidades iniciais: Aluno, Submissão, Categoria, RegraMatriz, Avaliação, Documento. |
-| `STACK.md` | Confirmar pnpm+Turborepo+TypeScript+Postgres. Framework backend/frontend/ORM/validação = pendência. |
+| `DATABASE.md` | Postgres + Prisma v6 (`packages/db`). Entidades iniciais: Aluno, Submissão, Categoria, RegraMatriz, Avaliação, Documento. Comandos `pnpm db:generate/migrate/studio/seed`. |
+| `STACK.md` | Confirmar: pnpm+Turborepo, TypeScript 5.7, NestJS 11 (api), Next.js 15 + React 19 + Turbopack (web), Prisma 6, Postgres via docker-compose. Validação/auth ainda = pendência. |
 | `dominio/pendencias.md` | Lista das decisões ainda não tomadas (ver abaixo). |
 
 ### Camada 2 — artefato acadêmico (nova pasta `docs/tcc/`)
@@ -71,12 +71,11 @@ A documentação é a **fonte de verdade do projeto**. Depois dela, qualquer dec
 Serão listadas em `dominio/pendencias.md` como "em aberto" (bloqueiam) ou "a confirmar" (ratificar):
 
 **Em aberto:**
-- Framework backend (Fastify, NestJS, Hono?) — bloqueia estrutura de `apps/api`.
-- Framework frontend (Next.js, Remix, Vite+React?) — bloqueia estrutura de `apps/web`.
-- ORM/query builder (Drizzle, Prisma, Kysely?) — bloqueia `packages/db`.
-- Autenticação (próprio, Supabase Auth, Clerk?) — bloqueia modelagem de usuário.
-- Storage dos PDFs de comprovantes (filesystem, S3, Supabase Storage?) — bloqueia submissão.
-- Matriz curricular concreta: formato de regra por categoria (JSON? tabela?) — bloqueia validação.
+- Autenticação (NestJS Passport próprio, SSO institucional, Clerk, Auth.js?) — bloqueia modelagem de usuário.
+- Storage dos PDFs de comprovantes (filesystem local, S3, MinIO, Supabase Storage?) — bloqueia submissão.
+- Matriz curricular concreta: formato de regra por categoria (JSON em RegraMatriz? tabela normalizada?) — bloqueia validação.
+- Biblioteca de validação de DTO no NestJS (`class-validator`+`class-transformer`? `zod`?) — bloqueia contrato de API.
+- Biblioteca de UI no frontend (shadcn/ui, Chakra, Mantine, puro?) — já existe `@easycert/ui` vazio esperando decisão.
 
 **A confirmar:**
 - Multi-IES vs. instituição única na v1.
