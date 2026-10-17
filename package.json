@@ -1,0 +1,29 @@
+{
+  "name": "easycert",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Plataforma de gestão de horas complementares",
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:generate": "pnpm --filter @easycert/db generate",
+    "db:migrate": "pnpm --filter @easycert/db migrate",
+    "db:studio": "pnpm --filter @easycert/db studio",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,28 @@
+// Prisma schema inicial — modelagem mínima para validar o setup.
+// O domínio completo (Curso, MatrizCurricular, CategoriaAtividade,
+// Submissao, Avaliacao, DocumentoEmitido) será modelado em iteração
+// próxima junto com as regras de negócio.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ALUNO
+  COORDENADOR
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      Role     @default(ALUNO)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
