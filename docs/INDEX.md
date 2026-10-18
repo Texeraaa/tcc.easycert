@@ -8,6 +8,7 @@
 - [[DATABASE]] — schema, entidades, migrations.
 - [[INFRASTRUCTURE]] — hospedagem, CI/CD, integrações externas.
 - [[STACK]] — decisões de tecnologia.
+- [[AGENTS]] — roster de 6 agentes automatizados e protocolo de interação.
 
 ## API
 - [[API_ROUTES]] — rotas HTTP agrupadas por módulo.
