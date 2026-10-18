@@ -19,8 +19,23 @@ Criar 5 subagentes Claude Code que automatizem fluxos repetidos do dia-a-dia do 
 ## Local e formato
 
 - Cada agente é um arquivo Markdown em `.claude/agents/<nome>.md`.
-- Frontmatter YAML com `name`, `description` (quando o main agent deve invocá-lo), `tools` (lista).
+- Frontmatter YAML com `name`, `description` (quando o main agent deve invocá-lo), `tools` (lista), `model` (explícito).
 - Corpo = system prompt do agente, estruturado em: identidade → regras invioláveis → fluxo de trabalho → formato de saída → anti-padrões.
+
+## Modelo por agente
+
+Cada agente especifica `model` no frontmatter para evitar herdar o modelo do main (que pode ser Opus e desperdiçar tokens em tarefa mecânica).
+
+| Agente | `model` | Justificativa |
+|---|---|---|
+| `docs-curator` (patch no existente) | `haiku` | Mecânico — segue convenções rígidas do vault, não raciocina |
+| `code-reviewer` | `sonnet` | Precisa correlacionar diff + checks + docs; Opus é overkill pra MVP |
+| `feature-scaffolder` | `sonnet` | Templated mas com boundaries do monorepo |
+| `prisma-migrator` | `sonnet` | Templated; guard "confirmo destrutivo" cobre o risco real |
+| `pendencia-resolver` | `sonnet` | Default barato; **Opus sob demanda** para pendências críticas (ver abaixo) |
+| `tcc-writer` | `sonnet` | PT-BR acadêmico de nível TCC não precisa de Opus |
+
+**Override de Opus para `pendencia-resolver`:** as 4 pendências em aberto (auth, storage de PDFs, UI library, validação de DTO) moldam o projeto por 5 meses. O main agent deve escalar para Opus **por invocação** quando a pendência for estrutural ("invoca pendencia-resolver com Opus pra decidir auth"). Pendências menores (ex: lib de QRCode) ficam no Sonnet default. Isso dá controle explícito sem fixar custo alto no frontmatter.
 
 ---
 
@@ -192,11 +207,13 @@ Nenhum dos 5 agentes invoca outros subagentes diretamente — eles **devolvem** 
 ## Critérios de aceitação
 
 Cada agente é considerado pronto quando:
-1. Arquivo em `.claude/agents/<nome>.md` existe com frontmatter válido.
+1. Arquivo em `.claude/agents/<nome>.md` existe com frontmatter válido (`name`, `description`, `tools`, `model`).
 2. System prompt cobre: identidade, regras invioláveis, fluxo passo a passo, formato de saída, anti-padrões.
 3. Tool list está escopada ao mínimo necessário.
-4. Agente é invocável do main agent e devolve resposta no formato especificado.
-5. Para os 4 que não são `code-reviewer`: a delegação ao `docs-curator` está explícita no system prompt como passo final obrigatório quando a mudança for doc-worthy.
+4. `model` está definido explicitamente (nunca `inherit` — evita herdar Opus do main).
+5. Agente é invocável do main agent e devolve resposta no formato especificado.
+6. Para os 4 que não são `code-reviewer`: a delegação ao `docs-curator` está explícita no system prompt como passo final obrigatório quando a mudança for doc-worthy.
+7. Patch no `docs-curator` existente: `model: haiku` adicionado no frontmatter.
 
 ## Próximo passo
 
