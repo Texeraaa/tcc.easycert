@@ -66,3 +66,4 @@ Referências de alto nível: [[ARCHITECTURE]]. Rotas expostas: [[API_ROUTES]]. P
 - [[ARCHITECTURE]] — como os módulos se encaixam.
 - [[API_ROUTES]] — rotas HTTP por módulo.
 - [[DATABASE]] — entidades e schema.
+- [[AGENTS]] — builders (`backend-builder`, `frontend-builder`) criam módulos; `docs-curator` registra.

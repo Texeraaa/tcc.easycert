@@ -46,3 +46,4 @@ Prisma Migrate. Arquivos em `packages/db/prisma/migrations/`. Dev: `pnpm db:migr
 - [[ARCHITECTURE]] — visão geral.
 - [[MODULES]] — módulos que acessam o banco.
 - [[STACK]] — decisões de tecnologia.
+- [[AGENTS]] — `backend-builder` executa mudanças de schema.

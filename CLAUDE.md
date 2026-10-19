@@ -28,10 +28,14 @@ O usuário também pode pedir diretamente: "documenta isso", "registra em docs",
 
 Além do `docs-curator`, o projeto tem subagentes especializados em `.claude/agents/`:
 
-- **`code-reviewer`** — revisa diffs antes de commit (roda typecheck/lint/test, aponta bugs/segurança, sinaliza doc-worthy). Read-only. Modelo: Sonnet.
-- **`feature-scaffolder`** — scaffolda slice vertical NestJS + types + Next para feature nova. Propõe antes de aplicar. Modelo: Sonnet.
-- **`prisma-migrator`** — mudança de schema Prisma com protocolo completo (edit + migrate + generate + delegar DATABASE.md). Mudanças destrutivas exigem segunda aprovação. Modelo: Sonnet.
-- **`pendencia-resolver`** — pesquisa e propõe decisão para itens em `docs/dominio/pendencias.md`. Read-only. Modelo: Sonnet (escalar para Opus via override em decisões estruturais).
-- **`tcc-writer`** — produz rascunhos de conteúdo acadêmico PT-BR para `docs/tcc/`. Read-only, delega ao `docs-curator`. Modelo: Sonnet.
+- **`tech-architect`** — análise crítica de arquitetura sobre specs/planos do superpowers (`docs/superpowers/specs/`, `docs/superpowers/plans/`). Sempre lê `docs/INDEX.md` + a spec + notas-âncora (ARCHITECTURE, STACK, MODULES, DATABASE, dominio). Entrega bloqueadores/importantes/sugestões e veredito. Read-only, não escreve código, delega docs ao `docs-curator`. Modelo: **Opus**.
+- **`backend-builder`** — executa parcela backend de plano já **aprovado**: NestJS 11 em `apps/api/src/`, Prisma 6 em `packages/db/prisma/`, DTOs em `packages/types/src/`. Roda `pnpm typecheck`/`test`. Nunca mexe em `apps/web/`, nunca commita, delega docs ao `docs-curator`. Modelo: Sonnet.
+- **`frontend-builder`** — executa parcela frontend de plano já **aprovado**: Next.js 15 + React 19 em `apps/web/src/app/`, consumindo `@easycert/types`. Roda `pnpm typecheck`/`lint`. Nunca mexe no backend/schema, nunca commita, delega docs ao `docs-curator`. Modelo: Sonnet.
+- **`code-reviewer`** — revisa diffs antes de commit (typecheck/lint/test, bugs/segurança, doc-worthy). Read-only, nunca commita. Modelo default: Sonnet. **Reinvocar com override `model: opus`** em conteúdo crítico: auth/autorização, criptografia/QRCode, migrations destrutivas, upload de arquivo, geração de documento oficial, PII, travessia web↔api, decisão que resolve pendência. Lista completa de gatilhos no próprio agente.
+- **`tcc-writer`** — produz rascunhos acadêmicos PT-BR para `docs/tcc/`. Read-only, delega ao `docs-curator`. Modelo: Sonnet.
 
-Padrão: nenhum dos agentes escreve em `docs/` direto. Mudança doc-worthy sempre termina com delegação ao `docs-curator`.
+### Padrões transversais
+
+- **Nenhum agente commita.** Proibido `git commit/push/tag/merge/rebase/reset-hard/checkout --`. O commit é sempre do usuário.
+- **Nenhum agente escreve em `docs/` direto, exceto o `docs-curator`.** Mudança doc-worthy sempre termina com delegação a ele, que propõe antes de aplicar.
+- **Builders operam só sob plano aprovado.** `backend-builder` e `frontend-builder` assumem que a spec/plano foi analisado (idealmente pelo `tech-architect`) e aprovado — não propõem, executam.

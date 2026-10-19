@@ -48,3 +48,4 @@ Postgres via `docker-compose.yml`. ORM: Prisma 6. Detalhes em [[DATABASE]].
 - [[ARCHITECTURE]] — como as peças se encaixam.
 - [[dominio/visao-geral|visao-geral]] — requisitos de produto que orientaram a stack.
 - [[dominio/pendencias|pendencias]] — decisões em aberto.
+- [[AGENTS]] — agentes que respeitam as decisões de stack.

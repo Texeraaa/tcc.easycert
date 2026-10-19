@@ -54,3 +54,4 @@ Fluxo canônico fim-a-fim:
 - [[STACK]] — tecnologias escolhidas.
 - [[INFRASTRUCTURE]] — hospedagem e deploy.
 - [[dominio/visao-geral|visao-geral]] — contexto de produto.
+- [[AGENTS]] — roster de agentes que operam sobre a arquitetura.

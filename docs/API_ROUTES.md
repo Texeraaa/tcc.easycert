@@ -18,3 +18,4 @@ Referências: [[MODULES]] para responsabilidades, [[DATABASE]] para entidades.
 
 - [[MODULES]] — módulos que expõem essas rotas.
 - [[ARCHITECTURE]] — visão geral.
+- [[AGENTS]] — `backend-builder` cria rotas; `frontend-builder` consome.

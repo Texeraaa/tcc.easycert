@@ -31,3 +31,4 @@ Decisões ainda em aberto na v1. Cada item aponta a nota que originou a pendênc
 
 - [[visao-geral]] — contexto de produto.
 - [[STACK]] — decisões técnicas.
+- [[AGENTS]] — agentes consultam pendências antes de executar.
