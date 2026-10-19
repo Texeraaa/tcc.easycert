@@ -19,6 +19,7 @@
 - [[dominio/fluxo-aprovacao|fluxo-aprovacao]] — ciclo de submissão, análise e aprovação.
 - [[dominio/atores-e-papeis|atores-e-papeis]] — alunos, coordenadores, instituição.
 - [[dominio/pendencias|pendencias]] — decisões em aberto.
+- [[dominio/as-is-fmpfm|as-is-fmpfm]] — processo atual manual da FMPFM; baseline do As-Is da Fase 4.
 
 ## TCC
 - [[tcc/visao-geral|visao-geral]] — objetivos, título refinado, foco acadêmico.

@@ -41,5 +41,6 @@ Explicitamente fora de escopo. Cada item aqui foi decidido; propor implementaç�
 - [[horas-complementares]] — modelo de horas e categorias.
 - [[fluxo-aprovacao]] — ciclo de submissão e aprovação.
 - [[atores-e-papeis]] — quem usa o sistema e o que pode fazer.
+- [[as-is-fmpfm]] — processo atual manual que o easycert substitui.
 - [[pendencias]] — decisões em aberto.
 - [[STACK]] — decisões de tecnologia e por quê.

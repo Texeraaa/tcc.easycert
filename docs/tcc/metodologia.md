@@ -54,4 +54,5 @@ Pesquisa **aplicada**, **quanti-qualitativa**, **experimental**, baseada em **es
 - [[tcc/visao-geral]] — contexto acadêmico.
 - [[tcc/estrutura-artigo]] — onde esta metodologia aparece no artigo.
 - [[tcc/cronograma]] — quando cada fase acontece.
+- [[dominio/as-is-fmpfm]] — baseline da comparação As-Is vs. To-Be.
 - [[dominio/fluxo-aprovacao]] — processo To-Be medido.

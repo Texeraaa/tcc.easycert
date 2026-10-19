@@ -37,7 +37,10 @@ Quem usa o **easycert** e o que cada um pode fazer. Esta nota lista os atores e 
 
 ## Autenticação
 
-_(pendente)_ — a definir entre login próprio (NestJS Passport) e SSO institucional. Ver [[pendencias]] e [[INFRASTRUCTURE#Integrações externas]].
+Login próprio local com e-mail + senha, via **NestJS Passport (strategy local)** + **JWT** nos tokens de sessão. Senhas armazenadas com hash (bcrypt ou argon2id).
+
+> [!info] A confirmar
+> Decisão preliminar. Autor ratifica antes de iniciar a modelagem de usuário no Mês 2. SSO institucional e OAuth externo são trabalho futuro ([[visao-geral#Não-objetivos da v1]]). Ver [[pendencias#A confirmar]].
 
 ---
 

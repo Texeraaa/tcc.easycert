@@ -41,11 +41,16 @@ Após aprovação, a plataforma gera:
 
 ## Notificações
 
-_(pendente)_ — definir quais eventos (submissão enviada, análise iniciada, decisão emitida, correção necessária) disparam notificação e por qual canal (email, in-app). Ver [[pendencias]].
+A plataforma dispara notificações a cada transição de estado da submissão (envio para análise, abertura pelo coordenador, aprovação, indeferimento, correção enviada) por **dois canais combinados**:
+
+- **E-mail transacional** — canal ativo que não exige o aluno estar logado. Mensagem contém o novo estado e, em caso de indeferimento, a justificativa.
+- **Central in-app** — ícone de sino no header com contador de não-lidas; página de histórico com todas as notificações do usuário.
+
+Meta de latência: ≤ 1 min para e-mail e ≤ 10 s para in-app (ver [[superpowers/specs/2026-10-19-requisitos-mes-1#7.2 Performance]]).
 
 ## Auditoria
 
-Todo evento de transição é registrado com: ator, timestamp, estado anterior, estado novo, justificativa (quando aplicável). O histórico é imutável. Prazo de retenção: _(pendente)_ — definir.
+Todo evento de transição é registrado com: ator, timestamp, estado anterior, estado novo, justificativa (quando aplicável). O histórico é imutável. Prazo de retenção na v1: **indefinida** — nunca expurga enquanto a plataforma estiver em operação. Política sujeita a revisão em consulta com orientação acadêmica (ver [[pendencias#A confirmar]]).
 
 ---
 
