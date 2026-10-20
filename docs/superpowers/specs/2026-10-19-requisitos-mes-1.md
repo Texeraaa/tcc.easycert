@@ -2,7 +2,7 @@
 
 **Data:** 2026-10-19
 **Autor:** Pedro H. Teixeira
-**Status:** draft — aguarda revisão do autor e, após aprovação, do `tech-architect`.
+**Status:** v1 — revisado pelo `tech-architect` em 2026-10-20; aprovado.
 **Versão:** 1.0
 
 ---

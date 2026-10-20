@@ -33,6 +33,7 @@ Explicitamente fora de escopo. Cada item aqui foi decidido; propor implementaç�
 - Integração via API com ERPs acadêmicos existentes (trabalho futuro).
 - Assinatura digital externa (ICP-Brasil ou similar).
 - Suporte multi-IES; v1 assume instituição única.
+- **Antivírus/scan de malware em PDFs** — hoje a plataforma aceita PDF arbitrário até 10 MB sem validação de conteúdo. Mitigação (ClamAV / AWS Lambda scan / S3 Object Lambda) fica para versão futura pós-MVP.
 
 ---
 

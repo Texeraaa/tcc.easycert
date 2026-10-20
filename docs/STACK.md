@@ -42,11 +42,6 @@ Postgres via `docker-compose.yml`. ORM: Prisma 6. Detalhes em [[DATABASE]].
 > [!warning] Em aberto
 > Lista de decisões ainda não tomadas vive em [[dominio/pendencias|pendencias]].
 
-## A confirmar
-
-> [!info] A confirmar
-> Biblioteca de UI, biblioteca de validação de DTO e estratégia de autenticação ainda não ratificadas. Ver [[dominio/pendencias|pendencias]].
-
 ---
 
 ## Notas relacionadas

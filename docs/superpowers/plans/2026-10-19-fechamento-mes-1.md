@@ -10,11 +10,12 @@ Checklist das ações pendentes para encerrar formalmente o Mês 1 do TCC easyce
 
 ## 1. Revisão crítica do `tech-architect`
 
-- [ ] **Invocar `tech-architect`** sobre a spec `2026-10-19-requisitos-mes-1.md` e as notas de domínio sincronizadas.
+- [x] **Invocar `tech-architect`** sobre a spec `2026-10-19-requisitos-mes-1.md` e as notas de domínio sincronizadas.
   - **Objetivo:** capturar bloqueadores, importantes e sugestões que escaparam ao levantamento.
   - **Prompt sugerido:** "Revise criticamente a spec do Mês 1 e as notas de domínio após a sincronização. Procure: inconsistências entre RF/RNF e domínio, premissas frágeis, riscos metodológicos adicionais, pontos de ambiguidade na matriz assumida, lacunas que podem travar o Mês 2."
   - **Entregável:** veredito do agente (bloqueadores / importantes / sugestões) revisado pelo autor.
   - **Prazo:** antes do Mês 2 começar.
+  - **Conclusão:** 2026-10-20. Veredito: "pode executar com ajustes acompanhados". Identificou 4 pendências novas (imutabilidade do log, fluxo de upload, esquema QRCode, escopo auditoria) agora registradas em [[dominio/pendencias]].
 
 ## 2. Coleta do regulamento oficial da FMPFM
 
@@ -26,10 +27,11 @@ Checklist das ações pendentes para encerrar formalmente o Mês 1 do TCC easyce
 
 ## 3. Ratificação da autenticação
 
-- [ ] **Confirmar formalmente** a decisão preliminar de autenticação: login próprio local + JWT via NestJS Passport.
+- [x] **Confirmar formalmente** a decisão preliminar de autenticação: login próprio local + JWT via NestJS Passport.
   - **Alternativas descartadas (reconsiderar se mudar de ideia):** SSO institucional, OAuth externo, magic link.
   - **Entregável:** nota ou mensagem registrando a confirmação; remoção do callout `[!info] A confirmar` em [[dominio/atores-e-papeis#Autenticação]] e migração do item para "Resolvidas" em [[dominio/pendencias]].
   - **Prazo:** antes de iniciar a modelagem de usuário no Mês 2.
+  - **Conclusão:** 2026-10-20. Decisão firme registrada em [[dominio/atores-e-papeis#Autenticação]] e [[dominio/pendencias#Resolvidas após ratificação (2026-10-20)]].
 
 ## 4. Pergunta ao orientador — retenção de auditoria
 
