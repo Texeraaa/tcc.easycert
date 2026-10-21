@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nova submissão · easycert</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" href="aluno-dashboard.html">Visão geral</a>
+        <a class="app-nav__link" aria-current="page" href="aluno-submissoes.html">Minhas submissões</a>
+        <a class="app-nav__link" href="#">Declarações</a>
+      </nav>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+        </button>
+        <span style="width:22px;height:22px;background:var(--accent-muted);color:var(--accent);border-radius:9999px;display:grid;place-items:center;font-size:11px;font-weight:700">AO</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main">
+    <div class="container-aluno stack-6">
+      <!-- Breadcrumb + title -->
+      <div>
+        <a href="aluno-submissoes.html" class="text-sm text-muted" style="display:inline-flex;align-items:center;gap:4px">
+          <i class="ph ph-arrow-left"></i>
+          Minhas submissões
+        </a>
+        <h1 class="text-2xl font-bold" style="margin:12px 0 4px;letter-spacing:-0.015em">Nova submissão</h1>
+        <p class="text-sm text-muted prose" style="margin:0">
+          Envie o comprovante em PDF e preencha os metadados. A coordenação revisa e devolve o status por e-mail e aqui no portal.
+        </p>
+      </div>
+
+      <form class="stack-6" onsubmit="return false">
+        <!-- PDF upload -->
+        <section class="card stack-4">
+          <div>
+            <h2 class="text-lg font-bold" style="margin:0">1. Comprovante</h2>
+            <p class="text-sm text-muted" style="margin:4px 0 0">Certificado, declaração ou atestado em PDF.</p>
+          </div>
+
+          <div class="dropzone" id="dropzone">
+            <i class="ph ph-upload-simple"></i>
+            <span class="text-sm">Arraste o PDF aqui ou <span class="text-accent font-medium">clique para selecionar</span>.</span>
+            <span class="text-xs">Máx 10 MB. Apenas .pdf.</span>
+          </div>
+
+          <!-- preview do arquivo (estado "selecionado") -->
+          <div class="card--pad-sm" style="padding:12px;background:var(--muted);border:1px solid var(--border);border-radius:var(--radius-md);display:flex;align-items:center;gap:12px">
+            <div style="width:32px;height:40px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);display:grid;place-items:center;color:var(--destructive)">
+              <i class="ph-fill ph-file-pdf" style="font-size:18px"></i>
+            </div>
+            <div style="flex:1;min-width:0">
+              <p class="text-sm font-medium" style="margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">certificado-oficina-ia-2026.pdf</p>
+              <p class="text-xs text-muted font-mono tabular-nums" style="margin:2px 0 0">1.2 MB</p>
+            </div>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Remover">
+              <i class="ph ph-trash"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Metadados -->
+        <section class="card stack-4">
+          <div>
+            <h2 class="text-lg font-bold" style="margin:0">2. Metadados</h2>
+            <p class="text-sm text-muted" style="margin:4px 0 0">Confira as regras da sua matriz antes de escolher categoria.</p>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="label" for="categoria">Categoria</label>
+              <select id="categoria" class="input">
+                <option>Ensino</option>
+                <option>Pesquisa</option>
+                <option selected>Extensão</option>
+                <option>Monitoria</option>
+                <option>Eventos</option>
+              </select>
+              <span class="hint">Extensão: mínimo 80 h no curso.</span>
+            </div>
+
+            <div class="field">
+              <label class="label" for="carga">Carga horária informada</label>
+              <input id="carga" class="input" type="number" value="40" />
+              <span class="hint">A coordenação pode aceitar valor diferente.</span>
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1">
+              <label class="label" for="instituicao">Instituição emissora</label>
+              <input id="instituicao" class="input" type="text" value="Universidade Federal de Minas Gerais" />
+            </div>
+
+            <div class="field">
+              <label class="label" for="data-inicio">Data de início</label>
+              <input id="data-inicio" class="input" type="date" value="2026-08-15" />
+            </div>
+
+            <div class="field">
+              <label class="label" for="data-fim">Data de término</label>
+              <input id="data-fim" class="input" type="date" value="2026-09-30" />
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1">
+              <label class="label" for="obs">Observação (opcional)</label>
+              <textarea id="obs" class="input" placeholder="Contexto adicional. Evite texto longo; a coordenação já tem o PDF."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Confirmação -->
+        <section class="card stack-4">
+          <div>
+            <h2 class="text-lg font-bold" style="margin:0">3. Confirmar envio</h2>
+            <p class="text-sm text-muted" style="margin:4px 0 0">O status fica "Pendente" até a coordenação abrir seu pedido.</p>
+          </div>
+
+          <label class="row" style="cursor:pointer">
+            <div class="checkbox" role="checkbox" aria-checked="true"></div>
+            <span class="text-sm">Confirmo que o PDF corresponde à atividade declarada acima.</span>
+          </label>
+
+          <div class="row-between" style="margin-top:4px">
+            <a class="btn btn--ghost" href="aluno-submissoes.html">Cancelar</a>
+            <div class="row">
+              <button class="btn btn--outline">Salvar rascunho</button>
+              <button class="btn btn--primary btn--lg" type="submit"
+                data-toast='{"title":"Pedido enviado","desc":"SUB-2026-00043 agora está pendente.","icon":"paper-plane-tilt","variant":"accent"}'>
+                Enviar pedido
+              </button>
+            </div>
+          </div>
+        </section>
+      </form>
+    </div>
+  </main>
+
+  <script src="_shared.js"></script>
+  <script>
+    document.addEventListener("click", (e) => {
+      const cb = e.target.closest(".checkbox");
+      if (!cb) return;
+      cb.setAttribute("aria-checked", cb.getAttribute("aria-checked") === "true" ? "false" : "true");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Matriz curricular · easycert admin</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    .cat-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      align-items: center;
+    }
+    .cat-row:first-child { border-top: 0; }
+    .cat-row__meta {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      font-size: 12px; color: var(--muted-foreground);
+      margin-top: 4px;
+    }
+    .cat-row__meta b { color: var(--foreground); font-weight: 500; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" href="admin-dashboard.html">Dashboard</a>
+        <a class="app-nav__link" aria-current="page" href="admin-matriz.html">Matriz curricular</a>
+        <a class="app-nav__link" href="#">Usuários</a>
+      </nav>
+      <div class="row">
+        <span class="badge badge--muted font-mono">admin</span>
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+        </button>
+        <span style="width:22px;height:22px;background:var(--accent-muted);color:var(--accent);border-radius:9999px;display:grid;place-items:center;font-size:11px;font-weight:700">FM</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main">
+    <div class="container stack-6">
+      <div class="row-between" style="flex-wrap:wrap;gap:16px">
+        <div>
+          <h1 class="text-2xl font-bold" style="margin:0;letter-spacing:-0.015em">Matriz curricular</h1>
+          <p class="text-sm text-muted prose" style="margin:4px 0 0">
+            Categorias e limites de carga aceitas pela coordenação. Mudanças aqui afetam novas submissões; pedidos já em análise mantêm as regras vigentes no envio.
+          </p>
+        </div>
+        <div class="row">
+          <button class="btn btn--outline btn--sm">
+            <i class="ph ph-clock-counter-clockwise"></i>
+            Histórico
+          </button>
+          <button class="btn btn--primary">
+            <i class="ph ph-plus"></i>
+            Nova categoria
+          </button>
+        </div>
+      </div>
+
+      <!-- Resumo -->
+      <section class="card--pad-sm" style="padding:16px 20px;background:var(--muted);border-radius:var(--radius-md);border:1px solid var(--border)">
+        <div class="row" style="gap:24px;flex-wrap:wrap">
+          <div>
+            <p class="text-xs text-muted" style="margin:0">Curso</p>
+            <p class="text-sm font-medium" style="margin:2px 0 0">Ciência da Computação</p>
+          </div>
+          <div>
+            <p class="text-xs text-muted" style="margin:0">Mínimo total</p>
+            <p class="text-sm font-medium font-mono tabular-nums" style="margin:2px 0 0">200 h</p>
+          </div>
+          <div>
+            <p class="text-xs text-muted" style="margin:0">Categorias ativas</p>
+            <p class="text-sm font-medium font-mono tabular-nums" style="margin:2px 0 0">5</p>
+          </div>
+          <div>
+            <p class="text-xs text-muted" style="margin:0">Última alteração</p>
+            <p class="text-sm font-medium font-mono tabular-nums" style="margin:2px 0 0">2026-08-10</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lista de categorias -->
+      <section class="card--pad-sm" style="padding:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md)">
+        <div class="cat-row">
+          <div>
+            <div class="row" style="gap:8px">
+              <h3 class="text-base font-bold" style="margin:0">Ensino</h3>
+              <span class="badge badge--accent">ativa</span>
+            </div>
+            <div class="cat-row__meta">
+              <span>Mínimo <b>40 h</b></span>
+              <span>Teto <b>80 h</b></span>
+              <span>Teto por submissão <b>40 h</b></span>
+              <span>Submissões ativas <b>18</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--ghost btn--sm">Editar</button>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Mais"><i class="ph ph-dots-three"></i></button>
+          </div>
+        </div>
+
+        <div class="cat-row">
+          <div>
+            <div class="row" style="gap:8px">
+              <h3 class="text-base font-bold" style="margin:0">Extensão</h3>
+              <span class="badge badge--accent">ativa</span>
+            </div>
+            <div class="cat-row__meta">
+              <span>Mínimo <b>80 h</b></span>
+              <span>Teto <b>120 h</b></span>
+              <span>Teto por submissão <b>60 h</b></span>
+              <span>Submissões ativas <b>42</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--ghost btn--sm">Editar</button>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Mais"><i class="ph ph-dots-three"></i></button>
+          </div>
+        </div>
+
+        <div class="cat-row">
+          <div>
+            <div class="row" style="gap:8px">
+              <h3 class="text-base font-bold" style="margin:0">Pesquisa</h3>
+              <span class="badge badge--accent">ativa</span>
+            </div>
+            <div class="cat-row__meta">
+              <span>Mínimo <b>40 h</b></span>
+              <span>Teto <b>80 h</b></span>
+              <span>Teto por submissão <b>60 h</b></span>
+              <span>Submissões ativas <b>14</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--ghost btn--sm">Editar</button>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Mais"><i class="ph ph-dots-three"></i></button>
+          </div>
+        </div>
+
+        <div class="cat-row">
+          <div>
+            <div class="row" style="gap:8px">
+              <h3 class="text-base font-bold" style="margin:0">Monitoria</h3>
+              <span class="badge badge--muted">opcional</span>
+            </div>
+            <div class="cat-row__meta">
+              <span>Mínimo <b>0 h</b></span>
+              <span>Teto <b>20 h</b></span>
+              <span>Teto por submissão <b>20 h</b></span>
+              <span>Submissões ativas <b>9</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--ghost btn--sm">Editar</button>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Mais"><i class="ph ph-dots-three"></i></button>
+          </div>
+        </div>
+
+        <div class="cat-row">
+          <div>
+            <div class="row" style="gap:8px">
+              <h3 class="text-base font-bold" style="margin:0">Eventos</h3>
+              <span class="badge badge--muted">opcional</span>
+            </div>
+            <div class="cat-row__meta">
+              <span>Mínimo <b>0 h</b></span>
+              <span>Teto <b>30 h</b></span>
+              <span>Teto por submissão <b>16 h</b></span>
+              <span>Submissões ativas <b>5</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--ghost btn--sm">Editar</button>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Mais"><i class="ph ph-dots-three"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Edição inline (card de exemplo expandido) -->
+      <section class="card stack-4">
+        <div class="row-between">
+          <div>
+            <h2 class="text-lg font-bold" style="margin:0">Editar: Extensão</h2>
+            <p class="text-sm text-muted" style="margin:4px 0 0">A mudança passa a valer para novas submissões.</p>
+          </div>
+          <button class="btn btn--ghost btn--sm btn--icon" aria-label="Fechar"><i class="ph ph-x"></i></button>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="label" for="min">Carga mínima</label>
+            <input id="min" class="input" type="number" value="80" />
+            <span class="hint">Horas que o aluno precisa cumprir obrigatoriamente.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="teto">Teto total</label>
+            <input id="teto" class="input" type="number" value="120" />
+            <span class="hint">Máximo contabilizado nesta categoria.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="teto-sub">Teto por submissão</label>
+            <input id="teto-sub" class="input" type="number" value="60" />
+          </div>
+          <div class="field">
+            <label class="label" for="instituicoes">Instituições parceiras</label>
+            <select id="instituicoes" class="input">
+              <option>Permitir qualquer instituição</option>
+              <option selected>Apenas lista aprovada</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column: 1 / -1">
+            <label class="label" for="desc">Descrição exibida ao aluno</label>
+            <textarea id="desc" class="input">Atividades que envolvam a comunidade externa: oficinas abertas, projetos sociais, parcerias com universidades e institutos.</textarea>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <span class="text-xs text-muted">
+            <i class="ph ph-info" style="vertical-align:-2px"></i>
+            Alterar carga mínima acima da atual não retroage em alunos já formados.
+          </span>
+          <div class="row">
+            <button class="btn btn--ghost">Cancelar</button>
+            <button class="btn btn--primary"
+              data-toast='{"title":"Matriz atualizada","desc":"Novas submissões já usam os valores atuais.","icon":"check-circle","variant":"accent"}'>
+              Salvar alterações
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="_shared.js"></script>
+</body>
+</html>

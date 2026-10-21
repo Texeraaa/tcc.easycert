@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Componentes · easycert mockup</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" href="index.html">Galeria</a>
+        <a class="app-nav__link" aria-current="page" href="componentes.html">Componentes</a>
+      </nav>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+          <span data-theme-label>Escuro</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main">
+    <div class="container stack-6">
+      <div>
+        <h1 class="page__title">Componentes</h1>
+        <p class="page__subtitle">Sampler dos blocos básicos. Alterne o tema no header para validar nos dois modos.</p>
+      </div>
+
+      <!-- Buttons -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Buttons</h2>
+
+        <div class="row" style="flex-wrap:wrap">
+          <button class="btn btn--primary"><i class="ph ph-paper-plane-tilt"></i> Enviar pedido</button>
+          <button class="btn btn--outline">Cancelar</button>
+          <button class="btn btn--ghost">Voltar</button>
+          <button class="btn btn--destructive"><i class="ph ph-trash"></i> Excluir</button>
+          <button class="btn btn--primary" disabled>Desativado</button>
+        </div>
+
+        <div class="row" style="flex-wrap:wrap">
+          <button class="btn btn--primary btn--sm">Small</button>
+          <button class="btn btn--primary">Default</button>
+          <button class="btn btn--primary btn--lg">Large</button>
+          <button class="btn btn--outline btn--icon" aria-label="Baixar"><i class="ph ph-download-simple"></i></button>
+          <button class="btn btn--ghost btn--icon" aria-label="Mais"><i class="ph ph-dots-three"></i></button>
+        </div>
+
+        <p class="text-xs text-muted">Press feedback: <code class="font-mono">transform: scale(0.97)</code> em <code class="font-mono">:active</code> + <code class="font-mono">160ms --ease-out</code>.</p>
+      </section>
+
+      <!-- Inputs -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Inputs</h2>
+        <div class="grid-2">
+          <div class="field">
+            <label class="label" for="in1">E-mail institucional</label>
+            <input id="in1" class="input" type="email" placeholder="ana.oliveira@fmpfm.edu.br" />
+            <span class="hint">Use seu e-mail da FMPFM.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="in2">Senha</label>
+            <input id="in2" class="input" type="password" placeholder="••••••••" />
+          </div>
+          <div class="field">
+            <label class="label" for="in3">Categoria</label>
+            <select id="in3" class="input">
+              <option>Ensino</option>
+              <option>Pesquisa</option>
+              <option selected>Extensão</option>
+              <option>Monitoria</option>
+              <option>Eventos</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="in4">Carga horária informada</label>
+            <input id="in4" class="input" type="number" value="40" />
+          </div>
+          <div class="field" style="grid-column: 1 / -1">
+            <label class="label" for="in5">Observação (opcional)</label>
+            <textarea id="in5" class="input" placeholder="Contexto adicional pra análise. Evite jargão."></textarea>
+          </div>
+          <div class="field">
+            <label class="label" for="in6">Com erro</label>
+            <input id="in6" class="input input--error" value="ana.oliveira" aria-describedby="err6" />
+            <span id="err6" class="error-text" role="alert">
+              <i class="ph-fill ph-warning-circle"></i>
+              E-mail precisa ter domínio institucional.
+            </span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Comprovante (PDF)</label>
+          <div class="dropzone">
+            <i class="ph ph-upload-simple"></i>
+            <span class="text-sm">Arraste o PDF aqui ou <span class="text-accent font-medium">clique para selecionar</span>.</span>
+            <span class="text-xs">Máx 10 MB. Apenas .pdf.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Badges & status -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Status e badges</h2>
+        <div class="row" style="flex-wrap:wrap;gap:12px">
+          <span class="status status--rascunho"><i class="ph ph-pencil-simple"></i> Rascunho</span>
+          <span class="status status--pendente"><i class="ph ph-clock"></i> Pendente</span>
+          <span class="status status--analise"><i class="ph ph-magnifying-glass"></i> Em análise</span>
+          <span class="status status--aprovada"><i class="ph-fill ph-check-circle"></i> Aprovada</span>
+          <span class="status status--indeferida"><i class="ph-fill ph-x-circle"></i> Indeferida</span>
+          <span class="status status--emitido"><i class="ph-fill ph-certificate"></i> Emitido</span>
+        </div>
+        <div class="row" style="flex-wrap:wrap;gap:8px">
+          <span class="badge badge--accent"><span class="dot"></span> Aprovada</span>
+          <span class="badge badge--warning"><span class="dot"></span> Pendente</span>
+          <span class="badge badge--destructive"><span class="dot"></span> Indeferida</span>
+          <span class="badge badge--muted">Extensão</span>
+          <span class="badge badge--muted font-mono">SUB-2026-00042</span>
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Tabs</h2>
+        <div class="tabs" role="tablist">
+          <button class="tabs__item" role="tab" aria-selected="true">Todas</button>
+          <button class="tabs__item" role="tab" aria-selected="false">Pendentes</button>
+          <button class="tabs__item" role="tab" aria-selected="false">Aprovadas</button>
+          <button class="tabs__item" role="tab" aria-selected="false">Indeferidas</button>
+        </div>
+      </section>
+
+      <!-- Table -->
+      <section class="card--pad-sm stack-4" style="padding:0;background:transparent;border:0">
+        <h2 class="text-lg font-bold">Tabela densa (coord mode)</h2>
+        <div class="table-wrap">
+          <table class="table table--dense">
+            <thead>
+              <tr>
+                <th style="width:16px"></th>
+                <th>Aluno</th>
+                <th>Matrícula</th>
+                <th>Categoria</th>
+                <th class="center">Status</th>
+                <th class="num">Carga</th>
+                <th class="date">Enviado</th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+                <td>Ana Oliveira</td>
+                <td class="code">20231234567</td>
+                <td>Extensão</td>
+                <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+                <td class="num">40 h</td>
+                <td class="date">2026-10-18 09:12</td>
+                <td class="actions">
+                  <div class="row-actions">
+                    <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                    <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr aria-selected="true">
+                <td><div class="checkbox" aria-checked="true" role="checkbox"></div></td>
+                <td>Carlos Mendes</td>
+                <td class="code">20228891122</td>
+                <td>Pesquisa</td>
+                <td class="center"><span class="badge badge--muted"><span class="dot"></span> Em análise</span></td>
+                <td class="num">60 h</td>
+                <td class="date">2026-10-17 16:40</td>
+                <td class="actions">
+                  <div class="row-actions">
+                    <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                    <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+                <td>Beatriz Souza</td>
+                <td class="code">20231177654</td>
+                <td>Monitoria</td>
+                <td class="center"><span class="badge badge--accent"><span class="dot"></span> Aprovada</span></td>
+                <td class="num">20 h</td>
+                <td class="date">2026-10-15 11:05</td>
+                <td class="actions"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Progress -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Progress</h2>
+        <div class="stack-2">
+          <div class="row-between">
+            <span class="text-sm font-medium">Extensão</span>
+            <span class="text-xs font-mono tabular-nums text-muted">60 / 80 h</span>
+          </div>
+          <div class="progress"><div class="progress__fill" style="width:75%"></div></div>
+        </div>
+        <div class="stack-2">
+          <div class="row-between">
+            <span class="text-sm font-medium">Pesquisa</span>
+            <span class="text-xs font-mono tabular-nums text-muted">10 / 40 h</span>
+          </div>
+          <div class="progress"><div class="progress__fill" style="width:25%"></div></div>
+        </div>
+      </section>
+
+      <!-- Dropdown & toast demos -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Dropdown & Toast</h2>
+        <div class="row" style="position:relative">
+          <div style="position:relative">
+            <button class="btn btn--outline" data-menu-trigger="demo">
+              <i class="ph ph-user-circle"></i> Minha conta
+              <i class="ph ph-caret-down" style="font-size:12px"></i>
+            </button>
+            <div class="menu" data-menu="demo" style="top:calc(100% + 6px);left:0;--transform-origin:top left">
+              <div class="menu__label">Ana Oliveira</div>
+              <a class="menu__item" href="#"><i class="ph ph-user"></i> Perfil</a>
+              <a class="menu__item" href="#"><i class="ph ph-gear-six"></i> Preferências</a>
+              <div class="menu__sep"></div>
+              <a class="menu__item menu__item--destructive" href="#"><i class="ph ph-sign-out"></i> Sair</a>
+            </div>
+          </div>
+
+          <button class="btn btn--primary" data-toast='{"title":"Pedido aprovado","desc":"Carga de 40 h lançada na categoria Extensão.","icon":"check-circle","variant":"accent"}'>
+            Simular toast accent
+          </button>
+          <button class="btn btn--outline" data-toast='{"title":"Sem conexão","desc":"Tentando reconectar.","icon":"wifi-slash","variant":"warning"}'>
+            Toast warning
+          </button>
+          <button class="btn btn--outline" data-toast='{"title":"Falha ao enviar","desc":"Verifique o PDF e tente de novo.","icon":"x-circle","variant":"destructive"}'>
+            Toast destructive
+          </button>
+        </div>
+      </section>
+
+      <!-- Modal demo -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Modal</h2>
+        <div class="row">
+          <button class="btn btn--outline" data-modal-open="demo">Abrir modal</button>
+          <button class="btn btn--destructive" data-modal-open="confirmar">Excluir rascunho</button>
+        </div>
+
+        <div class="modal-backdrop" data-modal="demo">
+          <div class="modal">
+            <h3 class="modal__title">Reenviar e-mail de confirmação?</h3>
+            <p class="modal__desc">Enviaremos um novo link para ana.oliveira@fmpfm.edu.br. O link anterior deixa de valer.</p>
+            <div class="modal__footer">
+              <button class="btn btn--ghost" data-modal-close="demo">Cancelar</button>
+              <button class="btn btn--primary" data-modal-close="demo">Reenviar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-backdrop" data-modal="confirmar">
+          <div class="modal">
+            <h3 class="modal__title">Excluir rascunho?</h3>
+            <p class="modal__desc">Esta ação não pode ser desfeita. O PDF anexado também será removido.</p>
+            <div class="modal__footer">
+              <button class="btn btn--ghost" data-modal-close="confirmar">Cancelar</button>
+              <button class="btn btn--destructive" data-modal-close="confirmar">Excluir</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Checkbox -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Checkbox</h2>
+        <div class="row">
+          <div class="checkbox" role="checkbox" aria-checked="true"></div>
+          <span class="text-sm">Receber e-mail a cada mudança de status</span>
+        </div>
+        <div class="row">
+          <div class="checkbox" role="checkbox" aria-checked="false"></div>
+          <span class="text-sm">Resumo semanal</span>
+        </div>
+      </section>
+
+      <!-- Skeleton -->
+      <section class="card stack-4">
+        <h2 class="text-lg font-bold">Skeleton</h2>
+        <div class="stack-2">
+          <span class="skeleton" style="height:18px;width:40%"></span>
+          <span class="skeleton" style="height:14px;width:70%"></span>
+          <span class="skeleton" style="height:14px;width:60%"></span>
+          <span class="skeleton" style="height:14px;width:30%"></span>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="_shared.js"></script>
+  <script>
+    // demo: clicar em checkbox alterna estado
+    document.addEventListener("click", (e) => {
+      const cb = e.target.closest(".checkbox");
+      if (!cb) return;
+      cb.setAttribute("aria-checked", cb.getAttribute("aria-checked") === "true" ? "false" : "true");
+    });
+  </script>
+</body>
+</html>

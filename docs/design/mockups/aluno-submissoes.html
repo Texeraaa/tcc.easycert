@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Minhas submissões · easycert</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    .sub-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: border-color var(--dur-fast) ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .sub-card:hover { border-color: color-mix(in oklab, var(--accent) 40%, var(--border)); }
+    }
+    .sub-card__icon {
+      width: 36px; height: 44px;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: grid; place-items: center;
+      color: var(--destructive);
+    }
+    .sub-card__meta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 12px; color: var(--muted-foreground);
+    }
+    .sub-card__meta b { color: var(--foreground); font-weight: 500; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" href="aluno-dashboard.html">Visão geral</a>
+        <a class="app-nav__link" aria-current="page" href="aluno-submissoes.html">Minhas submissões</a>
+        <a class="app-nav__link" href="#">Declarações</a>
+      </nav>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+        </button>
+        <span style="width:22px;height:22px;background:var(--accent-muted);color:var(--accent);border-radius:9999px;display:grid;place-items:center;font-size:11px;font-weight:700">AO</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main">
+    <div class="container-aluno stack-6">
+      <!-- Header + CTA -->
+      <div class="row-between" style="flex-wrap:wrap;gap:16px">
+        <div>
+          <h1 class="text-2xl font-bold" style="margin:0;letter-spacing:-0.015em">Minhas submissões</h1>
+          <p class="text-sm text-muted" style="margin:4px 0 0">7 pedidos no total · 4 aprovados · 130 h aceitas.</p>
+        </div>
+        <a class="btn btn--primary" href="aluno-nova-submissao.html">
+          <i class="ph ph-plus"></i>
+          Nova submissão
+        </a>
+      </div>
+
+      <!-- Filtros -->
+      <div class="row-between" style="flex-wrap:wrap;gap:12px">
+        <div class="tabs" role="tablist">
+          <button class="tabs__item" role="tab" aria-selected="true">Todas (7)</button>
+          <button class="tabs__item" role="tab" aria-selected="false">Pendentes (2)</button>
+          <button class="tabs__item" role="tab" aria-selected="false">Aprovadas (4)</button>
+          <button class="tabs__item" role="tab" aria-selected="false">Indeferidas (1)</button>
+        </div>
+        <div class="row">
+          <div class="field" style="width:240px">
+            <input class="input" type="search" placeholder="Buscar por ID ou categoria" />
+          </div>
+          <button class="btn btn--outline btn--sm">
+            <i class="ph ph-funnel"></i>
+            Filtrar
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de cards -->
+      <div class="stack-4 stagger">
+        <article class="sub-card enter">
+          <div class="sub-card__icon"><i class="ph-fill ph-file-pdf" style="font-size:18px"></i></div>
+          <div>
+            <div class="row" style="gap:8px;margin-bottom:4px">
+              <span class="font-mono text-sm font-medium">SUB-2026-00042</span>
+              <span class="status status--pendente"><i class="ph ph-clock"></i> Pendente</span>
+            </div>
+            <p class="text-base font-medium" style="margin:0">Oficina de IA aplicada à saúde</p>
+            <div class="sub-card__meta" style="margin-top:6px">
+              <span>Categoria <b>Extensão</b></span>
+              <span>Carga <b class="font-mono tabular-nums">40 h</b></span>
+              <span>Enviado em <b class="font-mono tabular-nums">2026-10-18 09:12</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--ghost btn--sm">Detalhes</button>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Mais"><i class="ph ph-dots-three"></i></button>
+          </div>
+        </article>
+
+        <article class="sub-card enter">
+          <div class="sub-card__icon"><i class="ph-fill ph-file-pdf" style="font-size:18px"></i></div>
+          <div>
+            <div class="row" style="gap:8px;margin-bottom:4px">
+              <span class="font-mono text-sm font-medium">SUB-2026-00041</span>
+              <span class="status status--aprovada"><i class="ph-fill ph-check-circle"></i> Aprovada</span>
+            </div>
+            <p class="text-base font-medium" style="margin:0">Iniciação Científica em visão computacional</p>
+            <div class="sub-card__meta" style="margin-top:6px">
+              <span>Categoria <b>Pesquisa</b></span>
+              <span>Carga <b class="font-mono tabular-nums">20 h</b></span>
+              <span>Decidido em <b class="font-mono tabular-nums">2026-10-12 10:04</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--outline btn--sm"
+              data-toast='{"title":"Download iniciado","desc":"declaracao-SUB-2026-00041.pdf","icon":"download-simple"}'>
+              <i class="ph ph-download-simple"></i>
+              Declaração
+            </button>
+          </div>
+        </article>
+
+        <article class="sub-card enter">
+          <div class="sub-card__icon"><i class="ph-fill ph-file-pdf" style="font-size:18px"></i></div>
+          <div>
+            <div class="row" style="gap:8px;margin-bottom:4px">
+              <span class="font-mono text-sm font-medium">SUB-2026-00040</span>
+              <span class="status status--analise"><i class="ph ph-magnifying-glass"></i> Em análise</span>
+            </div>
+            <p class="text-base font-medium" style="margin:0">Monitoria em Estrutura de Dados II</p>
+            <div class="sub-card__meta" style="margin-top:6px">
+              <span>Categoria <b>Monitoria</b></span>
+              <span>Carga <b class="font-mono tabular-nums">20 h</b></span>
+              <span>Aberto em <b class="font-mono tabular-nums">2026-10-16 14:20</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--ghost btn--sm">Detalhes</button>
+          </div>
+        </article>
+
+        <article class="sub-card enter" style="border-color: color-mix(in oklab, var(--destructive) 30%, var(--border))">
+          <div class="sub-card__icon" style="color: var(--destructive)"><i class="ph-fill ph-file-pdf" style="font-size:18px"></i></div>
+          <div>
+            <div class="row" style="gap:8px;margin-bottom:4px">
+              <span class="font-mono text-sm font-medium">SUB-2026-00039</span>
+              <span class="status status--indeferida"><i class="ph-fill ph-x-circle"></i> Indeferida</span>
+            </div>
+            <p class="text-base font-medium" style="margin:0">Monitoria em Cálculo I</p>
+            <p class="text-sm text-destructive" style="margin:4px 0 0">
+              <i class="ph-fill ph-warning-circle" style="font-size:14px;vertical-align:-2px"></i>
+              Comprovante não traz carga horária. Reenvie com atestado assinado pelo orientador.
+            </p>
+            <div class="sub-card__meta" style="margin-top:6px">
+              <span>Categoria <b>Monitoria</b></span>
+              <span>Decidido por <b>Prof. Carlos Mendes</b></span>
+              <span><b class="font-mono tabular-nums">2026-10-04 17:22</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--primary btn--sm">
+              <i class="ph ph-pencil-simple"></i>
+              Corrigir
+            </button>
+          </div>
+        </article>
+
+        <article class="sub-card enter">
+          <div class="sub-card__icon"><i class="ph-fill ph-file-pdf" style="font-size:18px"></i></div>
+          <div>
+            <div class="row" style="gap:8px;margin-bottom:4px">
+              <span class="font-mono text-sm font-medium">SUB-2026-00037</span>
+              <span class="status status--aprovada"><i class="ph-fill ph-check-circle"></i> Aprovada</span>
+            </div>
+            <p class="text-base font-medium" style="margin:0">Curso de Introdução a Python</p>
+            <div class="sub-card__meta" style="margin-top:6px">
+              <span>Categoria <b>Ensino</b></span>
+              <span>Carga <b class="font-mono tabular-nums">40 h</b></span>
+              <span>Decidido em <b class="font-mono tabular-nums">2026-09-28 11:50</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--outline btn--sm"
+              data-toast='{"title":"Download iniciado","desc":"declaracao-SUB-2026-00037.pdf","icon":"download-simple"}'>
+              <i class="ph ph-download-simple"></i>
+              Declaração
+            </button>
+          </div>
+        </article>
+
+        <article class="sub-card enter">
+          <div class="sub-card__icon"><i class="ph-fill ph-file-pdf" style="font-size:18px"></i></div>
+          <div>
+            <div class="row" style="gap:8px;margin-bottom:4px">
+              <span class="font-mono text-sm font-medium">SUB-2026-00032</span>
+              <span class="status status--rascunho"><i class="ph ph-pencil-simple"></i> Rascunho</span>
+            </div>
+            <p class="text-base font-medium" style="margin:0">Semana da Computação FMPFM 2026</p>
+            <div class="sub-card__meta" style="margin-top:6px">
+              <span>Categoria <b>Eventos</b></span>
+              <span>Última edição em <b class="font-mono tabular-nums">2026-09-14 20:11</b></span>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn btn--primary btn--sm">Continuar</button>
+            <button class="btn btn--ghost btn--sm btn--icon" aria-label="Excluir" data-modal-open="excluir">
+              <i class="ph ph-trash"></i>
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <!-- modal excluir -->
+  <div class="modal-backdrop" data-modal="excluir">
+    <div class="modal">
+      <h3 class="modal__title">Excluir rascunho?</h3>
+      <p class="modal__desc">O PDF anexado também será removido. A ação não pode ser desfeita.</p>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" data-modal-close="excluir">Cancelar</button>
+        <button class="btn btn--destructive" data-modal-close="excluir"
+          data-toast='{"title":"Rascunho excluído","icon":"check-circle"}'>Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="_shared.js"></script>
+</body>
+</html>

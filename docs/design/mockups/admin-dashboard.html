@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard · easycert admin</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    .metric {
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .metric__label {
+      font-size: 12px; color: var(--muted-foreground);
+      display: flex; align-items: center; gap: 6px;
+      margin: 0 0 8px;
+    }
+    .metric__value {
+      font-size: 30px; font-weight: 700; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      margin: 0;
+    }
+    .metric__delta {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; margin-top: 4px;
+    }
+    .metric__delta--up { color: var(--accent); }
+    .metric__delta--down { color: var(--destructive); }
+    .bar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+    }
+    .bar:first-child { border-top: 0; }
+    .bar__label { font-size: 13px; font-weight: 500; }
+    .bar__value { font-size: 12px; color: var(--muted-foreground); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .bar__track {
+      grid-column: 1 / -1;
+      height: 6px;
+      background: var(--muted);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .bar__fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: inherit;
+    }
+    .spark {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 48px;
+      padding: 6px 0;
+    }
+    .spark span {
+      flex: 1;
+      background: var(--accent-muted-strong);
+      border-radius: 1px;
+      transition: background var(--dur-fast) ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .spark span:hover { background: var(--accent); }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" aria-current="page" href="admin-dashboard.html">Dashboard</a>
+        <a class="app-nav__link" href="admin-matriz.html">Matriz curricular</a>
+        <a class="app-nav__link" href="#">Usuários</a>
+      </nav>
+      <div class="row">
+        <span class="badge badge--muted font-mono">admin</span>
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+        </button>
+        <span style="width:22px;height:22px;background:var(--accent-muted);color:var(--accent);border-radius:9999px;display:grid;place-items:center;font-size:11px;font-weight:700">FM</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main">
+    <div class="container stack-6">
+      <!-- Header -->
+      <div class="row-between" style="flex-wrap:wrap;gap:16px">
+        <div>
+          <h1 class="text-2xl font-bold" style="margin:0;letter-spacing:-0.015em">Visão institucional</h1>
+          <p class="text-sm text-muted" style="margin:4px 0 0">
+            Ciência da Computação · período letivo
+            <span class="font-mono tabular-nums">2026/2</span>
+          </p>
+        </div>
+        <div class="row">
+          <select class="input btn--sm" style="width:auto;height:30px;padding-right:28px">
+            <option>Últimos 30 dias</option>
+            <option>Últimos 90 dias</option>
+            <option>Período letivo</option>
+            <option>12 meses</option>
+          </select>
+          <button class="btn btn--outline btn--sm">
+            <i class="ph ph-download-simple"></i>
+            Exportar
+          </button>
+        </div>
+      </div>
+
+      <!-- Métricas top -->
+      <section class="grid-3 stagger">
+        <div class="metric enter">
+          <p class="metric__label"><i class="ph ph-users"></i> Alunos com horas concluídas</p>
+          <p class="metric__value">42<span style="color:var(--muted-foreground);font-size:16px;font-weight:500">%</span></p>
+          <span class="metric__delta metric__delta--up">
+            <i class="ph ph-arrow-up"></i>
+            +3.2 pp vs mês anterior
+          </span>
+        </div>
+
+        <div class="metric enter">
+          <p class="metric__label"><i class="ph ph-timer"></i> Tempo médio de análise</p>
+          <p class="metric__value">2,4<span style="color:var(--muted-foreground);font-size:16px;font-weight:500"> dias</span></p>
+          <span class="metric__delta metric__delta--up">
+            <i class="ph ph-arrow-down"></i>
+            -0,8 d vs mês anterior
+          </span>
+        </div>
+
+        <div class="metric enter">
+          <p class="metric__label"><i class="ph ph-clock-countdown"></i> Pendentes na fila</p>
+          <p class="metric__value">12</p>
+          <span class="metric__delta metric__delta--down">
+            <i class="ph ph-arrow-up"></i>
+            +4 vs semana anterior
+          </span>
+        </div>
+
+        <div class="metric enter">
+          <p class="metric__label"><i class="ph ph-file-text"></i> Submissões no período</p>
+          <p class="metric__value">184</p>
+          <span class="metric__delta metric__delta--up">
+            <i class="ph ph-arrow-up"></i>
+            +22 vs mês anterior
+          </span>
+        </div>
+
+        <div class="metric enter">
+          <p class="metric__label"><i class="ph ph-check-circle"></i> Taxa de aprovação</p>
+          <p class="metric__value">87<span style="color:var(--muted-foreground);font-size:16px;font-weight:500">%</span></p>
+          <span class="metric__delta metric__delta--up">
+            <i class="ph ph-arrow-up"></i>
+            +1,5 pp
+          </span>
+        </div>
+
+        <div class="metric enter">
+          <p class="metric__label"><i class="ph ph-certificate"></i> Declarações emitidas</p>
+          <p class="metric__value">160</p>
+          <span class="metric__delta metric__delta--up">
+            <i class="ph ph-arrow-up"></i>
+            +18
+          </span>
+        </div>
+      </section>
+
+      <!-- Linha de 2 colunas: categorias + tendência -->
+      <section class="grid-2">
+        <div class="card stack-4">
+          <div>
+            <h2 class="text-lg font-bold" style="margin:0">Categorias mais usadas</h2>
+            <p class="text-sm text-muted" style="margin:4px 0 0">Volume de submissões por categoria no período.</p>
+          </div>
+          <div>
+            <div class="bar">
+              <span class="bar__label">Extensão</span>
+              <span class="bar__value">72 submissões</span>
+              <div class="bar__track"><div class="bar__fill" style="width:100%"></div></div>
+            </div>
+            <div class="bar">
+              <span class="bar__label">Ensino</span>
+              <span class="bar__value">48</span>
+              <div class="bar__track"><div class="bar__fill" style="width:67%"></div></div>
+            </div>
+            <div class="bar">
+              <span class="bar__label">Pesquisa</span>
+              <span class="bar__value">32</span>
+              <div class="bar__track"><div class="bar__fill" style="width:44%"></div></div>
+            </div>
+            <div class="bar">
+              <span class="bar__label">Monitoria</span>
+              <span class="bar__value">22</span>
+              <div class="bar__track"><div class="bar__fill" style="width:30%"></div></div>
+            </div>
+            <div class="bar">
+              <span class="bar__label">Eventos</span>
+              <span class="bar__value">10</span>
+              <div class="bar__track"><div class="bar__fill" style="width:14%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card stack-4">
+          <div>
+            <h2 class="text-lg font-bold" style="margin:0">Submissões por semana</h2>
+            <p class="text-sm text-muted" style="margin:4px 0 0">Últimas 12 semanas · total <span class="font-mono tabular-nums text-foreground font-medium">184</span></p>
+          </div>
+          <div class="spark">
+            <span style="height: 30%" title="S1 · 8"></span>
+            <span style="height: 42%" title="S2 · 11"></span>
+            <span style="height: 55%" title="S3 · 15"></span>
+            <span style="height: 48%" title="S4 · 13"></span>
+            <span style="height: 65%" title="S5 · 18"></span>
+            <span style="height: 72%" title="S6 · 20"></span>
+            <span style="height: 60%" title="S7 · 16"></span>
+            <span style="height: 80%" title="S8 · 22"></span>
+            <span style="height: 92%" title="S9 · 26"></span>
+            <span style="height: 85%" title="S10 · 24"></span>
+            <span style="height: 100%" title="S11 · 29"></span>
+            <span style="height: 95%" title="S12 · 27"></span>
+          </div>
+          <div class="row-between text-xs text-muted">
+            <span class="font-mono tabular-nums">2026-08-05</span>
+            <span class="font-mono tabular-nums">2026-10-20</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coordenadores -->
+      <section>
+        <div class="row-between" style="margin:0 0 12px">
+          <h2 class="text-lg font-bold" style="margin:0">Carga por coordenador</h2>
+          <a class="btn btn--ghost btn--sm" href="#">Ver detalhes <i class="ph ph-arrow-right"></i></a>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Coordenador</th>
+                <th class="num">Analisados</th>
+                <th class="num">Tempo médio</th>
+                <th class="num">Taxa aprovação</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Carlos Mendes</td>
+                <td class="num">84</td>
+                <td class="num">1,8 d</td>
+                <td class="num">91%</td>
+                <td><span class="status status--aprovada"><i class="ph-fill ph-check-circle"></i> Em dia</span></td>
+              </tr>
+              <tr>
+                <td>Fernanda Lima</td>
+                <td class="num">52</td>
+                <td class="num">2,2 d</td>
+                <td class="num">85%</td>
+                <td><span class="status status--aprovada"><i class="ph-fill ph-check-circle"></i> Em dia</span></td>
+              </tr>
+              <tr>
+                <td>Helena Silva</td>
+                <td class="num">36</td>
+                <td class="num">3,6 d</td>
+                <td class="num">83%</td>
+                <td><span class="status status--pendente"><i class="ph ph-clock"></i> Fila crescendo</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="_shared.js"></script>
+</body>
+</html>

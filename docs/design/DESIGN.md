@@ -383,3 +383,4 @@ Antes de cada PR que mexe em UI:
 - [[superpowers/specs/2026-10-20-design-system-easycert]] — spec detalhada da qual esta nota é resumo vivo.
 - [[dominio/fluxo-aprovacao]] — vocabulário de status mapeado em ícones e cores.
 - [[dominio/pendencias]] — pendências abertas relacionadas a design system.
+- [galeria de protótipos HTML](./mockups/index.html) — protótipos interativos do design system em HTML/CSS.

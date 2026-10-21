@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pedido · easycert coord</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    kbd {
+      display: inline-grid; place-items: center;
+      min-width: 20px; height: 20px; padding: 0 5px;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+      color: var(--muted-foreground); background: var(--muted);
+      border: 1px solid var(--border); border-bottom-width: 2px;
+      border-radius: var(--radius-sm);
+    }
+    .kbd-hints { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .kbd-hints span { font-size: 12px; color: var(--muted-foreground); }
+    .detail-row {
+      display: grid; grid-template-columns: 120px 1fr;
+      gap: 12px; padding: 10px 0;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .detail-row:first-child { border-top: 0; }
+    .detail-row__label { color: var(--muted-foreground); }
+    .pdf-preview {
+      aspect-ratio: 1 / 1.3;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 8px;
+      color: var(--muted-foreground);
+      position: relative;
+      overflow: hidden;
+    }
+    .pdf-preview::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        linear-gradient(var(--border) 1px, transparent 1px) 0 0 / 100% 14px,
+        linear-gradient(var(--background) 50%, transparent 50%) 0 0 / 100% 2px;
+      opacity: 0.4;
+      mask-image: linear-gradient(to bottom, black 30%, transparent);
+    }
+    .pdf-preview i { font-size: 36px; z-index: 1; color: var(--destructive); }
+    .pdf-preview span { z-index: 1; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" aria-current="page" href="coord-fila.html">Fila</a>
+        <a class="app-nav__link" href="#">Decididas</a>
+        <a class="app-nav__link" href="#">Relatórios</a>
+      </nav>
+      <div class="row">
+        <span class="badge badge--muted font-mono">coord</span>
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+        </button>
+        <span style="width:22px;height:22px;background:var(--accent-muted);color:var(--accent);border-radius:9999px;display:grid;place-items:center;font-size:11px;font-weight:700">CM</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main page__main--dense">
+    <div class="container-wide stack-4" style="max-width: calc(100% - 480px); padding-right: 48px">
+      <div class="row-between" style="flex-wrap:wrap;gap:16px">
+        <div>
+          <h1 class="text-2xl font-bold" style="margin:0;letter-spacing:-0.015em">Fila de análise</h1>
+          <p class="text-sm text-muted" style="margin:4px 0 0">
+            <span class="font-mono tabular-nums">12</span> pedidos aguardando ·
+            tempo médio:
+            <span class="font-mono tabular-nums">2.4 dias</span>
+          </p>
+        </div>
+        <div class="kbd-hints">
+          <span><kbd>J</kbd> <kbd>K</kbd> navegar</span>
+          <span><kbd>Enter</kbd> abrir</span>
+          <span><kbd>R</kbd> rejeitar</span>
+          <span><kbd>Esc</kbd> fechar</span>
+        </div>
+      </div>
+
+      <div class="table-wrap" tabindex="0">
+        <table class="table table--dense" data-keyboard-list="fila" data-sheet-target="pedido" data-selected="0">
+          <thead>
+            <tr>
+              <th style="width:28px"><div class="checkbox" aria-checked="false" role="checkbox"></div></th>
+              <th>Pedido</th>
+              <th>Aluno</th>
+              <th>Matrícula</th>
+              <th>Categoria</th>
+              <th class="center">Status</th>
+              <th class="num">Carga</th>
+              <th class="date">Enviado</th>
+              <th class="actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-row aria-selected="true">
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00042</td>
+              <td>Ana Oliveira</td>
+              <td class="code">20231234567</td>
+              <td>Extensão</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">40 h</td>
+              <td class="date">2026-10-18 09:12</td>
+              <td class="actions"></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00040</td>
+              <td>Beatriz Souza</td>
+              <td class="code">20228891122</td>
+              <td>Monitoria</td>
+              <td class="center"><span class="badge badge--muted"><span class="dot"></span> Em análise</span></td>
+              <td class="num">20 h</td>
+              <td class="date">2026-10-16 14:20</td>
+              <td class="actions"></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00038</td>
+              <td>Diego Alves</td>
+              <td class="code">20224456781</td>
+              <td>Extensão</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">60 h</td>
+              <td class="date">2026-10-15 10:33</td>
+              <td class="actions"></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00036</td>
+              <td>Fernanda Lima</td>
+              <td class="code">20231177654</td>
+              <td>Pesquisa</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">30 h</td>
+              <td class="date">2026-10-14 16:05</td>
+              <td class="actions"></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00035</td>
+              <td>Gabriel Rocha</td>
+              <td class="code">20225567788</td>
+              <td>Ensino</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">80 h</td>
+              <td class="date">2026-10-14 09:40</td>
+              <td class="actions"></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00034</td>
+              <td>Helena Silva</td>
+              <td class="code">20230091234</td>
+              <td>Eventos</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">16 h</td>
+              <td class="date">2026-10-13 18:22</td>
+              <td class="actions"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Backdrop + side panel (abertos por padrão nesta tela) -->
+  <div class="sheet-backdrop" data-sheet-backdrop="pedido" data-open="true" style="transition-duration: 0ms"></div>
+  <aside class="sheet" data-sheet="pedido" data-open="true" style="transition-duration: 0ms" role="dialog" aria-labelledby="pedido-title">
+    <header class="sheet__header">
+      <div>
+        <div class="row" style="gap:8px">
+          <span class="font-mono text-sm font-medium">SUB-2026-00042</span>
+          <span class="badge badge--warning"><span class="dot"></span> Pendente</span>
+        </div>
+        <h2 id="pedido-title" class="text-lg font-bold" style="margin:4px 0 0">Oficina de IA aplicada à saúde</h2>
+      </div>
+      <button class="btn btn--ghost btn--sm btn--icon" aria-label="Fechar" data-sheet-close="pedido">
+        <i class="ph ph-x"></i>
+      </button>
+    </header>
+
+    <div class="sheet__body stack-6">
+      <!-- PDF preview -->
+      <div class="stack-2">
+        <div class="row-between">
+          <h3 class="text-sm font-medium" style="margin:0">Comprovante</h3>
+          <button class="btn btn--ghost btn--sm">
+            <i class="ph ph-arrows-out-simple"></i>
+            Abrir em tela cheia
+          </button>
+        </div>
+        <div class="pdf-preview">
+          <i class="ph-fill ph-file-pdf"></i>
+          <span class="text-xs font-mono">certificado-oficina-ia-2026.pdf · 1.2 MB</span>
+        </div>
+      </div>
+
+      <!-- Metadados -->
+      <div>
+        <h3 class="text-sm font-medium" style="margin:0 0 4px">Metadados declarados</h3>
+        <div>
+          <div class="detail-row">
+            <span class="detail-row__label">Aluno</span>
+            <span>Ana Oliveira · <span class="font-mono tabular-nums text-muted">20231234567</span></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-row__label">Categoria</span>
+            <span>Extensão</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-row__label">Instituição</span>
+            <span>Universidade Federal de Minas Gerais</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-row__label">Período</span>
+            <span class="font-mono tabular-nums">2026-08-15 a 2026-09-30</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-row__label">Carga informada</span>
+            <span class="font-mono tabular-nums">40 h</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-row__label">Observação</span>
+            <span class="text-muted">Nenhuma.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regras da matriz -->
+      <div class="card--pad-sm" style="padding:14px;background:var(--muted);border-radius:var(--radius-md)">
+        <div class="row" style="margin-bottom:6px">
+          <i class="ph ph-info" style="color: var(--muted-foreground)"></i>
+          <span class="text-sm font-medium">Regras: Extensão</span>
+        </div>
+        <ul style="margin:0;padding-left:20px;font-size:12px;color:var(--muted-foreground);line-height:1.6">
+          <li>Mínimo exigido no curso: <span class="font-mono text-foreground">80 h</span></li>
+          <li>Teto por submissão: <span class="font-mono text-foreground">60 h</span></li>
+          <li>Instituição externa precisa estar na lista de parceiras (<a href="#" class="text-accent" style="text-decoration:underline">ver lista</a>)</li>
+        </ul>
+      </div>
+
+      <!-- Decisão -->
+      <div class="stack-4">
+        <h3 class="text-sm font-medium" style="margin:0">Decisão</h3>
+        <div class="field">
+          <label class="label" for="carga-aceita">Carga aceita</label>
+          <input id="carga-aceita" class="input" type="number" value="40" />
+          <span class="hint">Pode diferir da carga informada pelo aluno.</span>
+        </div>
+      </div>
+
+      <!-- Histórico -->
+      <div>
+        <h3 class="text-sm font-medium" style="margin:0 0 8px">Histórico</h3>
+        <div class="stack-2" style="font-size:12px">
+          <div class="row">
+            <i class="ph ph-paper-plane-tilt" style="color: var(--muted-foreground)"></i>
+            <span>Ana Oliveira enviou para análise</span>
+            <span class="text-muted font-mono tabular-nums" style="margin-left:auto">2026-10-18 09:12</span>
+          </div>
+          <div class="row">
+            <i class="ph ph-magnifying-glass" style="color: var(--muted-foreground)"></i>
+            <span>Carlos Mendes abriu o pedido</span>
+            <span class="text-muted font-mono tabular-nums" style="margin-left:auto">2026-10-20 14:30</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="sheet__footer">
+      <button class="btn btn--outline" data-modal-open="rejeitar">
+        <i class="ph ph-x"></i>
+        Rejeitar
+      </button>
+      <button class="btn btn--primary"
+        data-toast='{"title":"Pedido aprovado","desc":"SUB-2026-00042 · 40 h lançadas em Extensão.","icon":"check-circle","variant":"accent"}'
+        data-sheet-close="pedido">
+        <i class="ph ph-check"></i>
+        Aprovar
+      </button>
+    </footer>
+  </aside>
+
+  <!-- Modal rejeição -->
+  <div class="modal-backdrop" data-modal="rejeitar">
+    <div class="modal">
+      <h3 class="modal__title">Rejeitar pedido</h3>
+      <p class="modal__desc">SUB-2026-00042 · Ana Oliveira. Explique o motivo. O aluno recebe sua justificativa por e-mail.</p>
+      <div class="field">
+        <label class="label" for="motivo">Motivo</label>
+        <textarea id="motivo" class="input" placeholder="Ex.: certificado sem carga horária explícita; reenviar com atestado assinado."></textarea>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" data-modal-close="rejeitar">Cancelar</button>
+        <button class="btn btn--destructive" data-modal-close="rejeitar"
+          data-toast='{"title":"Pedido indeferido","desc":"Aluno notificado por e-mail.","icon":"x-circle","variant":"destructive"}'>
+          Indeferir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="_shared.js"></script>
+  <script>
+    document.addEventListener("click", (e) => {
+      const cb = e.target.closest(".checkbox");
+      if (!cb) return;
+      cb.setAttribute("aria-checked", cb.getAttribute("aria-checked") === "true" ? "false" : "true");
+      e.stopPropagation();
+    });
+    // reabilita animação depois de pintar (sheet já aberta sem animação inicial)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.querySelectorAll('[data-sheet="pedido"], [data-sheet-backdrop="pedido"]').forEach(el => el.style.removeProperty('transition-duration'));
+      });
+    });
+  </script>
+</body>
+</html>

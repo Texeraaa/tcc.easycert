@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fila de análise · easycert coord</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    kbd {
+      display: inline-grid;
+      place-items: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted-foreground);
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: var(--radius-sm);
+    }
+    .kbd-hints { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .kbd-hints span { font-size: 12px; color: var(--muted-foreground); }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      background: var(--muted);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+    }
+    .filter-chip button {
+      display: grid; place-items: center;
+      width: 14px; height: 14px;
+      border-radius: 9999px;
+      color: var(--muted-foreground);
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" aria-current="page" href="coord-fila.html">Fila</a>
+        <a class="app-nav__link" href="#">Decididas</a>
+        <a class="app-nav__link" href="#">Relatórios</a>
+      </nav>
+      <div class="row">
+        <span class="badge badge--muted font-mono">coord</span>
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+        </button>
+        <div style="position:relative">
+          <button class="btn btn--ghost btn--sm" data-menu-trigger="user">
+            <span style="width:22px;height:22px;background:var(--accent-muted);color:var(--accent);border-radius:9999px;display:grid;place-items:center;font-size:11px;font-weight:700">CM</span>
+            Carlos Mendes
+            <i class="ph ph-caret-down" style="font-size:12px"></i>
+          </button>
+          <div class="menu" data-menu="user" style="top:calc(100% + 6px);right:0;--transform-origin:top right">
+            <div class="menu__label">Coordenação · Ciência da Computação</div>
+            <a class="menu__item" href="#"><i class="ph ph-user"></i> Perfil</a>
+            <a class="menu__item" href="#"><i class="ph ph-gear-six"></i> Preferências</a>
+            <div class="menu__sep"></div>
+            <a class="menu__item menu__item--destructive" href="login.html"><i class="ph ph-sign-out"></i> Sair</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main page__main--dense">
+    <div class="container-wide stack-4">
+      <!-- Header + stats -->
+      <div class="row-between" style="flex-wrap:wrap;gap:16px">
+        <div>
+          <h1 class="text-2xl font-bold" style="margin:0;letter-spacing:-0.015em">Fila de análise</h1>
+          <p class="text-sm text-muted" style="margin:4px 0 0">
+            <span class="font-mono tabular-nums">12</span> pedidos aguardando ·
+            tempo médio de análise:
+            <span class="font-mono tabular-nums">2.4 dias</span>
+          </p>
+        </div>
+
+        <div class="kbd-hints">
+          <span><kbd>J</kbd> <kbd>K</kbd> navegar</span>
+          <span><kbd>Enter</kbd> abrir</span>
+          <span><kbd>R</kbd> rejeitar</span>
+          <span><kbd>Esc</kbd> fechar</span>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="row-between" style="gap:12px;flex-wrap:wrap">
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          <span class="filter-chip">
+            Status: Pendente
+            <button aria-label="Remover filtro"><i class="ph ph-x" style="font-size:10px"></i></button>
+          </span>
+          <span class="filter-chip">
+            Período: últimos 30 dias
+            <button aria-label="Remover filtro"><i class="ph ph-x" style="font-size:10px"></i></button>
+          </span>
+          <button class="btn btn--ghost btn--sm">
+            <i class="ph ph-plus"></i>
+            Adicionar filtro
+          </button>
+        </div>
+
+        <div class="row">
+          <div class="field" style="width:280px">
+            <input class="input" type="search" placeholder="Buscar aluno, matrícula, categoria" />
+          </div>
+          <button class="btn btn--outline btn--sm">
+            <i class="ph ph-download-simple"></i>
+            Exportar
+          </button>
+        </div>
+      </div>
+
+      <!-- Bulk action bar (quando ao menos 1 selecionado) -->
+      <div class="card--pad-sm row-between" style="padding:10px 16px;background:var(--accent-muted);border:1px solid color-mix(in oklab, var(--accent) 30%, var(--border));border-radius:var(--radius-md)">
+        <div class="row">
+          <span class="text-sm font-medium text-accent"><span class="font-mono tabular-nums">1</span> selecionado</span>
+          <span class="text-xs text-muted">·  Ações em lote exigem desktop ≥ 1024px</span>
+        </div>
+        <div class="row">
+          <button class="btn btn--outline btn--sm">
+            <i class="ph ph-check"></i>
+            Aprovar selecionados
+          </button>
+          <button class="btn btn--ghost btn--sm">Limpar</button>
+        </div>
+      </div>
+
+      <!-- Tabela densa com atalhos de teclado -->
+      <div class="table-wrap" tabindex="0">
+        <table class="table table--dense" data-keyboard-list="fila" data-sheet-target="pedido">
+          <thead>
+            <tr>
+              <th style="width:28px"><div class="checkbox" aria-checked="false" role="checkbox"></div></th>
+              <th>Pedido</th>
+              <th>Aluno</th>
+              <th>Matrícula</th>
+              <th>Categoria</th>
+              <th class="center">Status</th>
+              <th class="num">Carga</th>
+              <th class="date">Enviado</th>
+              <th class="actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00042</td>
+              <td>Ana Oliveira</td>
+              <td class="code">20231234567</td>
+              <td>Extensão</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">40 h</td>
+              <td class="date">2026-10-18 09:12</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="true" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00040</td>
+              <td>Beatriz Souza</td>
+              <td class="code">20228891122</td>
+              <td>Monitoria</td>
+              <td class="center"><span class="badge badge--muted"><span class="dot"></span> Em análise</span></td>
+              <td class="num">20 h</td>
+              <td class="date">2026-10-16 14:20</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00038</td>
+              <td>Diego Alves</td>
+              <td class="code">20224456781</td>
+              <td>Extensão</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">60 h</td>
+              <td class="date">2026-10-15 10:33</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00036</td>
+              <td>Fernanda Lima</td>
+              <td class="code">20231177654</td>
+              <td>Pesquisa</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">30 h</td>
+              <td class="date">2026-10-14 16:05</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00035</td>
+              <td>Gabriel Rocha</td>
+              <td class="code">20225567788</td>
+              <td>Ensino</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">80 h</td>
+              <td class="date">2026-10-14 09:40</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00034</td>
+              <td>Helena Silva</td>
+              <td class="code">20230091234</td>
+              <td>Eventos</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">16 h</td>
+              <td class="date">2026-10-13 18:22</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00033</td>
+              <td>Ingrid Costa</td>
+              <td class="code">20231234999</td>
+              <td>Extensão</td>
+              <td class="center"><span class="badge badge--muted"><span class="dot"></span> Em análise</span></td>
+              <td class="num">24 h</td>
+              <td class="date">2026-10-12 11:15</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00031</td>
+              <td>João Pereira</td>
+              <td class="code">20224412345</td>
+              <td>Pesquisa</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">50 h</td>
+              <td class="date">2026-10-11 14:30</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+            <tr data-row>
+              <td><div class="checkbox" aria-checked="false" role="checkbox"></div></td>
+              <td class="font-mono text-sm">SUB-2026-00030</td>
+              <td>Letícia Martins</td>
+              <td class="code">20225598765</td>
+              <td>Monitoria</td>
+              <td class="center"><span class="badge badge--warning"><span class="dot"></span> Pendente</span></td>
+              <td class="num">20 h</td>
+              <td class="date">2026-10-10 08:50</td>
+              <td class="actions"><div class="row-actions">
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Aprovar"><i class="ph ph-check"></i></button>
+                <button class="btn btn--ghost btn--sm btn--icon" aria-label="Rejeitar"><i class="ph ph-x"></i></button>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- footer / paginação -->
+      <div class="row-between">
+        <span class="text-xs text-muted">
+          Mostrando <span class="font-mono tabular-nums">9</span> de <span class="font-mono tabular-nums">12</span> pedidos.
+        </span>
+        <div class="row">
+          <button class="btn btn--ghost btn--sm" disabled>
+            <i class="ph ph-caret-left"></i>
+            Anterior
+          </button>
+          <button class="btn btn--outline btn--sm">
+            Próximo
+            <i class="ph ph-caret-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="_shared.js"></script>
+  <script>
+    document.addEventListener("click", (e) => {
+      const cb = e.target.closest(".checkbox");
+      if (!cb) return;
+      cb.setAttribute("aria-checked", cb.getAttribute("aria-checked") === "true" ? "false" : "true");
+      e.stopPropagation();
+    });
+  </script>
+</body>
+</html>

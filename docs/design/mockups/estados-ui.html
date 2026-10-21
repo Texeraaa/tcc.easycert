@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Estados de UI · easycert mockup</title>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("easycert.theme");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", stored || sys);
+      } catch { document.documentElement.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    .state-section {
+      scroll-margin-top: 80px;
+    }
+    .toc {
+      position: sticky; top: 80px;
+      align-self: start;
+      padding: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+    }
+    .toc a {
+      display: block;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      color: var(--muted-foreground);
+      transition: color var(--dur-fast) ease, background var(--dur-fast) ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .toc a:hover { color: var(--foreground); background: var(--muted); }
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">e</span>
+        easycert
+      </a>
+      <nav class="app-nav">
+        <a class="app-nav__link" href="index.html">Galeria</a>
+        <a class="app-nav__link" aria-current="page" href="estados-ui.html">Estados</a>
+        <a class="app-nav__link" href="componentes.html">Componentes</a>
+      </nav>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
+          <i data-theme-icon class="ph ph-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main">
+    <div class="container">
+      <div style="margin-bottom:24px">
+        <h1 class="page__title">Estados de UI</h1>
+        <p class="page__subtitle prose">Cada tela de dados tem quatro estados obrigatórios além do happy path. Esta página mostra como cada um aparece.</p>
+      </div>
+
+      <div class="layout">
+        <aside class="toc">
+          <a href="#empty">Empty</a>
+          <a href="#loading">Loading</a>
+          <a href="#error">Error</a>
+          <a href="#offline">Offline</a>
+          <a href="#403">403 Sem permissão</a>
+          <a href="#partial">Partial / stale</a>
+        </aside>
+
+        <div class="stack-6">
+          <!-- Empty -->
+          <section id="empty" class="state-section stack-4">
+            <div>
+              <h2 class="text-lg font-bold" style="margin:0">Empty</h2>
+              <p class="text-sm text-muted" style="margin:4px 0 0">Sem dados. Nunca mostrar placeholder data ("lorem ipsum", "Jane Doe"). Headline curta, subtext explicativo, CTA primário se há ação natural.</p>
+            </div>
+            <div class="card">
+              <div class="state">
+                <div class="state__icon"><i class="ph ph-tray"></i></div>
+                <h3 class="state__title">Nenhuma submissão ainda.</h3>
+                <p class="state__desc">Quando você solicitar uma declaração, ela aparece aqui com status, categoria e carga horária.</p>
+                <a class="btn btn--primary" href="aluno-nova-submissao.html">
+                  <i class="ph ph-plus"></i>
+                  Solicitar declaração
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <!-- Loading -->
+          <section id="loading" class="state-section stack-4">
+            <div>
+              <h2 class="text-lg font-bold" style="margin:0">Loading</h2>
+              <p class="text-sm text-muted" style="margin:4px 0 0">Skeleton com a forma do layout final. Nunca spinner genérico centralizado. Visível a partir de 100 ms.</p>
+            </div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Pedido</th>
+                    <th>Aluno</th>
+                    <th>Categoria</th>
+                    <th class="center">Status</th>
+                    <th class="num">Carga</th>
+                    <th class="date">Enviado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="6" style="padding:0">
+                    <div style="padding:12px 16px"><span class="skeleton" style="height:16px;width:60%;display:block"></span></div>
+                  </td></tr>
+                  <tr><td colspan="6" style="padding:0">
+                    <div style="padding:12px 16px"><span class="skeleton" style="height:16px;width:72%;display:block"></span></div>
+                  </td></tr>
+                  <tr><td colspan="6" style="padding:0">
+                    <div style="padding:12px 16px"><span class="skeleton" style="height:16px;width:55%;display:block"></span></div>
+                  </td></tr>
+                  <tr><td colspan="6" style="padding:0">
+                    <div style="padding:12px 16px"><span class="skeleton" style="height:16px;width:68%;display:block"></span></div>
+                  </td></tr>
+                  <tr><td colspan="6" style="padding:0">
+                    <div style="padding:12px 16px"><span class="skeleton" style="height:16px;width:48%;display:block"></span></div>
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- card skeleton -->
+            <div class="grid-3">
+              <div class="card stack-2">
+                <span class="skeleton" style="height:14px;width:40%"></span>
+                <span class="skeleton" style="height:24px;width:60%"></span>
+                <span class="skeleton" style="height:6px;width:100%"></span>
+              </div>
+              <div class="card stack-2">
+                <span class="skeleton" style="height:14px;width:40%"></span>
+                <span class="skeleton" style="height:24px;width:60%"></span>
+                <span class="skeleton" style="height:6px;width:100%"></span>
+              </div>
+              <div class="card stack-2">
+                <span class="skeleton" style="height:14px;width:40%"></span>
+                <span class="skeleton" style="height:24px;width:60%"></span>
+                <span class="skeleton" style="height:6px;width:100%"></span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Error -->
+          <section id="error" class="state-section stack-4">
+            <div>
+              <h2 class="text-lg font-bold" style="margin:0">Error</h2>
+              <p class="text-sm text-muted" style="margin:4px 0 0">Headline no contexto do erro. Nunca stack trace, nunca "500 Internal Server Error" como copy. Ação secundária <span class="font-mono">[Tentar novamente]</span>.</p>
+            </div>
+            <div class="card">
+              <div class="state">
+                <div class="state__icon" style="background: var(--destructive-muted); color: var(--destructive)">
+                  <i class="ph ph-warning-octagon"></i>
+                </div>
+                <h3 class="state__title">Não foi possível carregar a fila.</h3>
+                <p class="state__desc">Verifique sua conexão e tente novamente. Se o problema persistir, fale com o administrador do sistema.</p>
+                <div class="row">
+                  <button class="btn btn--outline">Voltar</button>
+                  <button class="btn btn--primary"
+                    data-toast='{"title":"Tentando de novo...","icon":"arrow-clockwise","variant":"accent"}'>
+                    <i class="ph ph-arrow-clockwise"></i>
+                    Tentar novamente
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Offline -->
+          <section id="offline" class="state-section stack-4">
+            <div>
+              <h2 class="text-lg font-bold" style="margin:0">Offline</h2>
+              <p class="text-sm text-muted" style="margin:4px 0 0">Banner persistente no topo. Formulários ficam disabled. Ações pendentes são enfileiradas em memória e retomadas na reconexão.</p>
+            </div>
+            <div style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden">
+              <div class="banner banner--warning">
+                <i class="ph-fill ph-wifi-slash"></i>
+                <span>Sem conexão. Tentando reconectar...</span>
+                <button class="btn btn--ghost btn--sm" style="margin-left:auto;color:inherit">
+                  <i class="ph ph-arrow-clockwise"></i>
+                  Tentar agora
+                </button>
+              </div>
+              <div style="padding:24px;background:var(--card)">
+                <h3 class="text-base font-bold" style="margin:0 0 4px">Nova submissão</h3>
+                <p class="text-sm text-muted" style="margin:0 0 16px">Formulário bloqueado até a conexão voltar.</p>
+                <div class="field" style="opacity:0.5;pointer-events:none">
+                  <label class="label">Categoria</label>
+                  <input class="input" value="Extensão" disabled />
+                </div>
+                <div style="margin-top:16px;opacity:0.5;pointer-events:none">
+                  <button class="btn btn--primary" disabled>Enviar pedido</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 403 -->
+          <section id="403" class="state-section stack-4">
+            <div>
+              <h2 class="text-lg font-bold" style="margin:0">403 · Sem permissão</h2>
+              <p class="text-sm text-muted" style="margin:4px 0 0">Tela dedicada full-page. Nunca "403 Forbidden" como copy. Ícone <span class="font-mono">Prohibit</span>, headline em pt-BR, CTA de volta.</p>
+            </div>
+            <div class="card" style="padding:64px 24px">
+              <div class="state">
+                <div class="state__icon" style="width:56px;height:56px"><i class="ph ph-prohibit" style="font-size:28px"></i></div>
+                <h3 class="state__title">Sem permissão para acessar esta página.</h3>
+                <p class="state__desc">Esta tela é restrita à coordenação. Se você acha que isso é um erro, fale com o administrador do curso.</p>
+                <a class="btn btn--outline" href="aluno-dashboard.html">
+                  <i class="ph ph-arrow-left"></i>
+                  Voltar ao dashboard
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <!-- Partial / stale -->
+          <section id="partial" class="state-section stack-4">
+            <div>
+              <h2 class="text-lg font-bold" style="margin:0">Partial / stale</h2>
+              <p class="text-sm text-muted" style="margin:4px 0 0">Dados carregados mas desatualizados. Toast discreto convidando a recarregar. Nunca forçar reload.</p>
+            </div>
+            <div class="row">
+              <button class="btn btn--outline"
+                data-toast='{"title":"Status atualizado","desc":"SUB-2026-00042 mudou para Aprovada.","icon":"info","variant":"accent"}'>
+                Simular toast de stale
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="_shared.js"></script>
+</body>
+</html>
