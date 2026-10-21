@@ -34,7 +34,7 @@ Referências de alto nível: [[ARCHITECTURE]]. Rotas expostas: [[API_ROUTES]]. P
 
 ## Frontend
 
-Único app: `apps/web` (Next.js 15). Organização por área:
+Único app: `apps/web` (Next.js 15). Organização por área. Todos os módulos respeitam [[design/DESIGN]] (sistema de design do easycert).
 
 ### `apps/web/app/aluno` — Portal do Aluno
 

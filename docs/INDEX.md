@@ -9,6 +9,7 @@
 - [[INFRASTRUCTURE]] — hospedagem, CI/CD, integrações externas.
 - [[STACK]] — decisões de tecnologia.
 - [[AGENTS]] — roster de 6 agentes e protocolo de interação.
+- [[design/DESIGN]] — design system do easycert (tokens, componentes, motion, guardrails).
 
 ## API
 - [[API_ROUTES]] — rotas HTTP agrupadas por módulo.

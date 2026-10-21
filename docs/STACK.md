@@ -25,7 +25,7 @@ Decisões de tecnologia do **easycert** e por quê. Esta nota registra escolhas 
 - **Framework:** Next.js 15 com Turbopack.
 - **React:** 19.
 - **Roteamento:** App Router do Next.js.
-- **Estilização / UI:** **shadcn/ui + Tailwind CSS + Radix UI** — shadcn é um gerador: `npx shadcn add <componente>` injeta o código em `apps/web/src/components/ui/`. Baseado em Radix (primitivos acessíveis, atende WCAG A/AA). `@easycert/ui` fica reservado para wrappers compartilhados entre múltiplos frontends futuros. Decisão em [[superpowers/specs/2026-10-19-requisitos-mes-1#8. Decisões técnicas resolvidas]].
+- **Estilização / UI:** **shadcn/ui + Tailwind CSS + Radix UI** — shadcn é um gerador: `npx shadcn add <componente>` injeta o código em `apps/web/src/components/ui/`. Baseado em Radix (primitivos acessíveis, atende WCAG A/AA). `@easycert/ui` fica reservado para wrappers compartilhados entre múltiplos frontends futuros. Decisão em [[superpowers/specs/2026-10-19-requisitos-mes-1#8. Decisões técnicas resolvidas]]. Sistema de design detalhado em [[design/DESIGN]].
 
 ## Autenticação
 

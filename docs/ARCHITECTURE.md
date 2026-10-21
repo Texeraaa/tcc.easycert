@@ -18,7 +18,7 @@ Fluxo canônico fim-a-fim:
 
 ## Componentes
 
-- **`apps/web`** — Next.js 15 + React 19 (Turbopack). Entrega todas as UIs (aluno, coordenador, admin).
+- **`apps/web`** — Next.js 15 + React 19 (Turbopack). Entrega todas as UIs (aluno, coordenador, admin). Componentes shadcn gerados em `apps/web/src/components/ui/` (owned); ver [[design/DESIGN]] para sistema de design completo.
 - **`apps/api`** — NestJS 11. Expõe REST para a web, orquestra Prisma e storage.
 - **`packages/db`** — schema Prisma 6 + client gerado; migrations em `prisma/migrations/`.
 - **`packages/types`** — DTOs/contratos compartilhados entre api e web.
