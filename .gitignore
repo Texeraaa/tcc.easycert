@@ -29,6 +29,10 @@ pnpm-debug.log*
 *.swo
 .DS_Store
 
+# obsidian — state local do editor (layout, zoom do grafo)
+docs/.obsidian/workspace.json
+docs/.obsidian/graph.json
+
 # testing
 coverage/
 .nyc_output/
