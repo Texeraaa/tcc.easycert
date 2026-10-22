@@ -14,6 +14,11 @@
 ## API
 - [[API_ROUTES]] — rotas HTTP agrupadas por módulo.
 
+## Superpowers — Specs e Plans
+- [[superpowers/specs/2026-10-19-requisitos-mes-1]] — requisitos e decisões técnicas do Mês 1.
+- [[superpowers/specs/2026-10-20-design-system-easycert]] — sistema de design completo.
+- [[superpowers/specs/2026-10-22-upload-de-pdf-design]] — fluxo de upload de PDF direto ao storage via POST policy (RF-06, RNF-03).
+
 ## Domínio
 - [[dominio/visao-geral|visao-geral]] — objetivo, atores, requisito central, não-objetivos.
 - [[dominio/horas-complementares|horas-complementares]] — modelo de horas, categorias, limites.
