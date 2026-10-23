@@ -164,6 +164,65 @@ def _apply_font(run, name, size, bold, italic, color_rgb) -> None:
         run.font.color.rgb = RGBColor(color_rgb[0], color_rgb[1], color_rgb[2])
 
 
+# --- slide handlers ---
+
+
+def find_title_and_body_frames(slide):
+    """Heurística: title_frame = o shape cujo placeholder_format.idx == 0 OU cujo nome
+    começa com 'Title'. body_frame = o próximo text_frame não-título.
+
+    Retorna (title_tf, body_tf). Qualquer um pode ser None.
+    """
+    title_tf = None
+    body_tf = None
+    for shape in slide.shapes:
+        if not shape.has_text_frame:
+            continue
+        name = (shape.name or "").lower()
+        is_title = (
+            "title" in name
+            or (shape.is_placeholder and shape.placeholder_format.idx == 0)
+        )
+        if is_title and title_tf is None:
+            title_tf = shape.text_frame
+        elif body_tf is None:
+            body_tf = shape.text_frame
+    return title_tf, body_tf
+
+
+def process_generic_slide(slide, content: SlideContent) -> list[str]:
+    """Preenche título (do heading do rascunho) e corpo (bullets ou blockquote ou paragraphs)."""
+    logs: list[str] = []
+    title_tf, body_tf = find_title_and_body_frames(slide)
+
+    if title_tf is not None and content.heading:
+        replace_text_preserving_runs(title_tf, content.heading)
+        logs.append(f"título='{content.heading}'")
+
+    if body_tf is not None:
+        body_text = _render_body(content)
+        if body_text:
+            replace_text_preserving_runs(body_tf, body_text)
+            logs.append(f"corpo com {body_text.count(chr(10)) + 1} linha(s)")
+        else:
+            logs.append("corpo vazio (nenhum conteúdo no rascunho)")
+    return logs
+
+
+def _render_body(content: SlideContent) -> str:
+    """Transforma SlideContent em string multiline para o body do slide.
+
+    Prioridade: bullets > blockquote > paragraphs. Nunca mistura — se há bullets, só bullets.
+    """
+    if content.bullets:
+        return "\n".join(strip_inline_marks(b) for b in content.bullets)
+    if content.blockquote:
+        return "\n".join(strip_inline_marks(b) for b in content.blockquote if b)
+    if content.paragraphs:
+        return "\n".join(strip_inline_marks(p) for p in content.paragraphs)
+    return ""
+
+
 def check_dependencies() -> None:
     try:
         import pptx  # noqa: F401
@@ -302,9 +361,28 @@ def _test_normalize_for_diff_whitespace() -> None:
 def main() -> int:
     check_dependencies()
     check_files_exist()
-    print(f"Pre-flight OK. Template: {TEMPLATE_PATH}")
-    print(f"Rascunho: {RASCUNHO_PATH}")
-    print("(pipeline ainda não implementado)")
+
+    from pptx import Presentation
+
+    slides_content = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
+    prs = Presentation(str(TEMPLATE_PATH))
+
+    GENERIC_SLIDES = {1, 2, 3, 4, 6, 7, 8, 9, 12, 14}
+
+    for idx, slide in enumerate(prs.slides, start=1):
+        content = slides_content.get(idx)
+        if content is None:
+            print(f"Slide {idx}: SEM conteúdo no rascunho — mantido como no template.")
+            continue
+        if idx in GENERIC_SLIDES:
+            logs = process_generic_slide(slide, content)
+        else:
+            logs = [f"handler específico pendente (Task 6-9)"]
+        print(f"Slide {idx}: {'; '.join(logs) if logs else '(nada)'}")
+
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    prs.save(str(OUTPUT_PATH))
+    print(f"\nArquivo gerado: {OUTPUT_PATH}")
     return 0
 
 
