@@ -36,3 +36,4 @@
 - [[tcc/cronograma|cronograma]] — 5 meses com entregáveis.
 - [[tcc/trabalhos-correlatos|trabalhos-correlatos]] — esqueleto da fundamentação teórica (Mês 1).
 - [[tcc/rascunhos/01-introducao|01-introducao]] — rascunho da introdução.
+- [[tcc/rascunhos/pre-banca|pre-banca]] — esqueleto dos 14 slides da pré-banca.
