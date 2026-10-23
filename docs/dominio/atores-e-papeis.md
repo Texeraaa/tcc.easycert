@@ -37,7 +37,7 @@ Quem usa o **easycert** e o que cada um pode fazer. Esta nota lista os atores e 
 
 ## Autenticação
 
-**Login próprio local com e-mail + senha**, via NestJS Passport (strategy local) + JWT nos tokens de sessão. Senhas armazenadas com hash (bcrypt ou argon2id). Decisão ratificada pelo autor em **2026-10-20**. SSO institucional e OAuth externo são trabalho futuro ([[visao-geral#Não-objetivos da v1]]).
+**Login próprio local com e-mail + senha**, via NestJS Passport (strategy local) + JWT em cookie HttpOnly SameSite=Lax (nome `easycert_session`). Senhas armazenadas com hash **argon2id** via `@node-rs/argon2`. Decisão ratificada pelo autor em **2026-10-20** (auth + JWT) e **2026-10-22** (hash, cookie, CSRF). Mitigação CSRF via `csrf-csrf`. SSO institucional e OAuth externo são trabalho futuro ([[visao-geral#Não-objetivos da v1]]).
 
 ---
 
