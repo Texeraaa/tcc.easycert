@@ -209,6 +209,58 @@ def process_generic_slide(slide, content: SlideContent) -> list[str]:
     return logs
 
 
+def process_blockquote_slide(slide, content: SlideContent) -> list[str]:
+    """Para slides onde o blockquote carrega título (1ª linha) + corpo (demais linhas).
+
+    Aplica-se a slides 1, 2, 5, 7, 14. O heading do rascunho é organizacional e descartado
+    quando há blockquote; o título visível vem da 1ª linha do blockquote.
+
+    Slide 5 é especial: título fixo "Pergunta de pesquisa" (spec seção 2.3).
+
+    Fallback: se o template não tem body_frame (slides 2 e 14), concatena o blockquote
+    inteiro no title_frame como múltiplos parágrafos.
+    """
+    logs: list[str] = []
+    title_tf, body_tf = find_title_and_body_frames(slide)
+
+    quote = [strip_inline_marks(b) for b in content.blockquote if b]
+    if not quote:
+        logs.append("sem blockquote — fallback para handler genérico")
+        return process_generic_slide(slide, content)
+
+    if content.number == 5:
+        title_text = "Pergunta de pesquisa"
+    else:
+        title_text = quote[0]
+    body_text = "\n".join(quote[1:]) if len(quote) > 1 else ""
+
+    # Slide 5 tem bullets adicionais no corpo além do blockquote.
+    if content.bullets:
+        body_bullets = "\n".join(strip_inline_marks(b) for b in content.bullets)
+        body_text = f"{body_text}\n{body_bullets}" if body_text else body_bullets
+
+    if body_tf is None and body_text:
+        # Fallback: template sem body frame (slides 2, 14) — concatena no título.
+        full_title = f"{title_text}\n{body_text}"
+        if title_tf is not None:
+            replace_text_preserving_runs(title_tf, full_title)
+            logs.append(f"título multi-linha (sem body frame): {full_title!r}")
+        else:
+            logs.append("AVISO: nem title_tf nem body_tf — nada substituído")
+        return logs
+
+    if title_tf is not None:
+        replace_text_preserving_runs(title_tf, title_text)
+        logs.append(f"título='{title_text[:50]}{'…' if len(title_text) > 50 else ''}'")
+    if body_tf is not None:
+        if body_text:
+            replace_text_preserving_runs(body_tf, body_text)
+            logs.append(f"corpo com {body_text.count(chr(10)) + 1} linha(s)")
+        else:
+            logs.append("corpo vazio")
+    return logs
+
+
 def _render_body(content: SlideContent) -> str:
     """Transforma SlideContent em string multiline para o body do slide.
 
@@ -367,7 +419,8 @@ def main() -> int:
     slides_content = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
     prs = Presentation(str(TEMPLATE_PATH))
 
-    GENERIC_SLIDES = {1, 2, 3, 4, 6, 7, 8, 9, 12, 14}
+    GENERIC_SLIDES = {3, 4, 6, 8, 9, 12}
+    BLOCKQUOTE_SLIDES = {1, 2, 5, 7, 14}
 
     for idx, slide in enumerate(prs.slides, start=1):
         content = slides_content.get(idx)
@@ -376,8 +429,10 @@ def main() -> int:
             continue
         if idx in GENERIC_SLIDES:
             logs = process_generic_slide(slide, content)
+        elif idx in BLOCKQUOTE_SLIDES:
+            logs = process_blockquote_slide(slide, content)
         else:
-            logs = [f"handler específico pendente (Task 6-9)"]
+            logs = ["handler específico pendente (slide 10, 11, 13)"]
         print(f"Slide {idx}: {'; '.join(logs) if logs else '(nada)'}")
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
