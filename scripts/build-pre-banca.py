@@ -38,7 +38,26 @@ def check_files_exist() -> None:
 
 
 def inspect_template() -> int:
-    raise NotImplementedError("Task 2")
+    from pptx import Presentation
+
+    prs = Presentation(str(TEMPLATE_PATH))
+    for idx, slide in enumerate(prs.slides, start=1):
+        print(f"\n=== Slide {idx} ===")
+        for shape_idx, shape in enumerate(slide.shapes):
+            kind = type(shape).__name__
+            name = getattr(shape, "name", "?")
+            print(f"  [{shape_idx}] {kind} name={name!r}")
+            if shape.has_text_frame:
+                for p_idx, para in enumerate(shape.text_frame.paragraphs):
+                    text = "".join(r.text for r in para.runs)
+                    print(f"      para[{p_idx}]: {text!r}")
+            if shape.has_table:
+                table = shape.table
+                print(f"      table rows={len(table.rows)} cols={len(table.columns)}")
+                for r_idx, row in enumerate(table.rows):
+                    cells = [cell.text_frame.text for cell in row.cells]
+                    print(f"      row[{r_idx}]: {cells!r}")
+    return 0
 
 
 def run_self_tests() -> int:
