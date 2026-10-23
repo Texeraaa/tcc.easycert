@@ -470,6 +470,91 @@ def _render_body(content: SlideContent) -> str:
     return ""
 
 
+# --- verification ---
+
+
+def extract_text_per_slide(pptx_path: Path) -> dict[int, list[str]]:
+    """Retorna {slide_num: [linhas de texto do slide, normalizadas]}."""
+    from pptx import Presentation
+    prs = Presentation(str(pptx_path))
+    result: dict[int, list[str]] = {}
+    for idx, slide in enumerate(prs.slides, start=1):
+        texts: list[str] = []
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for para in shape.text_frame.paragraphs:
+                    line = "".join(r.text for r in para.runs)
+                    norm = normalize_for_diff(line)
+                    if norm:
+                        texts.append(norm)
+            if shape.has_table:
+                for row in shape.table.rows:
+                    for cell in row.cells:
+                        line = cell.text_frame.text
+                        norm = normalize_for_diff(line)
+                        if norm:
+                            texts.append(norm)
+        result[idx] = texts
+    return result
+
+
+def expected_text_per_slide(slides_content: dict[int, SlideContent]) -> dict[int, list[str]]:
+    """Monta a representação esperada a partir do rascunho, para diff."""
+    expected: dict[int, list[str]] = {}
+    for num, content in slides_content.items():
+        texts: list[str] = []
+        if num == 5:
+            texts.append(normalize_for_diff("Pergunta de pesquisa"))
+        else:
+            texts.append(normalize_for_diff(content.heading))
+        for b in content.blockquote:
+            n = normalize_for_diff(b)
+            if n:
+                texts.append(n)
+        source_bullets = content.bullets_raw or content.bullets
+        for b in source_bullets:
+            n = normalize_for_diff(b)
+            if n:
+                texts.append(n)
+        for p in content.paragraphs:
+            n = normalize_for_diff(p)
+            if n:
+                texts.append(n)
+        for row in content.table_rows:
+            for cell in row:
+                n = normalize_for_diff(cell)
+                if n:
+                    texts.append(n)
+        expected[num] = texts
+    return expected
+
+
+def diff_rascunho_vs_output(
+    expected: dict[int, list[str]], actual: dict[int, list[str]]
+) -> tuple[list[str], list[str]]:
+    """Retorna (errors, warnings).
+
+    Para cada slide, verifica se CADA string esperada aparece como substring de ALGUMA linha
+    do actual (comparação relaxada: template pode agrupar bullets em um parágrafo só, etc).
+
+    Slide 13 e qualquer linha contendo "[FALTA" só gera warning.
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+    for num, exp_lines in expected.items():
+        act_lines = actual.get(num, [])
+        act_joined = " \n ".join(act_lines)
+        for exp in exp_lines:
+            if exp in act_joined:
+                continue
+            msg = f"Slide {num}: texto esperado NÃO encontrado: {exp!r}"
+            if num == 13 or "[FALTA" in exp:
+                warnings.append(msg)
+            else:
+                errors.append(msg)
+    return errors, warnings
+
+
 def check_dependencies() -> None:
     try:
         import pptx  # noqa: F401
@@ -642,6 +727,19 @@ def main() -> int:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT_PATH))
     print(f"\nArquivo gerado: {OUTPUT_PATH}")
+
+    print("\n=== Verificação (diff rascunho × .pptx gerado) ===")
+    expected = expected_text_per_slide(slides_content)
+    actual = extract_text_per_slide(OUTPUT_PATH)
+    errors, warnings = diff_rascunho_vs_output(expected, actual)
+    for w in warnings:
+        print(f"AVISO: {w}")
+    for e in errors:
+        print(f"ERRO: {e}")
+    if errors:
+        print(f"\n{len(errors)} divergência(s) crítica(s). Exit code 1.")
+        return 1
+    print(f"\nOK — {len(warnings)} aviso(s), 0 erro(s). Exit code 0.")
     return 0
 
 
