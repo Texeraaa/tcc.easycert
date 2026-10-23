@@ -282,6 +282,40 @@ def process_blockquote_slide(slide, content: SlideContent) -> list[str]:
     return logs
 
 
+def process_slide_10(slide, content: SlideContent, slide_width: int, slide_height: int) -> list[str]:
+    """Slide 10: título + bullets (gerenciado como genérico) + inserção de 2 imagens lado a lado.
+
+    Imagens vão abaixo do body_frame, largura ≈ 11 cm cada, centradas no slide.
+    slide_width/slide_height vêm do prs (int EMU).
+    Fallback: se imagem não existe no filesystem, só avisa (não falha).
+    """
+    from pptx.util import Cm
+
+    logs = process_generic_slide(slide, content)
+
+    if not content.images:
+        logs.append("nenhuma imagem no rascunho — nada a inserir")
+        return logs
+
+    img_width = Cm(11)
+    gap = Cm(0.5)
+    total = img_width + img_width + gap
+    left_start = (slide_width - total) // 2
+    top = int(slide_height * 0.55)
+
+    inserted = []
+    for i, (alt, path) in enumerate(content.images[:2]):
+        if not Path(path).is_file():
+            logs.append(f"AVISO: imagem não encontrada: {path}")
+            continue
+        left = left_start + i * (img_width + gap)
+        slide.shapes.add_picture(path, left, top, width=img_width)
+        inserted.append(Path(path).name)
+    if inserted:
+        logs.append(f"{len(inserted)} imagem(s) inserida(s): {', '.join(inserted)}")
+    return logs
+
+
 def _render_body(content: SlideContent) -> str:
     """Transforma SlideContent em string multiline para o body do slide.
 
@@ -443,6 +477,9 @@ def main() -> int:
     GENERIC_SLIDES = {3, 4, 6, 8, 9, 12}
     BLOCKQUOTE_SLIDES = {1, 2, 5, 7, 14}
 
+    slide_width = prs.slide_width
+    slide_height = prs.slide_height
+
     for idx, slide in enumerate(prs.slides, start=1):
         content = slides_content.get(idx)
         if content is None:
@@ -452,8 +489,10 @@ def main() -> int:
             logs = process_generic_slide(slide, content)
         elif idx in BLOCKQUOTE_SLIDES:
             logs = process_blockquote_slide(slide, content)
+        elif idx == 10:
+            logs = process_slide_10(slide, content, slide_width, slide_height)
         else:
-            logs = ["handler específico pendente (slide 10, 11, 13)"]
+            logs = ["handler específico pendente (slide 11, 13)"]
         print(f"Slide {idx}: {'; '.join(logs) if logs else '(nada)'}")
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
