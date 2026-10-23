@@ -168,25 +168,46 @@ def _apply_font(run, name, size, bold, italic, color_rgb) -> None:
 
 
 def find_title_and_body_frames(slide):
-    """Heurística: title_frame = o shape cujo placeholder_format.idx == 0 OU cujo nome
-    começa com 'Title'. body_frame = o próximo text_frame não-título.
+    """Localiza (title_tf, body_tf) de um slide.
 
-    Retorna (title_tf, body_tf). Qualquer um pode ser None.
+    Title: shape placeholder cujo placeholder_format.idx == 0 (ou cujo nome contém 'title').
+    Body (nesta ordem de preferência):
+        1. Shape (placeholder OU text_box) cujo nome contenha 'conteúdo'/'conteudo'/'content'
+           — identifica o 'Espaço Reservado para Conteúdo' do template mesmo quando foi
+           convertido em TextBox.
+        2. SlidePlaceholder não-título (idx != 0).
+        3. Primeiro text_frame restante (fallback).
+
+    Essa preferência existe porque alguns slides do template (ex.: 7, 8) têm uma TextBox de
+    sub-título ('Objetivo Geral', 'Objetivos Específicos') ANTES do shape de corpo na ordem
+    XML, e tanto o subtítulo quanto o corpo já não são placeholders.
     """
     title_tf = None
-    body_tf = None
+    body_content_tf = None       # shape nomeado como "Conteúdo"
+    body_placeholder_tf = None   # placeholder não-título
+    body_fallback_tf = None      # qualquer outro text_frame
     for shape in slide.shapes:
         if not shape.has_text_frame:
             continue
         name = (shape.name or "").lower()
+        is_placeholder = shape.is_placeholder
         is_title = (
             "title" in name
-            or (shape.is_placeholder and shape.placeholder_format.idx == 0)
+            or (is_placeholder and shape.placeholder_format.idx == 0)
         )
         if is_title and title_tf is None:
             title_tf = shape.text_frame
-        elif body_tf is None:
-            body_tf = shape.text_frame
+            continue
+        is_content_named = (
+            "conteúdo" in name or "conteudo" in name or "content" in name
+        )
+        if is_content_named and body_content_tf is None:
+            body_content_tf = shape.text_frame
+        elif is_placeholder and body_placeholder_tf is None:
+            body_placeholder_tf = shape.text_frame
+        elif body_fallback_tf is None:
+            body_fallback_tf = shape.text_frame
+    body_tf = body_content_tf or body_placeholder_tf or body_fallback_tf
     return title_tf, body_tf
 
 
