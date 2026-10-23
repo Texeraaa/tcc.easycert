@@ -29,6 +29,7 @@ class SlideContent:
     number: int
     heading: str                             # texto após "## Slide N — "
     bullets: list[str] = field(default_factory=list)
+    bullets_raw: list[str] = field(default_factory=list)  # com **/*/_
     paragraphs: list[str] = field(default_factory=list)
     blockquote: list[str] = field(default_factory=list)
     table_rows: list[list[str]] = field(default_factory=list)
@@ -84,6 +85,7 @@ def parse_rascunho(markdown: str) -> dict[int, SlideContent]:
             without_img = _IMAGE_RE.sub("", stripped[2:]).strip()
             if without_img:
                 current.bullets.append(without_img)
+                current.bullets_raw.append(without_img)
         else:
             current.paragraphs.append(stripped)
 
@@ -387,6 +389,73 @@ def process_slide_11(slide, content: SlideContent) -> list[str]:
     return logs
 
 
+_INLINE_MARK_PAIR_RE = re.compile(r"(\*\*\*|\*\*|_|\*)([^*_]+)\1")
+
+
+def process_slide_13(slide, content: SlideContent) -> list[str]:
+    """Slide 13: referências. Preserva itálico/negrito ABNT dentro de cada bullet.
+
+    Cada bullet vira UM parágrafo no body_frame, com runs separados para segmentos marcados.
+    """
+    logs: list[str] = []
+    title_tf, body_tf = find_title_and_body_frames(slide)
+    if title_tf is not None:
+        replace_text_preserving_runs(title_tf, content.heading)
+        logs.append(f"título='{content.heading}'")
+    if body_tf is None:
+        logs.append("AVISO: nenhum body_frame no slide 13")
+        return logs
+    if not content.bullets_raw:
+        logs.append("AVISO: sem bullets no rascunho")
+        return logs
+
+    first_para = body_tf.paragraphs[0]
+    if not first_para.runs:
+        first_para.add_run()
+    base_run = first_para.runs[0]
+    base_name = base_run.font.name
+    base_size = base_run.font.size
+    try:
+        base_color_rgb = base_run.font.color.rgb
+    except (AttributeError, TypeError):
+        base_color_rgb = None
+
+    tf_elem = body_tf._txBody
+    ns = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
+    for p in list(tf_elem.findall(f"{ns}p"))[1:]:
+        tf_elem.remove(p)
+    for r in list(first_para._p.findall(f"{ns}r")):
+        first_para._p.remove(r)
+
+    for i, bullet in enumerate(content.bullets_raw):
+        p = first_para if i == 0 else body_tf.add_paragraph()
+        _render_marked_runs(p, bullet, base_name, base_size, base_color_rgb)
+    logs.append(f"{len(content.bullets_raw)} referência(s) renderizada(s) com itálico/negrito")
+    return logs
+
+
+def _render_marked_runs(paragraph, text: str, font_name, font_size, color_rgb) -> None:
+    """Varre `text` quebrando em runs: segmentos ***X*** → bold+italic; **X** → bold;
+    *X* ou _X_ → italic; resto → plain."""
+    pos = 0
+    for match in _INLINE_MARK_PAIR_RE.finditer(text):
+        if match.start() > pos:
+            _add_run(paragraph, text[pos:match.start()], False, False, font_name, font_size, color_rgb)
+        mark, inner = match.group(1), match.group(2)
+        bold = mark in ("**", "***")
+        italic = mark in ("*", "_", "***")
+        _add_run(paragraph, inner, bold, italic, font_name, font_size, color_rgb)
+        pos = match.end()
+    if pos < len(text):
+        _add_run(paragraph, text[pos:], False, False, font_name, font_size, color_rgb)
+
+
+def _add_run(paragraph, text: str, bold: bool, italic: bool, name, size, color_rgb) -> None:
+    run = paragraph.add_run()
+    run.text = text
+    _apply_font(run, name, size, bold if bold else None, italic if italic else None, color_rgb)
+
+
 def _render_body(content: SlideContent) -> str:
     """Transforma SlideContent em string multiline para o body do slide.
 
@@ -564,8 +633,10 @@ def main() -> int:
             logs = process_slide_10(slide, content, slide_width, slide_height)
         elif idx == 11:
             logs = process_slide_11(slide, content)
+        elif idx == 13:
+            logs = process_slide_13(slide, content)
         else:
-            logs = ["handler específico pendente (slide 13)"]
+            logs = [f"ERRO: slide {idx} sem handler mapeado"]
         print(f"Slide {idx}: {'; '.join(logs) if logs else '(nada)'}")
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
