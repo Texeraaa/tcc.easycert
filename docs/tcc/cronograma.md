@@ -52,3 +52,4 @@ Plano temporal do TCC em 5 meses. Entregáveis mês a mês. Metodologia detalhad
 - [[tcc/visao-geral]] — objetivos.
 - [[tcc/metodologia]] — fases que o cronograma executa.
 - [[tcc/estrutura-artigo]] — seções escritas em cada mês.
+- [[superpowers/specs/2026-10-22-plano-mes-2]] — plano completo do Mês 2 (15 decisões técnicas + DAG T1-T8).

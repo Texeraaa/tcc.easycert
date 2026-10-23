@@ -1,7 +1,7 @@
-// Prisma schema inicial — modelagem mínima para validar o setup.
-// O domínio completo (Curso, MatrizCurricular, CategoriaAtividade,
-// Submissao, Avaliacao, DocumentoEmitido) será modelado em iteração
-// próxima junto com as regras de negócio.
+// Schema Prisma — easycert
+// Modelagem completa do domínio (Mês 2, T4).
+// datasource usa DATABASE_URL_MIGRATE (role owner) para migrations;
+// PrismaService em runtime lê DATABASE_URL (role app) via ConfigService.
 
 generator client {
   provider = "prisma-client-js"
@@ -9,20 +9,223 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_MIGRATE")
 }
 
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+// Papel único por usuário. Mudanças auditadas como role.assigned / role.revoked.
 enum Role {
   ALUNO
   COORDENADOR
   ADMIN
 }
 
+// Estados do ciclo de vida de uma submissão.
+enum SubmissionState {
+  AWAITING_UPLOAD
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  CORRECTION_REQUESTED
+  UPLOAD_INVALID
+}
+
+// Tipo de documento armazenado.
+enum DocumentoTipo {
+  COMPROVANTE
+  RELATORIO
+  CERTIFICADO_INTERNO
+}
+
+// Decisão do coordenador em uma avaliação.
+enum AvaliacaoDecisao {
+  APROVADO
+  REJEITADO
+  CORRECAO_SOLICITADA
+}
+
+// ---------------------------------------------------------------------------
+// Usuário
+// ---------------------------------------------------------------------------
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  role      Role     @default(ALUNO)
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  nome         String
+  dataIngresso DateTime @db.Date
+  matricula    String?
+  curso        String?
+  ativo        Boolean  @default(true)
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relações
+  submissions        Submission[]    @relation("AlunoSubmissions")
+  avaliacoes         Avaliacao[]     @relation("CoordenadorAvaliacoes")
+  eventosOrganizados EventoInterno[] @relation("OrganizadorEventos")
+  notifications      Notification[]
+
+  @@index([role, ativo])
+}
+
+// ---------------------------------------------------------------------------
+// Matriz curricular
+// ---------------------------------------------------------------------------
+
+// Categoria de atividade complementar (ex.: Ensino, Pesquisa, Extensão).
+model Categoria {
+  id        String   @id @default(uuid())
+  nome      String   @unique
+  descricao String?
+  ativo     Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relações
+  regras          RegraMatriz[]
+  submissions     Submission[]
+  eventosInternos EventoInterno[]
+}
+
+// Regra de teto de horas por categoria, com versionamento por período de ingresso.
+// cursoId null = regra global (aplica a qualquer curso).
+model RegraMatriz {
+  id                 String    @id @default(uuid())
+  categoriaId        String
+  tetoTotalHoras     Int
+  tetoAtividadeHoras Int
+  cursoId            String?
+  dataIngressoDesde  DateTime  @db.Date
+  dataIngressoAte    DateTime? @db.Date
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // Relações. Restrict impede remover Categoria que tenha regra ativa.
+  categoria Categoria @relation(fields: [categoriaId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ---------------------------------------------------------------------------
+// Submissão
+// ---------------------------------------------------------------------------
+
+model Submission {
+  id                  String          @id @default(uuid())
+  alunoId             String
+  categoriaId         String
+  cargaInformadaHoras Int
+  instituicao         String?
+  estado              SubmissionState @default(AWAITING_UPLOAD)
+  motivoIndeferimento String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relações. Restrict preserva histórico mesmo se tentarem deletar aluno/categoria.
+  aluno      User        @relation("AlunoSubmissions", fields: [alunoId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  categoria  Categoria   @relation(fields: [categoriaId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  documentos Documento[]
+  avaliacoes Avaliacao[]
+}
+
+// Documento PDF armazenado. codigo é UUIDv4 opaco para verificação via QRCode.
+// submissionId e eventoInternoId são opcionais pois um documento pode ser
+// comprovante de submissão OU certificado de evento interno.
+model Documento {
+  id              String        @id @default(uuid())
+  submissionId    String?
+  eventoInternoId String?
+  tipo            DocumentoTipo
+  // Código opaco UUIDv4 para rota pública /v/:codigo — ratificado Q1.
+  codigo          String        @unique @db.VarChar(36)
+  version         Int           @default(1)
+  storageKey      String
+  confirmedAt     DateTime?
+  revogadoEm      DateTime?
+  createdAt       DateTime      @default(now())
+
+  // Relações. SetNull preserva o certificado mesmo se submission/evento sumirem.
+  submission    Submission?    @relation(fields: [submissionId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  eventoInterno EventoInterno? @relation(fields: [eventoInternoId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
+
+// Decisão do coordenador sobre uma submissão.
+model Avaliacao {
+  id            String           @id @default(uuid())
+  submissionId  String
+  coordenadorId String
+  decisao       AvaliacaoDecisao
+  comentario    String?
+  createdAt     DateTime         @default(now())
+
+  // Relações. Restrict preserva avaliações históricas.
+  submission  Submission @relation(fields: [submissionId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  coordenador User       @relation("CoordenadorAvaliacoes", fields: [coordenadorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ---------------------------------------------------------------------------
+// Auditoria
+// ---------------------------------------------------------------------------
+
+// Log imutável de eventos auditáveis.
+// REVOKE UPDATE, DELETE em easycert_app aplicado em migration separada (T4d.b).
+// before/after armazenam snapshot JSON das entidades antes e depois da mudança.
+model AuditLog {
+  id         String   @id @default(uuid())
+  actor      String?
+  action     String
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  reason     String?
+  // Timestamptz para rastreabilidade sem ambiguidade de fuso horário.
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("audit_log")
+}
+
+// ---------------------------------------------------------------------------
+// Evento interno
+// ---------------------------------------------------------------------------
+
+// Evento organizado pela instituição que gera certificado (RF-22).
+// Presença em v1 não modelada — pendência aberta em docs/dominio/pendencias.md.
+model EventoInterno {
+  id            String   @id @default(uuid())
+  titulo        String
+  descricao     String?
+  data          DateTime @db.Date
+  cargaHoraria  Int
+  categoriaId   String
+  organizadorId String
+  createdAt     DateTime @default(now())
+
+  // Relações. Restrict preserva evento mesmo se tentarem remover categoria/organizador.
+  categoria   Categoria   @relation(fields: [categoriaId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  organizador User        @relation("OrganizadorEventos", fields: [organizadorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  documentos  Documento[]
+}
+
+// ---------------------------------------------------------------------------
+// Notificação
+// ---------------------------------------------------------------------------
+
+// Notificação in-app + e-mail. metadata armazena payload livre por type.
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  metadata  Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  // Relações. Cascade: se um usuário for removido, suas notificações vão junto.
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
