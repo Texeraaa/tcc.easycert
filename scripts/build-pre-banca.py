@@ -498,6 +498,25 @@ def extract_text_per_slide(pptx_path: Path) -> dict[int, list[str]]:
     return result
 
 
+# Slides onde o `heading` do rascunho é organizacional (não é o título visível no deck).
+_HEADING_IS_ORGANIZATIONAL = {1, 2, 7, 14}
+# Slide 5 usa heading substituído ("Pergunta de pesquisa") — tratado abaixo separadamente.
+
+
+def _is_editorial_note(line: str) -> bool:
+    """Linha é anotação do autor dentro de blockquote (começa com _ ou vem como itálico isolado),
+    não vai para o slide."""
+    stripped = line.strip()
+    if not stripped:
+        return True
+    if stripped == "---":
+        return True
+    # Blockquote em italic (ex.: _Substitui 'Hipótese'..._, _Qualificação — protótipo..._)
+    if stripped.startswith("_") and stripped.endswith("_") and len(stripped) > 2:
+        return True
+    return False
+
+
 def expected_text_per_slide(slides_content: dict[int, SlideContent]) -> dict[int, list[str]]:
     """Monta a representação esperada a partir do rascunho, para diff."""
     expected: dict[int, list[str]] = {}
@@ -505,9 +524,11 @@ def expected_text_per_slide(slides_content: dict[int, SlideContent]) -> dict[int
         texts: list[str] = []
         if num == 5:
             texts.append(normalize_for_diff("Pergunta de pesquisa"))
-        else:
+        elif num not in _HEADING_IS_ORGANIZATIONAL:
             texts.append(normalize_for_diff(content.heading))
         for b in content.blockquote:
+            if _is_editorial_note(b):
+                continue
             n = normalize_for_diff(b)
             if n:
                 texts.append(n)
@@ -517,6 +538,8 @@ def expected_text_per_slide(slides_content: dict[int, SlideContent]) -> dict[int
             if n:
                 texts.append(n)
         for p in content.paragraphs:
+            if _is_editorial_note(p):
+                continue
             n = normalize_for_diff(p)
             if n:
                 texts.append(n)
