@@ -24,5 +24,38 @@ services:
       timeout: 5s
       retries: 5
 
+  minio:
+    # cleanstart/minio é a imagem community mais acessível em 2026 — as oficiais
+    # (minio/minio no Docker Hub e quay.io/minio/minio) passaram a exigir auth.
+    # Débito registrado em pendências para avaliar em deploy real (Mês 4+).
+    image: cleanstart/minio:latest
+    container_name: easycert-minio
+    restart: unless-stopped
+    # cleanstart/minio roda como UID 65532 (nonroot). Volume Docker nasce root:root,
+    # então o container não consegue escrever em /data. UID 0 contorna isso em dev.
+    user: "0:0"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # Console web
+    volumes:
+      - minio_data:/data
+    command: ["server", "/data", "--console-address", ":9001"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/ready || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+# Bucket creation + lifecycle rule foram deferidos para o Round 4 (T7):
+# o `DocumentoService` fará `HeadBucketCommand` + `CreateBucketCommand` via
+# @aws-sdk/client-s3 no startup (idempotente), e `PutBucketLifecycleConfiguration`
+# aplicará a regra `expires _tmp/* após 7 dias`. Isso elimina a dependência
+# do image `mc` (indisponível em registries públicos sem auth) e colocou o
+# bootstrap no mesmo processo que fará o upload — menos superfície para errar.
+
 volumes:
   postgres_data:
+  minio_data:

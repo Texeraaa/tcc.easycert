@@ -26,14 +26,14 @@ export class HealthController {
 
   /**
    * Readiness probe: dependências acessíveis.
-   * Retorna 200 quando Postgres responde + MINIO_ENDPOINT está configurado.
+   * Checa Postgres via query mínima + MinIO via `/minio/health/ready`.
    * Retorna 503 quando alguma dep falha — orquestrador para de rotear tráfego.
    */
   @Get("ready")
   async ready() {
-    const checks: Record<string, "ok" | "error"> = {};
+    const checks: Record<string, "ok" | "error" | "unconfigured"> = {};
 
-    // Checa Postgres via query mínima
+    // Postgres
     try {
       await this.prisma.$queryRaw`SELECT 1`;
       checks.postgres = "ok";
@@ -41,9 +41,23 @@ export class HealthController {
       checks.postgres = "error";
     }
 
-    // Checa configuração de storage (stub — apenas valida que a env está setada)
+    // MinIO: HTTP GET em /minio/health/ready, 2s timeout.
     const minioEndpoint = this.configService.get<string>("MINIO_ENDPOINT");
-    checks.storage = minioEndpoint ? "ok" : "error";
+    if (!minioEndpoint) {
+      checks.storage = "unconfigured";
+    } else {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch(`${minioEndpoint}/minio/health/ready`, {
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+        checks.storage = res.ok ? "ok" : "error";
+      } catch {
+        checks.storage = "error";
+      }
+    }
 
     const allOk = Object.values(checks).every((v) => v === "ok");
 

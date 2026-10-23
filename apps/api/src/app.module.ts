@@ -13,6 +13,15 @@ import { resolve } from "path";
 
 import { PrismaModule } from "./prisma/prisma.module";
 import { HealthModule } from "./health/health.module";
+import { AuditModule } from "./audit/audit.module";
+import { NotificationModule } from "./notification/notification.module";
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./user/user.module";
+import { SubmissionModule } from "./submission/submission.module";
+import { DocumentoModule } from "./documento/documento.module";
+import { AvaliacaoModule } from "./avaliacao/avaliacao.module";
+import { MatrizModule } from "./matriz/matriz.module";
+import { EventoModule } from "./evento/evento.module";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
 import { validateEnv } from "./config/env.schema";
 
@@ -132,6 +141,19 @@ const { doubleCsrfProtection } = doubleCsrf({
 
     PrismaModule,
     HealthModule,
+
+    // Cross-cutting (AuditModule é @Global — demais módulos não precisam importar)
+    AuditModule,
+    NotificationModule,
+
+    // Domínio — 9 módulos por entidade conforme Q7.
+    AuthModule,
+    UserModule,
+    SubmissionModule,
+    DocumentoModule,
+    AvaliacaoModule,
+    MatrizModule,
+    EventoModule,
   ],
   providers: [
     // Guard global do throttler. Sem isso, ThrottlerModule configurado
