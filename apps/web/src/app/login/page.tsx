@@ -2,9 +2,13 @@
  * Pagina de login — /login
  * Server Component (renderiza form client-side via componente filho).
  * Rota publica — excluida do matcher do middleware.
+ *
+ * LoginForm usa useSearchParams() (para ler returnTo), por isso e envolvido
+ * em Suspense conforme exigido pelo Next.js 15 (evita CSR bailout no build).
  */
 
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { LoginForm } from "./_components/LoginForm";
 
 export const metadata: Metadata = {
@@ -25,8 +29,25 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <LoginForm />
+        {/* Suspense necessario pois LoginForm usa useSearchParams() */}
+        <Suspense fallback={<LoginFormSkeleton />}>
+          <LoginForm />
+        </Suspense>
       </div>
+    </div>
+  );
+}
+
+/** Skeleton minimo exibido enquanto LoginForm hidrata */
+function LoginFormSkeleton() {
+  return (
+    <div className="rounded-lg border border-[var(--border)] p-6 space-y-4">
+      <div className="h-5 w-20 animate-pulse rounded bg-[var(--muted)]" />
+      <div className="space-y-3">
+        <div className="h-9 animate-pulse rounded bg-[var(--muted)]" />
+        <div className="h-9 animate-pulse rounded bg-[var(--muted)]" />
+      </div>
+      <div className="h-10 animate-pulse rounded bg-[var(--muted)]" />
     </div>
   );
 }

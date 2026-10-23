@@ -1,23 +1,30 @@
 import { Injectable, NotImplementedException } from "@nestjs/common";
+import type { Categoria } from "@easycert/db";
+import { PrismaService } from "../prisma/prisma.service";
 
 /**
  * MatrizService — CRUD de Categoria + RegraMatriz.
- * Implementação real em T6 Round 4.
+ *
+ * findAllCategorias é real (consumido pelo frontend em /aluno/submissoes/nova
+ * para popular o select). CRUD de criação/edição ainda stub — Mês 3 painel admin.
  */
 @Injectable()
 export class MatrizService {
+  constructor(private readonly prisma: PrismaService) {}
+
   // ---------------------------------------------------------------------------
   // Categorias
   // ---------------------------------------------------------------------------
 
   /**
-   * Lista todas as categorias ativas.
-   * STUB — T6 Round 4.
+   * Lista todas as categorias ativas (ordenadas por nome).
+   * Pública a qualquer usuário autenticado — aluno precisa ver para submeter.
    */
-  async findAllCategorias(): Promise<never> {
-    throw new NotImplementedException(
-      "MatrizService.findAllCategorias: implementação pendente — T6 Round 4",
-    );
+  async findAllCategorias(): Promise<Categoria[]> {
+    return this.prisma.categoria.findMany({
+      where: { ativo: true },
+      orderBy: { nome: "asc" },
+    });
   }
 
   /**

@@ -2,9 +2,11 @@
  * Home do aluno — /aluno
  * Server Component.
  *
- * TODO (Round 4 T6): substituir dados mock pelo retorno real de /auth/me.
+ * Busca usuario real via GET /auth/me (getCurrentUser).
+ * Se retornar null (sessao expirada sem middleware pegar), redireciona para /login.
  */
 
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { Button } from "@/components/ui/button";
@@ -18,14 +20,19 @@ import {
 
 export default async function AlunoHomePage() {
   const user = await getCurrentUser();
-  const nomeExibicao = user?.nome ?? "Aluno";
+
+  // Middleware protege a rota, mas por seguranca: se /auth/me retornar null,
+  // redireciona explicitamente (ex.: sessao expirou entre o check do middleware e aqui)
+  if (!user) {
+    redirect("/login");
+  }
 
   return (
     <div className="space-y-8">
       {/* Saudacao */}
       <div>
         <h1 className="text-2xl font-semibold text-[var(--foreground)]">
-          Ola, {nomeExibicao}
+          Ola, {user.nome}
         </h1>
         <p className="mt-1 text-sm text-[var(--muted-foreground)]">
           Gerencie suas horas complementares pelo easycert.
