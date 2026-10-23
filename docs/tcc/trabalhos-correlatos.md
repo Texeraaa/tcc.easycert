@@ -12,29 +12,32 @@ Base teórica e análise comparativa de sistemas correlatos. Esta nota é um **e
 ## Eixos teóricos
 
 ### Sistemas de informação acadêmica e BPM
-- _(pendente)_ — referências sobre otimização de fluxos de trabalho no ensino superior.
-- _(pendente)_ — referências sobre BPM/BPA aplicado a secretarias acadêmicas.
+
+CARVALHO, AGANETTE e MACULAN (2026) propõem a metodologia **BPM Acadêmico** — abordagem sistematizada em sete etapas, alinhada ao PMBOK e orientada a instituições de ensino superior com baixa maturidade em gestão de processos. A metodologia foi validada em contexto brasileiro (ECI/UFMG) e demonstra aplicabilidade direta ao problema de modelagem do fluxo de horas complementares.
 
 ### Prototipagem acelerada e Low-Code/No-Code
-- _(pendente)_ — referências sobre desenvolvimento orientado à produtividade.
-- _(pendente)_ — plataformas BaaS (Supabase, Firebase) como abordagem de prototipagem.
-- _(pendente)_ — justificativa da escolha de stack moderna como alternativa pragmática.
 
-### Autenticidade e assinatura digital de documentos
-- _(pendente)_ — verificação de veracidade de certificados digitais.
-- _(pendente)_ — QRCode e códigos de verificação em contexto acadêmico.
+BALDOW et al. (2024) discutem a adoção de plataformas Low-Code e No-Code como estratégia de democratização do desenvolvimento de software, destacando ganho de produtividade e prototipagem rápida. O easycert adota uma variação pragmática desse paradigma — **desenvolvimento acelerado com stack moderna** — usando frameworks maduros (NestJS, Next.js, Prisma) para preservar flexibilidade arquitetural sem abrir mão da velocidade de entrega.
+
+### Autenticidade e verificação de documentos digitais
+
+A **Portaria MEC nº 554/2019** regulamenta a emissão de diploma digital no Brasil, exigindo assinatura ICP-Brasil (XAdES) e verificação por QRCode no padrão oficial do validador do MEC. Serve como referência normativa para o modelo de verificação pública adotado no easycert (rota `GET /v/:codigo`), ainda que o escopo da v1 do protótipo seja limitado a certificados internos de evento e não a diplomas.
+
+### Diretrizes Curriculares de Computação
+
+A **Resolução CNE/CES nº 5/2016** institui as DCN para cursos de graduação na área de Computação e enquadra as atividades complementares como componente curricular enriquecedor, limitadas a 20% da carga horária total do curso. Baseia a definição de categorias e tetos da matriz do easycert.
 
 ## Sistemas correlatos
 
-### Plataformas comerciais / institucionais
-- _(pendente)_ — levantar 2–4 sistemas em uso em IES brasileiras.
-- _(pendente)_ — matriz comparativa: cadastro CRUD vs. automação de fluxo, suporte a matriz curricular, emissão de documentos, dashboard gerencial.
+TOLEDO e SIRQUEIRA (2021) descrevem um aplicativo de gestão de atividades complementares desenvolvido no Centro Universitário Academia (UniAcademia), com cobertura dos papéis de estudante, coordenador e supervisor, foco em registro e controle da integralização curricular. É o correlato brasileiro mais próximo do easycert e será usado como base de comparação na Seção 2 do artigo.
 
-### Lacunas identificadas
-- _(pendente)_ — a preencher após o levantamento comparativo.
+> [!info] A completar
+> Levantar 1 segundo sistema correlato (comercial ou institucional) para fechar a matriz comparativa. Candidatos: Lyceum/TOTVS, SIGAA, módulos de atividades complementares em sistemas acadêmicos de IES federais.
 
-> [!warning] Em aberto
-> Preenchimento desta nota é um entregável do Mês 1. Ver [[tcc/cronograma#Mês 1]].
+## Lacunas identificadas
+
+- Trabalhos correlatos cobrem **cadastro e registro**, mas não trazem **avaliação formal de usabilidade (SUS)** nem **medição de redução de tempo As-Is × To-Be**. O easycert endereça esse gap.
+- Correlatos nacionais pouco documentam **arquitetura técnica** da solução; o TCC do easycert explicita decisões de stack e trade-offs do desenvolvimento acelerado.
 
 ---
 

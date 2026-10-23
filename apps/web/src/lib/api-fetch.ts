@@ -101,18 +101,38 @@ export async function apiFetchJson<T = unknown>(
 }
 
 /**
+ * Le o valor de um cookie pelo nome no contexto do browser (document.cookie).
+ * Retorna null se nao encontrado ou fora do contexto de browser.
+ */
+function getBrowserCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`));
+  return match ? decodeURIComponent(match.split("=")[1]) : null;
+}
+
+/**
  * Helper client-side para uso em Client Components.
  * Usa `credentials: 'include'` para que o browser envie os cookies automaticamente.
- * Nao repassa cookies manualmente (isso e feito pelo browser).
+ * Em mutations (POST/PATCH/PUT/DELETE): le o cookie `csrf-token` do browser
+ * e o injeta como header `X-CSRF-Token` (double-submit cookie pattern).
  */
 export async function clientApiFetch<T = unknown>(
   path: string,
   options: RequestInit = {},
 ): Promise<ApiFetchResponse<T>> {
   const method = (options.method ?? "GET").toUpperCase();
+  const isMutation = MUTATION_METHODS.has(method);
+
+  // CSRF double-submit: lê token do cookie e injeta no header em mutations
+  const csrfToken = isMutation ? getBrowserCookie("csrf-token") : null;
+  const csrfHeader: Record<string, string> =
+    csrfToken ? { "X-CSRF-Token": csrfToken } : {};
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    ...csrfHeader,
     ...(options.headers as Record<string, string> | undefined),
   };
 

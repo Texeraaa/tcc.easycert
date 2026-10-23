@@ -9,6 +9,15 @@ Esta é a porta de entrada da camada acadêmica do easycert: título, justificat
 
 ---
 
+## Identificação
+
+- **Discente:** Pedro Henrique Teixeira
+- **Orientador:** Prof. Robson Leandro Carvalho Canato
+- **IES:** Faculdade Municipal Professor Franco Montoro (FMPFM)
+- **Curso:** Ciência da Computação
+
+---
+
 ## Título
 
 **Inicial:** Desenvolvimento de uma Plataforma Web para Gestão de Atividades Complementares e Emissão Automatizada de Certificados.

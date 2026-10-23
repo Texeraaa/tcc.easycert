@@ -13,60 +13,21 @@ import { resolve } from "path";
 
 import { PrismaModule } from "./prisma/prisma.module";
 import { HealthModule } from "./health/health.module";
+import { AuditModule } from "./audit/audit.module";
+import { NotificationModule } from "./notification/notification.module";
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./user/user.module";
+import { SubmissionModule } from "./submission/submission.module";
+import { DocumentoModule } from "./documento/documento.module";
+import { AvaliacaoModule } from "./avaliacao/avaliacao.module";
+import { MatrizModule } from "./matriz/matriz.module";
+import { EventoModule } from "./evento/evento.module";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
 import { validateEnv } from "./config/env.schema";
-
-// Middleware CSRF importado dinamicamente para evitar problemas de import ESM
-// csrf-csrf v4 usa getSecret + getSessionIdentifier (double-submit cookie)
-import { doubleCsrf } from "csrf-csrf";
+import { doubleCsrfProtection } from "./common/csrf/csrf.setup";
+import { CsrfModule } from "./common/csrf/csrf.module";
 import cookieParser from "cookie-parser";
 import { Request, Response, NextFunction } from "express";
-
-// Configura o middleware CSRF uma única vez (singleton por processo).
-// isProd avaliado após main.ts carregar .env.local via dotenv (Blocker #2 do review).
-// Rotas exempt: POST /auth/login, POST /auth/logout, GET /auth/csrf-token.
-const isProd = process.env.NODE_ENV === "production";
-
-const { doubleCsrfProtection } = doubleCsrf({
-  getSecret: () => {
-    // CSRF_SECRET validado por validateEnv (min 32 chars) antes do boot continuar.
-    // Sem fallback — ausência em runtime é bug de configuração (não deve acontecer).
-    const secret = process.env.CSRF_SECRET;
-    if (!secret) {
-      throw new Error(
-        "CSRF_SECRET ausente em runtime — validateEnv deveria ter travado o boot",
-      );
-    }
-    return secret;
-  },
-  getSessionIdentifier: (req: Request) => {
-    // Usa cookie de sessão JWT como identificador. Fallback "anon" (string
-    // constante) para pré-login: o CSRF token amarrado a esse identificador
-    // é indiferente porque todas as rotas pré-login são exempt. Evita vazar
-    // req.ip (que pode ser compartilhado atrás de proxy sem trust proxy).
-    const cookies = req.cookies as Record<string, string | undefined>;
-    return cookies["easycert_session"] ?? "anon";
-  },
-  cookieName: "csrf-token",
-  cookieOptions: {
-    httpOnly: false, // frontend JS precisa ler o cookie para enviar no header
-    sameSite: "lax",
-    secure: isProd,
-    path: "/",
-  },
-  ignoredMethods: ["GET", "HEAD", "OPTIONS"],
-  skipCsrfProtection: (req: Request) => {
-    // Rotas exempt conforme decisão ratificada (Q6.8 / CSRF exempt list)
-    const url = req.url ?? "";
-    const method = req.method?.toUpperCase() ?? "";
-
-    if (method === "POST" && url.startsWith("/auth/login")) return true;
-    if (method === "POST" && url.startsWith("/auth/logout")) return true;
-    if (url.startsWith("/auth/csrf-token")) return true;
-
-    return false;
-  },
-});
 
 @Module({
   imports: [
@@ -132,6 +93,22 @@ const { doubleCsrfProtection } = doubleCsrf({
 
     PrismaModule,
     HealthModule,
+
+    // Cross-cutting: CsrfModule @Global exporta generateToken para injeção em AuthController.
+    CsrfModule,
+
+    // Cross-cutting (AuditModule é @Global — demais módulos não precisam importar)
+    AuditModule,
+    NotificationModule,
+
+    // Domínio — 9 módulos por entidade conforme Q7.
+    AuthModule,
+    UserModule,
+    SubmissionModule,
+    DocumentoModule,
+    AvaliacaoModule,
+    MatrizModule,
+    EventoModule,
   ],
   providers: [
     // Guard global do throttler. Sem isso, ThrottlerModule configurado

@@ -183,6 +183,9 @@ model AuditLog {
   before     Json?
   after      Json?
   reason     String?
+  // Payload livre adicional (ex.: email tentado em auth.login_failed, IP, user-agent).
+  // Separado de before/after para não poluir o diff da entidade.
+  metadata   Json?
   // Timestamptz para rastreabilidade sem ambiguidade de fuso horário.
   createdAt  DateTime @default(now()) @db.Timestamptz(6)
 
