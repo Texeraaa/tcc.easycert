@@ -316,6 +316,77 @@ def process_slide_10(slide, content: SlideContent, slide_width: int, slide_heigh
     return logs
 
 
+_COLS_TO_REMOVE = {"Abr", "Mai", "Jun", "Jul", "Dez"}
+_COLS_TO_KEEP = ["Ago", "Set", "Out", "Nov"]
+
+
+def process_slide_11(slide, content: SlideContent) -> list[str]:
+    """Slide 11: adapta a tabela — remove colunas Abr/Mai/Jun/Jul/Dez, redistribui largura,
+    preenche X conforme content.table_rows (header + atividades) do rascunho.
+    """
+    logs: list[str] = []
+
+    table_shape = None
+    for shape in slide.shapes:
+        if shape.has_table:
+            table_shape = shape
+            break
+    if table_shape is None:
+        logs.append("ERRO: nenhuma tabela encontrada no slide 11")
+        return logs
+    table = table_shape.table
+
+    header_cells = [cell.text_frame.text.strip() for cell in table.rows[0].cells]
+    cols_to_drop_idx = [i for i, h in enumerate(header_cells) if h in _COLS_TO_REMOVE]
+    if not cols_to_drop_idx:
+        logs.append(f"AVISO: nenhuma coluna a remover encontrada. Header atual: {header_cells}")
+    cols_to_drop_idx.sort(reverse=True)
+
+    tbl = table._tbl
+    ns = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
+    grid = tbl.find(f"{ns}tblGrid")
+    gridCols = grid.findall(f"{ns}gridCol")
+    total_width = sum(int(gc.get("w")) for gc in gridCols)
+
+    for col_idx in cols_to_drop_idx:
+        grid.remove(gridCols[col_idx])
+        for tr in tbl.findall(f"{ns}tr"):
+            tcs = tr.findall(f"{ns}tc")
+            tr.remove(tcs[col_idx])
+    logs.append(f"{len(cols_to_drop_idx)} coluna(s) removida(s)")
+
+    remaining_gridCols = grid.findall(f"{ns}gridCol")
+    if len(remaining_gridCols) < 2:
+        logs.append(f"AVISO: tabela tem só {len(remaining_gridCols)} coluna(s) após remoção")
+    else:
+        desc_width = int(remaining_gridCols[0].get("w"))
+        month_total = total_width - desc_width
+        month_each = month_total // 4
+        for gc in remaining_gridCols[1:]:
+            gc.set("w", str(month_each))
+        logs.append(f"larguras redistribuídas: desc={desc_width}, cada mês={month_each}")
+
+    if not content.table_rows:
+        logs.append("AVISO: content.table_rows vazio — tabela mantida sem X")
+        return logs
+    rascunho_rows = content.table_rows
+    if len(table.rows) - 1 < len(rascunho_rows) - 1:
+        logs.append(
+            f"AVISO: template tem {len(table.rows) - 1} linhas de atividade, "
+            f"rascunho pede {len(rascunho_rows) - 1} — truncando."
+        )
+    for row_idx, rascunho_row in enumerate(rascunho_rows[1:], start=1):
+        if row_idx >= len(table.rows):
+            break
+        template_row = table.rows[row_idx]
+        for col_idx, cell_text in enumerate(rascunho_row):
+            if col_idx >= len(template_row.cells):
+                break
+            replace_text_preserving_runs(template_row.cells[col_idx].text_frame, cell_text)
+    logs.append(f"{len(rascunho_rows) - 1} linha(s) de atividade preenchida(s)")
+    return logs
+
+
 def _render_body(content: SlideContent) -> str:
     """Transforma SlideContent em string multiline para o body do slide.
 
@@ -491,8 +562,10 @@ def main() -> int:
             logs = process_blockquote_slide(slide, content)
         elif idx == 10:
             logs = process_slide_10(slide, content, slide_width, slide_height)
+        elif idx == 11:
+            logs = process_slide_11(slide, content)
         else:
-            logs = ["handler específico pendente (slide 11, 13)"]
+            logs = ["handler específico pendente (slide 13)"]
         print(f"Slide {idx}: {'; '.join(logs) if logs else '(nada)'}")
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
