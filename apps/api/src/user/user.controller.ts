@@ -5,6 +5,7 @@ import {
   Param,
   Body,
   UseGuards,
+  NotFoundException,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { UserService } from "./user.service";
@@ -12,8 +13,8 @@ import { UserService } from "./user.service";
 /**
  * UserController — gerencia perfil de usuário.
  *
- * GET  /users/:id   — detalhe do usuário
- * PATCH /users/:id  — atualiza perfil
+ * GET  /users/:id   — detalhe do usuário (real: T6 Round 4)
+ * PATCH /users/:id  — atualiza perfil (stub: Mês 3)
  *
  * Todas as rotas exigem JWT.
  */
@@ -24,16 +25,23 @@ export class UserController {
 
   /**
    * Retorna perfil do usuário pelo ID.
-   * STUB — T6 Round 4.
+   * 404 se não encontrado. Exclui passwordHash da resposta.
    */
   @Get(":id")
-  findById(@Param("id") id: string) {
-    return this.userService.findById(id);
+  async findById(@Param("id") id: string) {
+    const user = await this.userService.findById(id);
+
+    if (!user) {
+      throw new NotFoundException("usuário não encontrado");
+    }
+
+    const { passwordHash: _, ...userWithoutHash } = user;
+    return userWithoutHash;
   }
 
   /**
    * Atualiza nome, matricula ou curso do usuário.
-   * STUB — T6 Round 4.
+   * STUB — Mês 3.
    */
   @Patch(":id")
   update(@Param("id") id: string, @Body() body: unknown) {

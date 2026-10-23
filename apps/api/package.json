@@ -13,6 +13,8 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1155.0",
+    "@aws-sdk/s3-presigned-post": "^3.1155.0",
     "@easycert/db": "workspace:*",
     "@easycert/types": "workspace:*",
     "@nestjs/common": "^11.0.1",

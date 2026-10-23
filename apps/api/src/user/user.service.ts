@@ -1,48 +1,45 @@
 import { Injectable, NotImplementedException } from "@nestjs/common";
+import type { User } from "@easycert/db";
+import { PrismaService } from "../prisma/prisma.service";
 
 /**
  * UserService — CRUD de usuários.
- * Implementação real em T6 Round 4.
  */
 @Injectable()
 export class UserService {
+  constructor(private readonly prisma: PrismaService) {}
+
   /**
-   * Busca usuário pelo ID.
-   * STUB — T6 Round 4.
+   * Busca usuário pelo ID. Retorna null se não existir.
    */
-  async findById(_id: string): Promise<never> {
-    throw new NotImplementedException(
-      "UserService.findById: implementação pendente — T6 Round 4",
-    );
+  async findById(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { id } });
   }
 
   /**
-   * Busca usuário pelo e-mail.
-   * STUB — T6 Round 4 (usado por AuthService.validateUser).
+   * Busca usuário pelo e-mail. Retorna null se não existir.
    */
-  async findByEmail(_email: string): Promise<never> {
-    throw new NotImplementedException(
-      "UserService.findByEmail: implementação pendente — T6 Round 4",
-    );
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { email } });
   }
 
   /**
    * Cria novo usuário.
-   * STUB — T6 Round 4.
+   * STUB — admin cria usuários no Mês 3.
    */
   async create(_data: unknown): Promise<never> {
     throw new NotImplementedException(
-      "UserService.create: implementação pendente — T6 Round 4",
+      "UserService.create: criação via admin pendente — Mês 3",
     );
   }
 
   /**
    * Atualiza dados do usuário.
-   * STUB — T6 Round 4.
+   * STUB — Mês 3.
    */
   async update(_id: string, _data: unknown): Promise<never> {
     throw new NotImplementedException(
-      "UserService.update: implementação pendente — T6 Round 4",
+      "UserService.update: implementação pendente — Mês 3",
     );
   }
 }

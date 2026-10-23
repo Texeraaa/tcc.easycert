@@ -55,6 +55,7 @@ export class AuditService {
           before: params.before ?? undefined,
           after: params.after ?? undefined,
           reason: params.reason,
+          metadata: params.metadata ?? undefined,
         },
       });
     } catch (err) {

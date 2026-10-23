@@ -6,19 +6,21 @@ import {
   Body,
   UseGuards,
   Req,
+  Query,
 } from "@nestjs/common";
 import { Request } from "express";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { SubmissionService } from "./submission.service";
 import { AuthenticatedUser } from "../auth/strategies/jwt.strategy";
-import { CreateSubmissionSchema } from "@easycert/types";
+import { CreateSubmissionSchema, ConfirmSubmissionSchema } from "@easycert/types";
 import { ZodValidationPipe } from "nestjs-zod";
+import type { CreateSubmissionDto, ConfirmSubmissionDto } from "@easycert/types";
 
 /**
  * SubmissionController — ciclo de vida das submissões.
  *
  * POST /submissions             — cria submissão (aluno autenticado)
- * GET  /submissions/me          — lista submissões do aluno
+ * GET  /submissions/me          — lista submissões do aluno (cursor-based)
  * GET  /submissions/:id         — detalhe de uma submissão
  * POST /submissions/:id/confirm — confirma upload (AWAITING_UPLOAD → PENDING)
  *
@@ -30,12 +32,12 @@ export class SubmissionController {
   constructor(private readonly submissionService: SubmissionService) {}
 
   /**
-   * Cria nova submissão.
-   * STUB — T7 Round 4.
+   * Cria nova submissão para o aluno autenticado.
+   * Retorna a submissão criada + dados para upload direto (presigned POST).
    */
   @Post()
   create(
-    @Body(new ZodValidationPipe(CreateSubmissionSchema)) body: unknown,
+    @Body(new ZodValidationPipe(CreateSubmissionSchema)) body: CreateSubmissionDto,
     @Req() req: Request,
   ) {
     const user = req.user as AuthenticatedUser;
@@ -43,31 +45,44 @@ export class SubmissionController {
   }
 
   /**
-   * Lista submissões do aluno autenticado.
-   * STUB — T7 Round 4.
+   * Lista submissões do aluno autenticado com cursor-based pagination.
+   * Query params: cursor (opcional), limit (padrão 20).
    */
   @Get("me")
-  findMine(@Req() req: Request) {
+  findMine(
+    @Req() req: Request,
+    @Query("cursor") cursor?: string,
+    @Query("limit") limit?: string,
+  ) {
     const user = req.user as AuthenticatedUser;
-    return this.submissionService.findByAluno(user.userId);
+    return this.submissionService.listForAluno(
+      user.userId,
+      cursor,
+      limit ? parseInt(limit, 10) : 20,
+    );
   }
 
   /**
    * Detalhe de uma submissão pelo ID.
-   * STUB — T7 Round 4.
+   * 403 se a submissão não pertencer ao aluno autenticado.
    */
   @Get(":id")
-  findById(@Param("id") id: string) {
-    return this.submissionService.findById(id);
+  findById(@Param("id") id: string, @Req() req: Request) {
+    const user = req.user as AuthenticatedUser;
+    return this.submissionService.findByIdForAluno(id, user.userId);
   }
 
   /**
-   * Confirma upload do documento: transiciona AWAITING_UPLOAD → PENDING.
-   * STUB — T7 Round 4.
+   * Confirma upload do documento: valida magic bytes e transiciona estado.
+   * Body: { storageKey: string } — o key retornado pelo presigned POST.
    */
   @Post(":id/confirm")
-  confirm(@Param("id") id: string, @Req() req: Request) {
+  confirm(
+    @Param("id") id: string,
+    @Body(new ZodValidationPipe(ConfirmSubmissionSchema)) body: ConfirmSubmissionDto,
+    @Req() req: Request,
+  ) {
     const user = req.user as AuthenticatedUser;
-    return this.submissionService.confirm(id, user.userId);
+    return this.submissionService.confirm(id, user.userId, body.storageKey);
   }
 }
