@@ -97,6 +97,73 @@ def _resolve_image_path(path: str) -> str:
     return str(p)
 
 
+_INLINE_MARK_RE = re.compile(r"(\*\*\*|\*\*|\*|_)")
+
+
+def strip_inline_marks(text: str) -> str:
+    """Remove **, *, _ do texto. Não interpreta — só remove."""
+    return _INLINE_MARK_RE.sub("", text)
+
+
+def normalize_for_diff(text: str) -> str:
+    """Normaliza para o diff da seção 2.9: colapsa whitespace, remove bordas, strip inline marks."""
+    text = strip_inline_marks(text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def replace_text_preserving_runs(text_frame, new_text: str) -> None:
+    """Substitui todo o texto de um TextFrame por new_text, preservando a formatação
+    do PRIMEIRO run do PRIMEIRO parágrafo (fonte, cor, tamanho, bold, italic).
+
+    Remove parágrafos extras do template. Se new_text tiver '\\n', vira múltiplos parágrafos.
+    """
+    if not text_frame.paragraphs:
+        text_frame.text = new_text
+        return
+    first_para = text_frame.paragraphs[0]
+    if not first_para.runs:
+        first_para.add_run()
+    template_run = first_para.runs[0]
+    font_name = template_run.font.name
+    font_size = template_run.font.size
+    font_bold = template_run.font.bold
+    font_italic = template_run.font.italic
+    try:
+        font_color_rgb = template_run.font.color.rgb
+    except (AttributeError, TypeError):
+        font_color_rgb = None
+
+    tf_elem = text_frame._txBody
+    for p in list(tf_elem.findall(".//{http://schemas.openxmlformats.org/drawingml/2006/main}p"))[1:]:
+        tf_elem.remove(p)
+    for r in list(first_para._p.findall("{http://schemas.openxmlformats.org/drawingml/2006/main}r")):
+        first_para._p.remove(r)
+
+    lines = new_text.split("\n")
+    first_run = first_para.add_run()
+    first_run.text = lines[0]
+    _apply_font(first_run, font_name, font_size, font_bold, font_italic, font_color_rgb)
+    for extra in lines[1:]:
+        p = text_frame.add_paragraph()
+        run = p.add_run()
+        run.text = extra
+        _apply_font(run, font_name, font_size, font_bold, font_italic, font_color_rgb)
+
+
+def _apply_font(run, name, size, bold, italic, color_rgb) -> None:
+    if name is not None:
+        run.font.name = name
+    if size is not None:
+        run.font.size = size
+    if bold is not None:
+        run.font.bold = bold
+    if italic is not None:
+        run.font.italic = italic
+    if color_rgb is not None:
+        from pptx.dml.color import RGBColor
+        run.font.color.rgb = RGBColor(color_rgb[0], color_rgb[1], color_rgb[2])
+
+
 def check_dependencies() -> None:
     try:
         import pptx  # noqa: F401
@@ -146,6 +213,10 @@ def run_self_tests() -> int:
         _test_parse_rascunho_slide_11_tem_tabela,
         _test_parse_rascunho_slide_10_tem_duas_imagens,
         _test_parse_rascunho_detecta_falta,
+        _test_strip_inline_marks_bold,
+        _test_strip_inline_marks_italic,
+        _test_strip_inline_marks_combined,
+        _test_normalize_for_diff_whitespace,
     ]
     failures: list[str] = []
     for test in tests:
@@ -206,6 +277,26 @@ def _test_parse_rascunho_detecta_falta() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
     s13 = slides[13]
     assert s13.has_falta, "slide 13 deveria ter has_falta=True (regulamento FMPFM)"
+
+
+def _test_strip_inline_marks_bold() -> None:
+    assert strip_inline_marks("**oi**") == "oi"
+    assert strip_inline_marks("palavra **destacada** aqui") == "palavra destacada aqui"
+
+
+def _test_strip_inline_marks_italic() -> None:
+    assert strip_inline_marks("*oi*") == "oi"
+    assert strip_inline_marks("_oi_") == "oi"
+
+
+def _test_strip_inline_marks_combined() -> None:
+    assert strip_inline_marks("***oi***") == "oi"
+    assert strip_inline_marks("**_oi_**") == "oi"
+
+
+def _test_normalize_for_diff_whitespace() -> None:
+    assert normalize_for_diff("  hello   world  ") == "hello world"
+    assert normalize_for_diff("a\tb") == "a b"
 
 
 def main() -> int:
