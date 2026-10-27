@@ -84,25 +84,25 @@ Esqueleto dos 14 slides da pré-banca, no formato do template `Muller_PreBanca_v
 
 ## Slide 11 — Cronograma
 
-| Atividades | Mês 1 | Mês 2 | Mês 3 | Mês 4 | Mês 5 |
-|---|:-:|:-:|:-:|:-:|:-:|
-| Levantamento de requisitos / regulamento | X | | | | |
-| Modelagem de dados e arquitetura | | X | | | |
-| Prototipagem e desenvolvimento | | X | X | | |
-| Testes de usabilidade (SUS) | | | | X | |
-| Medição As-Is × To-Be | | | | X | |
-| Escrita — Introdução e Fundamentação | X | | | | |
-| Escrita — Metodologia | | | X | | |
-| Escrita — Resultados e discussão | | | | X | |
-| Considerações finais / revisão ABNT | | | | | X |
-| Preparação da banca | | | | | X |
+| Atividades | Ago | Set | Out | Nov |
+|---|:-:|:-:|:-:|:-:|
+| Levantamento de requisitos / regulamento | X | | | |
+| Modelagem de dados e arquitetura | X | X | | |
+| Prototipagem e desenvolvimento | X | X | X | |
+| Testes de usabilidade (SUS) | | | X | X |
+| Medição As-Is × To-Be | | | X | X |
+| Escrita — Introdução e Fundamentação | X | | | |
+| Escrita — Metodologia | | X | | |
+| Escrita — Resultados e discussão | | | X | X |
+| Considerações finais / revisão ABNT | | | | X |
+| Preparação da banca | | | X | X |
 
 ## Slide 12 — Considerações parciais
 
 - O mapeamento do As-Is confirmou **dor crítica concreta**: aluno perde horas e precisa reconstituir o próprio acúmulo.
 - A opção por **stack moderna como "desenvolvimento acelerado"** se mostrou viável em prazo acadêmico — 9 módulos backend e portal do aluno entregues em 2 meses.
 - Decisões estruturantes consolidadas: separação estrita `web ↔ api`, `AuditLog` append-only, upload direto ao storage via POST policy.
-- **Próximos passos:** finalizar painel do coordenador e emissão de documentos (Mês 3); executar SUS e medir As-Is × To-Be (Mês 4).
+- **Próximos passos:** finalizar painel do coordenador e emissão de documentos até o fim de outubro; executar SUS e medir As-Is × To-Be em novembro, para apresentação na defesa.
 
 ## Slide 13 — Referências
 
@@ -123,11 +123,21 @@ Referências levantadas em 2026-10-23 para a pré-banca:
 
 ---
 
-## Pendências para fechar a pré-banca
+## Como regerar o arquivo .pptx
 
-- **Formato da pré-banca** — confirmar com o orientador se a FMPFM aceita formato "qualificação" (slide 10 como preliminares, slide 12 como parciais). Se exigir resultados fechados, SUS e As-Is × To-Be só saem no Mês 4.
-- **Regulamento oficial de horas complementares da FMPFM** — alvo do slide 13 e da matriz real. Ver [[dominio/as-is-fmpfm]].
-- **Screenshot do painel do coordenador** — opcional, pode ser capturado quando a fila for implementada (Mês 3).
+Pré-requisito único: `pip install --user python-pptx`.
+
+Para gerar (ou regerar após editar este rascunho) a apresentação, execute:
+
+```bash
+python scripts/build-pre-banca.py
+```
+
+O arquivo gerado é `~/Downloads/pre-banca.pptx`. O script preserva integralmente o visual do template `Muller_PreBanca_v2.pptx` e, ao final, roda uma verificação que compara o texto do `.pptx` gerado com este rascunho e reporta divergências no terminal.
+
+Lacunas `[FALTA: ...]` ficam em branco no slide — rastreio em [[dominio/pendencias]].
+
+**Spec:** [[superpowers/specs/2026-10-23-pre-banca-pptx-design]].
 
 ---
 
