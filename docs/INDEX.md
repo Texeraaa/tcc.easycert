@@ -19,6 +19,7 @@
 - [[superpowers/specs/2026-10-20-design-system-easycert]] — sistema de design completo.
 - [[superpowers/specs/2026-10-22-upload-de-pdf-design]] — fluxo de upload de PDF direto ao storage via POST policy (RF-06, RNF-03).
 - [[superpowers/specs/2026-10-22-plano-mes-2]] — plano completo do Mês 2 (15 decisões, schema Prisma + 9 módulos NestJS + 2 fluxos E2E + half-circle aluno).
+- [[superpowers/specs/2026-10-23-pre-banca-pptx-design]] — design do script Python para gerar o `.pptx` da pré-banca a partir do template Muller preservando o visual.
 
 ## Domínio
 - [[dominio/visao-geral|visao-geral]] — objetivo, atores, requisito central, não-objetivos.
@@ -36,3 +37,4 @@
 - [[tcc/cronograma|cronograma]] — 5 meses com entregáveis.
 - [[tcc/trabalhos-correlatos|trabalhos-correlatos]] — esqueleto da fundamentação teórica (Mês 1).
 - [[tcc/rascunhos/01-introducao|01-introducao]] — rascunho da introdução.
+- [[tcc/rascunhos/pre-banca|pre-banca]] — esqueleto dos 14 slides da pré-banca.

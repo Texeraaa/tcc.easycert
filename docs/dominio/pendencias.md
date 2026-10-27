@@ -14,6 +14,14 @@ Decisões ainda em aberto na v1. Cada item aponta a nota que originou a pendênc
 > [!warning] Em aberto
 > Pendências para montar os slides de pré-banca a partir do modelo enviado pelo orientador (14 slides, estrutura Muller Catellan).
 
+### Lacunas críticas do template (bloqueiam consolidação dos slides)
+
+- **Obter regulamento oficial de horas complementares da FMPFM** — impacta slide 13 (referências). Regulamento necessário para fundamentar categorias e limites de horas na apresentação. Origem: [[superpowers/specs/2026-10-23-pre-banca-pptx-design]], [[horas-complementares]].
+- **Confirmar com o orientador o formato da apresentação** — qualificação (resultados preliminares) vs. defesa fechada (resultados consolidados). Impacta slides 10 e 12 (apresentação de resultados e considerações finais). Origem: [[superpowers/specs/2026-10-23-pre-banca-pptx-design]], [[tcc/rascunhos/pre-banca]].
+- **Opcional: screenshot do painel do coordenador** — se o módulo estiver implementado a tempo, incluir como evidência visual no slide 10. Não bloqueia, recomendado. Origem: [[superpowers/specs/2026-10-23-pre-banca-pptx-design]].
+
+---
+
 - **Hipótese formal (slide 5)** — nenhuma nota do vault tem hipótese explícita. Precisa ser escrita derivando da dor do As-Is + proposta To-Be. Owner: autor + `tcc-writer`. Origem: modelo de pré-banca.
 - **Referências bibliográficas (slide 13)** — [[tcc/trabalhos-correlatos]] está 100% com `_(pendente)_`; era entregável do Mês 1. Preencher eixos teóricos (BPM/sistemas acadêmicos, prototipagem acelerada/Low-Code, assinatura digital/QRCode), sistemas correlatos (2–4 plataformas em uso em IES brasileiras) e lacunas identificadas. Owner: autor + `tcc-writer`. Origem: [[tcc/cronograma#Mês 1]], [[tcc/estrutura-artigo#2. Fundamentação teórica e trabalhos correlatos (4–5 páginas)]].
 - **Resultados preliminares reinterpretados (slide 10)** — SUS e comparação As-Is×To-Be acontecem no Mês 4; estamos no Mês 1. Para a pré-banca o slide precisa reportar "andamento de desenvolvimento até o momento" (As-Is mapeado, requisitos definidos, arquitetura ratificada, design system entregue, specs aprovadas, prototipagem iniciada). Decisão editorial. Owner: autor. Origem: [[tcc/metodologia]], [[tcc/cronograma#Mês 4]].
