@@ -1,0 +1,33 @@
+%% Diagrama V2 — Slot 11 (vazio) — Arquitetura
+%% Renderizar em https://mermaid.live, exportar PNG, colar manualmente no slide 11.
+
+flowchart LR
+    subgraph Pessoas["Usuários"]
+        direction TB
+        AL["Aluno"]
+        CO["Coordenação"]
+    end
+
+    subgraph Plataforma["Plataforma easycert"]
+        direction TB
+        WEB["<b>Portal web</b><br/>(interface visual)"]
+        API["<b>Servidor</b><br/>(regras do negócio)"]
+        DB[("<b>Banco de dados</b><br/>certificados,<br/>categorias, histórico")]
+        STG[("<b>Armazenamento</b><br/>de arquivos PDF")]
+
+        WEB <--> API
+        API --> DB
+        API --> STG
+    end
+
+    AL <--> WEB
+    CO <--> WEB
+
+    classDef pessoa fill:#e8f0fe,stroke:#1a73e8,color:#000;
+    classDef interface fill:#fff4e1,stroke:#d68910,color:#000;
+    classDef servidor fill:#eafaf1,stroke:#1e8449,color:#000;
+    classDef dados fill:#f3e8fd,stroke:#8e44ad,color:#000;
+    class AL,CO pessoa;
+    class WEB interface;
+    class API servidor;
+    class DB,STG dados;

@@ -1,0 +1,23 @@
+%% Diagrama V1 — Slide 4 — Problema · Atual × Proposto
+%% Renderizar em https://mermaid.live, exportar PNG, salvar como ./img/as-is-vs-to-be.png
+%% (o nome do arquivo mantém o legado para o script build-pre-banca.py).
+
+flowchart TB
+    subgraph Hoje["Hoje (manual)"]
+        direction LR
+        H1["<b>Emissão</b><br/>Não há emissão oficial<br/>para eventos próprios da FMPFM.<br/>Aluno fica sem comprovante."]
+        H2["<b>Recepção / Validação</b><br/>Entrega presencial.<br/>Planilha compartilhada.<br/>Latência de ~1 mês."]
+    end
+
+    subgraph Plataforma["Com a plataforma"]
+        direction LR
+        P1["<b>Emissão</b><br/>FMPFM cadastra o evento.<br/>Sistema gera o PDF.<br/>Aluno recebe pelo portal."]
+        P2["<b>Recepção / Validação</b><br/>Aluno envia pelo portal.<br/>Coordenação analisa online.<br/>Horas somadas automaticamente."]
+    end
+
+    Hoje ==> Plataforma
+
+    classDef hoje fill:#fdecea,stroke:#c0392b,color:#000;
+    classDef plat fill:#eafaf1,stroke:#1e8449,color:#000;
+    class H1,H2 hoje;
+    class P1,P2 plat;
