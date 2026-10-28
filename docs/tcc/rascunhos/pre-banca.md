@@ -5,7 +5,7 @@ status: v2-reframe
 
 # TCC — Pré-banca (rascunho — reframe 2026-10-27 com slots vazios)
 
-Esqueleto da pré-banca sob o reframe para emissão e validação de certificados. 19 slides físicos: 16 com conteúdo (declarados abaixo) e 3 slots vazios (11, 13, 15) reservados para posicionamento manual dos diagramas e dos screenshots do portal. Formato compatível com o script `scripts/build-pre-banca.py` (dispatch por `## Slide N — ...`).
+Esqueleto da pré-banca sob o reframe para emissão e validação de certificados. 19 slides físicos: 17 com conteúdo (declarados abaixo) e 2 slots vazios (11 e 13) reservados para posicionamento manual dos diagramas V2 (arquitetura) e V3 (fluxo de emissão). Formato compatível com o script `scripts/build-pre-banca.py` (dispatch por `## Slide N — ...`).
 
 Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
@@ -89,9 +89,11 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 - **Processo atual da FMPFM mapeado** e documentado como ponto de partida da avaliação.
 - **Banco de dados projetado** cobrindo alunos, envios, documentos, categorias, regras, eventos e histórico.
 - **Servidor da aplicação pronto** com 9 áreas; fluxo completo de recepção e validação de certificado externo, com ciclo definido: aguardando envio, aguardando análise, em análise, aprovado, recusado ou pedido de correção.
+
+## Slide 15 — Resultados preliminares (continuação)
+
 - **Portal do aluno em funcionamento**: login, indicador de progresso de horas e consulta de categorias.
 - **Em desenvolvimento até a defesa:** área de emissão de certificados para eventos próprios da FMPFM.
-- Telas do portal no slide seguinte.
 
 ## Slide 16 — Cronograma
 
@@ -144,7 +146,7 @@ Para gerar (ou regerar após editar este rascunho) a apresentação:
 python3 scripts/build-pre-banca.py
 ```
 
-O arquivo gerado é `~/Downloads/pre-banca.pptx` com **19 slides**. Os slots 11, 13 e 15 ficam vazios por construção — o autor posiciona manualmente ali o diagrama de arquitetura, o fluxograma de emissão e os screenshots do portal do aluno.
+O arquivo gerado é `~/Downloads/pre-banca.pptx` com **19 slides**. Os slots 11 e 13 ficam vazios por construção — o autor posiciona manualmente ali o diagrama de arquitetura (V2) e o fluxograma de emissão (V3).
 
 Lacunas `[FALTA: ...]` ficam em branco no slide — rastreio em [[dominio/pendencias]]. Imagem placeholder do slide 4 (diagrama Antes × Depois) ainda é inserida automaticamente pelo handler quando o arquivo existir; se ausente, o build loga aviso e segue.
 

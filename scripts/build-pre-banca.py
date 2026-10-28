@@ -685,7 +685,7 @@ def inspect_template() -> int:
 
 def run_self_tests() -> int:
     tests = [
-        _test_parse_rascunho_detecta_16_slides,
+        _test_parse_rascunho_detecta_17_slides,
         _test_parse_rascunho_slide_3_tem_4_bullets,
         _test_parse_rascunho_slide_1_tem_blockquote,
         _test_parse_rascunho_slide_16_tem_tabela,
@@ -711,10 +711,10 @@ def run_self_tests() -> int:
     return 0
 
 
-def _test_parse_rascunho_detecta_16_slides() -> None:
+def _test_parse_rascunho_detecta_17_slides() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    assert len(slides) == 16, f"esperado 16 slides, obtido {len(slides)}"
-    expected_indices = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 17, 18, 19}
+    assert len(slides) == 17, f"esperado 17 slides, obtido {len(slides)}"
+    expected_indices = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19}
     assert set(slides.keys()) == expected_indices, f"keys: {sorted(slides.keys())}"
 
 
@@ -793,17 +793,24 @@ def main() -> int:
     # source_idx=8 (0-based) = slide 9 Metodologia — fica estável durante todas as inserções
     # porque todas acontecem em target_idx >= 9.
     # Após as duplicações: slides originais 10..14 ficam deslocados para 14..19 (índices 1-based).
+    # Expansão para 19 slides: template Muller tem 14. Duplicamos layout do slide 9 (Metodologia)
+    # para criar slots 10 (Arquitetura) e 12 (Fluxo). Inserimos slots EM BRANCO em 11 (p/ V2) e 13 (p/ V3)
+    # para o usuário posicionar os diagramas manualmente. Duplicamos o layout do slide "Resultados"
+    # (template slot 10, após as 4 inserções anteriores ele está em 0-idx 13) para criar slot 15
+    # (Resultados preliminares — continuação, parte 2 dos bullets).
+    # source_idx=8 (0-based) = slide 9 Metodologia — estável durante as 4 primeiras inserções
+    # porque todas acontecem em target_idx >= 9.
     duplicate_slide_at(prs, source_idx=8, target_idx=9)       # cria slot 10 (Arquitetura)
     insert_blank_slide_at(prs, source_idx=8, target_idx=10)   # cria slot 11 (vazio p/ V2)
     duplicate_slide_at(prs, source_idx=8, target_idx=11)      # cria slot 12 (Fluxo)
     insert_blank_slide_at(prs, source_idx=8, target_idx=12)   # cria slot 13 (vazio p/ V3)
-    insert_blank_slide_at(prs, source_idx=8, target_idx=14)   # cria slot 15 (vazio p/ screenshots)
+    duplicate_slide_at(prs, source_idx=13, target_idx=14)     # cria slot 15 (Resultados continuação)
     assert len(prs.slides) == 19, f"após duplicação esperávamos 19 slides, temos {len(prs.slides)}"
 
-    GENERIC_SLIDES = {3, 6, 8, 9, 10, 12, 14, 17}
+    GENERIC_SLIDES = {3, 6, 8, 9, 10, 12, 14, 15, 17}
     BLOCKQUOTE_SLIDES = {1, 2, 5, 7, 19}
     SLIDES_WITH_IMAGE = {4}
-    EMPTY_SLOTS = {11, 13, 15}
+    EMPTY_SLOTS = {11, 13}
 
     slide_width = prs.slide_width
     slide_height = prs.slide_height
