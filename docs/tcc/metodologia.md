@@ -32,8 +32,8 @@ Pesquisa **aplicada**, **quanti-qualitativa**, **experimental**, baseada em **es
 
 ### Fase 4 — Avaliação do protótipo
 - Testes de usabilidade com amostra de alunos e avaliadores.
-- Simulação de cenários de submissão e validação.
-- Coleta de métricas de tempo e satisfação.
+- Simulação de dois cenários: (i) emissão de certificado de evento próprio (ciclo coordenador → plataforma → aluno) e (ii) recepção/validação de certificado externo (aluno → plataforma → coordenador).
+- Coleta de métricas de tempo e satisfação em cada cenário.
 
 ## Critérios de avaliação
 
@@ -43,9 +43,17 @@ Pesquisa **aplicada**, **quanti-qualitativa**, **experimental**, baseada em **es
 - Interpretação por faixas (ex.: ≥ 68 = acima da média).
 
 ### Desempenho operacional — As-Is vs. To-Be
-- Medição do tempo de ciclo manual (processo baseado em e-mail/planilha).
-- Medição do tempo via plataforma.
-- Comparação direta: redução percentual média de tempo por submissão analisada.
+Dois cenários distintos:
+
+**Cenário 1 — Emissão de certificado de evento próprio:**
+- Medição do tempo manual As-Is (coordenador escreve e-mail → aluno confere externos → coordenador emite PDF manual → aluno recebe).
+- Medição do tempo To-Be (coordenador registra evento na plataforma → sistema gera PDF automaticamente → aluno notificado → horas creditadas).
+- Comparação: redução percentual de tempo de ciclo completo.
+
+**Cenário 2 — Recepção e validação de certificado externo:**
+- Medição do tempo manual As-Is (aluno escaneia/envia certificado → coordenador abre e-mail → analisa → responde → aluno confere resposta).
+- Medição do tempo To-Be (aluno upload direto na plataforma → sistema valida → coordenador avalia em painel → aluno recebe decisão).
+- Comparação: redução percentual de tempo de ciclo completo.
 
 ---
 

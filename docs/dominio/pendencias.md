@@ -14,6 +14,17 @@ Decisões ainda em aberto na v1. Cada item aponta a nota que originou a pendênc
 > [!warning] Em aberto
 > Pendências para montar os slides de pré-banca a partir do modelo enviado pelo orientador (14 slides, estrutura Muller Catellan).
 
+> [!info] Reformulado 2026-10-27
+> Esta pendência foi reenquadrada: pré-banca passa a cobrir emissão + validação de certificados (16 slides, dois novos visuais). Ver [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
+
+### Novas pendências abertas pelo reframe 2026-10-27
+
+- **Confirmação formal do novo título com o orientador Prof. Robson** — alinhamento informal já ocorreu segundo o autor; registrar em e-mail/mensagem para rastro antes de uso em peças oficiais (ata, formulários, versão final do TCC). Owner: autor. Origem: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design#1. Motivação]].
+- **Diagrama As-Is × To-Be (V1, slide 4)** — visual 2×2 mostrando emissão/recepção × hoje/plataforma em linguagem de pessoas (não-técnica). Owner: autor. Origem: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design#6. O que esta spec NÃO decide]].
+- **Diagrama de arquitetura (V2, slide 10)** — visual dos dois caminhos do certificado e separação web ↔ api. Owner: autor. Origem: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design#5. Pendências novas abertas pela reframe]].
+- **Diagrama de fluxo de emissão (V3, slide 11)** — 6 passos: evento → participantes → PDF → storage → notificação → horas. Owner: autor. Origem: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design#5. Pendências novas abertas pela reframe]].
+- **Literatura: emissão/assinatura digital de certificados em IES** — Portaria MEC 554/2019 encontrada; procurar trabalhos correlatos em assinatura digital de documentos acadêmicos. Owner: autor + `tcc-writer`. Origem: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design#5. Pendências novas abertas pela reframe]].
+
 ### Lacunas críticas do template (bloqueiam consolidação dos slides)
 
 - **Obter regulamento oficial de horas complementares da FMPFM** — impacta slide 13 (referências). Regulamento necessário para fundamentar categorias e limites de horas na apresentação. Origem: [[superpowers/specs/2026-10-23-pre-banca-pptx-design]], [[horas-complementares]].

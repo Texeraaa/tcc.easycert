@@ -20,6 +20,8 @@
 - [[superpowers/specs/2026-10-22-upload-de-pdf-design]] — fluxo de upload de PDF direto ao storage via POST policy (RF-06, RNF-03).
 - [[superpowers/specs/2026-10-22-plano-mes-2]] — plano completo do Mês 2 (15 decisões, schema Prisma + 9 módulos NestJS + 2 fluxos E2E + half-circle aluno).
 - [[superpowers/specs/2026-10-23-pre-banca-pptx-design]] — design do script Python para gerar o `.pptx` da pré-banca a partir do template Muller preservando o visual.
+- [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]] — reframe para foco em emissão+validação de certificados (16 slides, dois novos visuais, novo título alinhado com orientador).
+- [[superpowers/plans/2026-10-27-pre-banca-reframe-certificados-design]] — plano de 10 tasks para executar o reframe (extensão do script 14→16 slides + reescrita do rascunho).
 
 ## Domínio
 - [[dominio/visao-geral|visao-geral]] — objetivo, atores, requisito central, não-objetivos.

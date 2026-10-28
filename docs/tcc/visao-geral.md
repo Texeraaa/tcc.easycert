@@ -22,9 +22,11 @@ Esta é a porta de entrada da camada acadêmica do easycert: título, justificat
 
 **Inicial:** Desenvolvimento de uma Plataforma Web para Gestão de Atividades Complementares e Emissão Automatizada de Certificados.
 
-**Refinado:** Desenvolvimento de uma Plataforma Web para Gestão de Horas Complementares e Automação de Fluxos Acadêmicos Baseada em Desenvolvimento Acelerado.
+**Refinado (até 2026-10-23):** Desenvolvimento de uma Plataforma Web para Gestão de Horas Complementares e Automação de Fluxos Acadêmicos Baseada em Desenvolvimento Acelerado.
 
-**Justificativa do ajuste:** explicita que a contribuição central é a automação e otimização dos fluxos operacionais acadêmicos (submissão, validação, contabilização de carga horária, emissão de documentos) via ciclo ágil de prototipagem — não um CRUD de certificados.
+**Reframed (2026-10-27):** Desenvolvimento de uma Plataforma Web para Emissão e Validação de Certificados Acadêmicos, Baseada em Desenvolvimento Acelerado.
+
+**Justificativa do reframe:** sessão de brainstorming com o orientador Prof. Robson consolidou que o foco real do produto é emissão e validação de certificados acadêmicos (nome do repo `easycert`), não gestão de horas complementares. Horas viram consequência contábil. Narrativa da pré-banca reformulada para expor dois fluxos (emissão e recepção) e defender escolhas arquiteturais (separação web ↔ api, upload direto, máquina de estados) perante banca técnica. Ref: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
 ## Foco acadêmico
 
