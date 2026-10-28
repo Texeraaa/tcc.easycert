@@ -1,16 +1,20 @@
-%% Diagrama V3 — Slot 13 (vazio) — Fluxo caminho feliz da emissão (com atores)
+%% Diagrama V3 — Slot 13 (vazio) — Fluxo caminho feliz da emissão (4 atores)
 %% Renderizar em https://mermaid.live, exportar PNG, colar manualmente no slide 13.
 
 sequenceDiagram
     actor COORD as Coordenação (FMPFM)
-    participant SIS as Sistema (easycert)
+    participant SIS as Servidor (easycert)
+    participant ARQ as Armazenamento de PDFs
     actor ALUNO as Aluno
 
     COORD->>SIS: 1. Cadastra o evento
     COORD->>SIS: 2. Registra os participantes
     Note over SIS: 3. Gera o certificado em PDF
-    Note over SIS: 4. Guarda o arquivo com segurança
+    SIS->>ARQ: 4. Guarda o PDF com segurança
     SIS->>ALUNO: 5. Avisa (portal e e-mail)
     Note over SIS: 6. Soma as horas na ficha do aluno
+
     ALUNO->>SIS: Baixa o certificado pelo portal
+    SIS->>ARQ: Busca o PDF
+    ARQ-->>SIS: Retorna o PDF
     SIS-->>ALUNO: Entrega o PDF
