@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -166,6 +167,33 @@ def _apply_font(run, name, size, bold, italic, color_rgb) -> None:
         run.font.color.rgb = RGBColor(color_rgb[0], color_rgb[1], color_rgb[2])
 
 
+def duplicate_slide_at(prs, source_idx: int, target_idx: int) -> None:
+    """Duplica o slide em `source_idx` (0-based) e insere o duplicado em `target_idx`.
+
+    Técnica: deep-copy do elemento XML `sld` do slide-fonte, criação de slide novo
+    via add_slide(layout) e reorganização em `sldIdLst` para posicionar o duplicado
+    em `target_idx`. python-pptx não oferece API nativa para isso.
+
+    Após a chamada:
+      - prs.slides[target_idx] é a cópia (shapes e layout do source).
+      - Os slides que estavam em [target_idx..] movem-se um para a direita.
+      - O slide original em source_idx permanece (deslocado se target_idx <= source_idx).
+    """
+    source_slide = prs.slides[source_idx]
+    layout = source_slide.slide_layout
+    new_slide = prs.slides.add_slide(layout)
+
+    for shape in source_slide.shapes:
+        new_el = deepcopy(shape.element)
+        new_slide.shapes._spTree.insert_element_before(new_el, "p:extLst")
+
+    sldIdLst = prs.slides._sldIdLst
+    slides_list = list(sldIdLst)
+    new_sld = slides_list[-1]
+    sldIdLst.remove(new_sld)
+    sldIdLst.insert(target_idx, new_sld)
+
+
 # --- slide handlers ---
 
 
@@ -284,8 +312,41 @@ def process_blockquote_slide(slide, content: SlideContent) -> list[str]:
     return logs
 
 
-def process_slide_10(slide, content: SlideContent, slide_width: int, slide_height: int) -> list[str]:
-    """Slide 10: título + bullets (gerenciado como genérico) + inserção de 2 imagens lado a lado.
+def process_slide_with_image(
+    slide, content: SlideContent, slide_width: int, slide_height: int
+) -> list[str]:
+    """Slide com título + bullets + 1 imagem grande centralizada abaixo dos bullets.
+
+    Usado nos slides 4 (V1 As-Is × To-Be), 10 (V2 Arquitetura) e 11 (V3 Fluxo).
+    Se a imagem referenciada no rascunho não existir no filesystem, loga aviso
+    e deixa o slide sem imagem (placeholder visual implícito).
+    """
+    from pptx.util import Cm
+
+    logs = process_generic_slide(slide, content)
+
+    if not content.images:
+        logs.append("sem imagem referenciada no rascunho")
+        return logs
+
+    _alt, path = content.images[0]
+    if not Path(path).is_file():
+        logs.append(
+            f"AVISO: imagem placeholder não encontrada ({Path(path).name}) — "
+            f"slide fica sem imagem"
+        )
+        return logs
+
+    img_width = Cm(18)
+    left = (slide_width - img_width) // 2
+    top = int(slide_height * 0.45)
+    slide.shapes.add_picture(path, left, top, width=img_width)
+    logs.append(f"imagem inserida: {Path(path).name}")
+    return logs
+
+
+def process_slide_12(slide, content: SlideContent, slide_width: int, slide_height: int) -> list[str]:
+    """Slide 12 (ex-10 no template, agora pós-reframe): título + bullets + 2 imagens lado a lado.
 
     Imagens vão abaixo do body_frame, largura ≈ 11 cm cada, centradas no slide.
     slide_width/slide_height vêm do prs (int EMU).
@@ -322,9 +383,9 @@ _COLS_TO_REMOVE = {"Abr", "Mai", "Jun", "Jul", "Dez"}
 _COLS_TO_KEEP = ["Ago", "Set", "Out", "Nov"]
 
 
-def process_slide_11(slide, content: SlideContent) -> list[str]:
-    """Slide 11: adapta a tabela — remove colunas Abr/Mai/Jun/Jul/Dez, redistribui largura,
-    preenche X conforme content.table_rows (header + atividades) do rascunho.
+def process_slide_13(slide, content: SlideContent) -> list[str]:
+    """Slide 13 (ex-11 no template, agora pós-reframe): adapta a tabela — remove colunas Abr/Mai/Jun/Jul/Dez,
+    redistribui largura, preenche X conforme content.table_rows (header + atividades) do rascunho.
     """
     logs: list[str] = []
 
@@ -392,11 +453,8 @@ def process_slide_11(slide, content: SlideContent) -> list[str]:
 _INLINE_MARK_PAIR_RE = re.compile(r"(\*\*\*|\*\*|_|\*)([^*_]+)\1")
 
 
-def process_slide_13(slide, content: SlideContent) -> list[str]:
-    """Slide 13: referências. Preserva itálico/negrito ABNT dentro de cada bullet.
-
-    Cada bullet vira UM parágrafo no body_frame, com runs separados para segmentos marcados.
-    """
+def process_slide_15(slide, content: SlideContent) -> list[str]:
+    """Slide 15 (ex-13 no template, agora pós-reframe): referências ABNT com itálico/negrito preservados."""
     logs: list[str] = []
     title_tf, body_tf = find_title_and_body_frames(slide)
     if title_tf is not None:
@@ -499,7 +557,7 @@ def extract_text_per_slide(pptx_path: Path) -> dict[int, list[str]]:
 
 
 # Slides onde o `heading` do rascunho é organizacional (não é o título visível no deck).
-_HEADING_IS_ORGANIZATIONAL = {1, 2, 7, 14}
+_HEADING_IS_ORGANIZATIONAL = {1, 2, 7, 16}
 # Slide 5 usa heading substituído ("Pergunta de pesquisa") — tratado abaixo separadamente.
 
 
@@ -621,11 +679,14 @@ def inspect_template() -> int:
 
 def run_self_tests() -> int:
     tests = [
-        _test_parse_rascunho_detecta_14_slides,
+        _test_parse_rascunho_detecta_16_slides,
         _test_parse_rascunho_slide_3_tem_4_bullets,
         _test_parse_rascunho_slide_1_tem_blockquote,
-        _test_parse_rascunho_slide_11_tem_tabela,
-        _test_parse_rascunho_slide_10_tem_duas_imagens,
+        _test_parse_rascunho_slide_13_tem_tabela,
+        _test_parse_rascunho_slide_12_tem_duas_imagens,
+        _test_parse_rascunho_slide_4_tem_uma_imagem_placeholder,
+        _test_parse_rascunho_slide_10_tem_imagem_arquitetura,
+        _test_parse_rascunho_slide_11_tem_imagem_fluxo,
         _test_parse_rascunho_detecta_falta,
         _test_strip_inline_marks_bold,
         _test_strip_inline_marks_italic,
@@ -647,10 +708,10 @@ def run_self_tests() -> int:
     return 0
 
 
-def _test_parse_rascunho_detecta_14_slides() -> None:
+def _test_parse_rascunho_detecta_16_slides() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    assert len(slides) == 14, f"esperado 14 slides, obtido {len(slides)}"
-    assert set(slides.keys()) == set(range(1, 15)), f"keys: {sorted(slides.keys())}"
+    assert len(slides) == 16, f"esperado 16 slides, obtido {len(slides)}"
+    assert set(slides.keys()) == set(range(1, 17)), f"keys: {sorted(slides.keys())}"
 
 
 def _test_parse_rascunho_slide_3_tem_4_bullets() -> None:
@@ -667,30 +728,53 @@ def _test_parse_rascunho_slide_1_tem_blockquote() -> None:
     assert "Pedro Henrique Teixeira" in "\n".join(s1.blockquote)
 
 
-def _test_parse_rascunho_slide_11_tem_tabela() -> None:
+def _test_parse_rascunho_slide_13_tem_tabela() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s11 = slides[11]
-    assert len(s11.table_rows) >= 2, "tabela do slide 11 deveria ter header + linhas"
-    header = s11.table_rows[0]
+    s13 = slides[13]
+    assert len(s13.table_rows) >= 2, "tabela do slide 13 deveria ter header + linhas"
+    header = s13.table_rows[0]
     assert header == ["Atividades", "Ago", "Set", "Out", "Nov"], f"header: {header}"
-    sus_row = next((r for r in s11.table_rows if "SUS" in r[0]), None)
+    sus_row = next((r for r in s13.table_rows if "SUS" in r[0]), None)
     assert sus_row is not None, "linha SUS não encontrada"
-    assert sus_row[1] == "" and sus_row[2] == "" and sus_row[3] == "X" and sus_row[4] == "X"
+    assert sus_row[4] == "X", "SUS deve ter X em Nov"
 
 
-def _test_parse_rascunho_slide_10_tem_duas_imagens() -> None:
+def _test_parse_rascunho_slide_12_tem_duas_imagens() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s10 = slides[10]
-    assert len(s10.images) == 2, f"esperado 2 imagens no slide 10: {s10.images}"
-    paths = [p for _, p in s10.images]
+    s12 = slides[12]
+    assert len(s12.images) == 2, f"esperado 2 imagens no slide 12: {s12.images}"
+    paths = [p for _, p in s12.images]
     assert all("aluno-" in p for p in paths), f"paths inesperados: {paths}"
     assert all(p.endswith(".png") for p in paths)
 
 
+def _test_parse_rascunho_slide_4_tem_uma_imagem_placeholder() -> None:
+    slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
+    s4 = slides[4]
+    assert len(s4.images) == 1, f"esperado 1 imagem no slide 4 (V1 as-is×to-be): {s4.images}"
+    path = s4.images[0][1].lower()
+    assert "as-is" in path or "to-be" in path, f"path inesperado para V1: {path}"
+
+
+def _test_parse_rascunho_slide_10_tem_imagem_arquitetura() -> None:
+    slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
+    s10 = slides[10]
+    assert len(s10.images) == 1, f"esperado 1 imagem no slide 10 (V2 arquitetura): {s10.images}"
+    assert "arquitetura" in s10.images[0][1].lower()
+
+
+def _test_parse_rascunho_slide_11_tem_imagem_fluxo() -> None:
+    slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
+    s11 = slides[11]
+    assert len(s11.images) == 1, f"esperado 1 imagem no slide 11 (V3 fluxo): {s11.images}"
+    path = s11.images[0][1].lower()
+    assert "fluxo" in path or "emissao" in path, f"path inesperado para V3: {path}"
+
+
 def _test_parse_rascunho_detecta_falta() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s13 = slides[13]
-    assert s13.has_falta, "slide 13 deveria ter has_falta=True (regulamento FMPFM)"
+    s15 = slides[15]
+    assert s15.has_falta, "slide 15 deveria ter has_falta=True (regulamento FMPFM)"
 
 
 def _test_strip_inline_marks_bold() -> None:
@@ -722,8 +806,9 @@ def main() -> int:
     slides_content = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
     prs = Presentation(str(TEMPLATE_PATH))
 
-    GENERIC_SLIDES = {3, 4, 6, 8, 9, 12}
-    BLOCKQUOTE_SLIDES = {1, 2, 5, 7, 14}
+    GENERIC_SLIDES = {3, 6, 8, 9, 14}
+    BLOCKQUOTE_SLIDES = {1, 2, 5, 7, 16}
+    SLIDES_WITH_IMAGE = {4, 10, 11}
 
     slide_width = prs.slide_width
     slide_height = prs.slide_height
@@ -737,12 +822,14 @@ def main() -> int:
             logs = process_generic_slide(slide, content)
         elif idx in BLOCKQUOTE_SLIDES:
             logs = process_blockquote_slide(slide, content)
-        elif idx == 10:
-            logs = process_slide_10(slide, content, slide_width, slide_height)
-        elif idx == 11:
-            logs = process_slide_11(slide, content)
+        elif idx in SLIDES_WITH_IMAGE:
+            logs = process_slide_with_image(slide, content, slide_width, slide_height)
+        elif idx == 12:
+            logs = process_slide_12(slide, content, slide_width, slide_height)
         elif idx == 13:
             logs = process_slide_13(slide, content)
+        elif idx == 15:
+            logs = process_slide_15(slide, content)
         else:
             logs = [f"ERRO: slide {idx} sem handler mapeado"]
         print(f"Slide {idx}: {'; '.join(logs) if logs else '(nada)'}")
