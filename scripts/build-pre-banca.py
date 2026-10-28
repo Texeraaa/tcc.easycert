@@ -54,8 +54,8 @@ def parse_rascunho(markdown: str) -> dict[int, SlideContent]:
         header = _SLIDE_HEADER_RE.match(line)
         if header:
             num = int(header.group(1))
-            if not 1 <= num <= 14:
-                raise ValueError(f"Slide fora da faixa 1-14: {num}")
+            if not 1 <= num <= 16:
+                raise ValueError(f"Slide fora da faixa 1-16: {num}")
             current = SlideContent(number=num, heading=header.group(2).strip())
             slides[num] = current
             continue
