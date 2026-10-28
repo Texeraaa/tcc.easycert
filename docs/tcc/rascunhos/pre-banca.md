@@ -3,9 +3,9 @@ tipo: rascunho
 status: v2-reframe
 ---
 
-# TCC — Pré-banca (rascunho — reframe 2026-10-27)
+# TCC — Pré-banca (rascunho — reframe 2026-10-27 com slots vazios)
 
-Esqueleto dos 16 slides da pré-banca sob o reframe para emissão + validação de certificados. Formato compatível com o script `scripts/build-pre-banca.py` (dispatch por `## Slide N — ...`). Imagens dos slides 4, 10 e 11 são placeholders — arquivos a desenhar depois; se ausentes, o build loga aviso e segue.
+Esqueleto da pré-banca sob o reframe para emissão + validação de certificados. 19 slides físicos: 16 com conteúdo (declarados abaixo) + 3 slots vazios (11, 13, 15) reservados para posicionamento manual dos diagramas V2/V3 e dos screenshots do portal. Formato compatível com o script `scripts/build-pre-banca.py` (dispatch por `## Slide N — ...`).
 
 Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
@@ -74,16 +74,15 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
 - **Separação estrita `web ↔ api`:** interface não acessa banco; API não serve HTML.
 - **Dois caminhos para o certificado**: um emitido pela FMPFM, outro trazido pelo aluno — convergem no mesmo ciclo de validação.
+- Diagrama no slide seguinte.
 
-![Arquitetura — Next.js (web) ↔ NestJS (api) ↔ PostgreSQL + MinIO/S3; dois caminhos para o certificado](./img/arquitetura.png)
+## Slide 12 — Fluxo caminho feliz da emissão
 
-## Slide 11 — Fluxo caminho feliz da emissão
-
+- 6 passos: evento → participantes → PDF → storage → notificação → horas.
 - Ramificações (reemissão, correção) tratadas no sistema mas fora deste slide.
+- Diagrama no slide seguinte.
 
-![Fluxo de emissão — 6 passos: evento → participantes → PDF → storage → notificação → horas](./img/fluxo-emissao.png)
-
-## Slide 12 — Resultados preliminares
+## Slide 14 — Resultados preliminares
 
 > _Qualificação — protótipo em andamento, SUS/As-Is ainda não executados._
 
@@ -93,10 +92,9 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 - **Upload direto ao storage** via POST policy (RF-06).
 - **Portal do aluno** (Next.js 15 + React 19): autenticação real, half-circle de progresso, consumo de `GET /categorias`.
 - **Em desenvolvimento até a defesa:** módulo de **emissão** (eventos → geração de PDF → portal do aluno).
-- ![Home do aluno — cards de nova submissão e minhas submissões](./img/aluno-home.png)
-- ![Histórico de submissões do aluno — status "Aguardando revisão" e "Aguardando upload"](./img/aluno-submissoes.png)
+- Screenshots no slide seguinte.
 
-## Slide 13 — Cronograma
+## Slide 16 — Cronograma
 
 | Atividades | Ago | Set | Out | Nov |
 |---|:-:|:-:|:-:|:-:|
@@ -111,14 +109,14 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 | Escrita — Resultados e discussão | | | X | X |
 | Considerações finais / revisão ABNT / preparação da banca | | | X | X |
 
-## Slide 14 — Considerações parciais
+## Slide 17 — Considerações parciais
 
 - O mapeamento do As-Is confirmou **duas dores no ciclo de vida do certificado**: emissão ausente em eventos próprios da FMPFM e validação lenta de certificados externos.
 - A opção por **stack moderna como "desenvolvimento acelerado"** se mostrou viável em prazo acadêmico — fluxo de recepção/validação entregue em 2 meses (9 módulos backend + portal do aluno).
 - Decisões estruturantes consolidadas: separação estrita `web ↔ api`, `AuditLog` append-only, upload direto ao storage via POST policy.
 - **Próximos passos até a defesa:** implementar o módulo de **emissão** (eventos → PDF → portal), executar SUS e medir As-Is × To-Be **nos dois cenários**.
 
-## Slide 15 — Referências
+## Slide 18 — Referências
 
 Referências levantadas em 2026-10-23 para a pré-banca (Portaria 554/2019 destacada no reframe pela relevância à emissão oficial):
 
@@ -130,7 +128,7 @@ Referências levantadas em 2026-10-23 para a pré-banca (Portaria 554/2019 desta
 - TOLEDO, Paulo Donizete Alves de; SIRQUEIRA, Tassio Ferenzini Martins. Horas complementares: um aplicativo de gestão de atividades acadêmicas. **Caderno de Estudos em Sistemas de Informação**, v. 8, n. 1, p. 1-12, 2021. DOI: https://doi.org/10.5281/zenodo.15042181. Disponível em: https://zenodo.org/records/15042181. Acesso em: 23 out. 2026.
 - `[FALTA]` Regulamento oficial de horas complementares da FMPFM (quando obtido).
 
-## Slide 16 — Obrigado
+## Slide 19 — Obrigado
 
 > **Obrigado!**
 > Pedro Henrique Teixeira — ph.teixeira.ph2020@gmail.com
@@ -144,12 +142,12 @@ Pré-requisito único: `pip install --user python-pptx`.
 Para gerar (ou regerar após editar este rascunho) a apresentação:
 
 ```bash
-python scripts/build-pre-banca.py
+python3 scripts/build-pre-banca.py
 ```
 
-O arquivo gerado é `~/Downloads/pre-banca.pptx`. O script preserva o visual do template `Muller_PreBanca_v2.pptx`, duplica dois slots a partir do layout do slide 9 (Metodologia) para acomodar Arquitetura e Fluxo, e roda uma verificação por diff rascunho × pptx no final.
+O arquivo gerado é `~/Downloads/pre-banca.pptx` com **19 slides**. Os slots 11, 13 e 15 ficam vazios por construção — o autor posiciona manualmente ali o diagrama de arquitetura (V2), o fluxograma de emissão (V3) e os screenshots do portal do aluno.
 
-Lacunas `[FALTA: ...]` ficam em branco no slide — rastreio em [[dominio/pendencias]]. Imagens placeholder dos slides 4/10/11 (V1/V2/V3) ficam ausentes até serem desenhadas — build loga aviso e segue, sem falhar.
+Lacunas `[FALTA: ...]` ficam em branco no slide — rastreio em [[dominio/pendencias]]. Imagem placeholder do slide 4 (V1 As-Is × To-Be) ainda é inserida automaticamente pelo handler quando o arquivo existir; se ausente, o build loga aviso e segue.
 
 **Spec:** [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 

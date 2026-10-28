@@ -55,8 +55,8 @@ def parse_rascunho(markdown: str) -> dict[int, SlideContent]:
         header = _SLIDE_HEADER_RE.match(line)
         if header:
             num = int(header.group(1))
-            if not 1 <= num <= 16:
-                raise ValueError(f"Slide fora da faixa 1-16: {num}")
+            if not 1 <= num <= 19:
+                raise ValueError(f"Slide fora da faixa 1-19: {num}")
             current = SlideContent(number=num, heading=header.group(2).strip())
             slides[num] = current
             continue
@@ -136,11 +136,16 @@ def replace_text_preserving_runs(text_frame, new_text: str) -> None:
     except (AttributeError, TypeError):
         font_color_rgb = None
 
+    ns = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
     tf_elem = text_frame._txBody
-    for p in list(tf_elem.findall(".//{http://schemas.openxmlformats.org/drawingml/2006/main}p"))[1:]:
+    for p in list(tf_elem.findall(f".//{ns}p"))[1:]:
         tf_elem.remove(p)
-    for r in list(first_para._p.findall("{http://schemas.openxmlformats.org/drawingml/2006/main}r")):
+    for r in list(first_para._p.findall(f"{ns}r")):
         first_para._p.remove(r)
+
+    # Preserve o pPr (bullet char, indent, etc) do primeiro parágrafo para clonar
+    # nos parágrafos adicionais — sem isso, bullets extras perdem o marcador.
+    first_pPr = first_para._p.find(f"{ns}pPr")
 
     lines = new_text.split("\n")
     first_run = first_para.add_run()
@@ -148,6 +153,9 @@ def replace_text_preserving_runs(text_frame, new_text: str) -> None:
     _apply_font(first_run, font_name, font_size, font_bold, font_italic, font_color_rgb)
     for extra in lines[1:]:
         p = text_frame.add_paragraph()
+        if first_pPr is not None:
+            new_pPr = deepcopy(first_pPr)
+            p._p.insert(0, new_pPr)
         run = p.add_run()
         run.text = extra
         _apply_font(run, font_name, font_size, font_bold, font_italic, font_color_rgb)
@@ -170,22 +178,48 @@ def _apply_font(run, name, size, bold, italic, color_rgb) -> None:
 def duplicate_slide_at(prs, source_idx: int, target_idx: int) -> None:
     """Duplica o slide em `source_idx` (0-based) e insere o duplicado em `target_idx`.
 
-    Técnica: deep-copy do elemento XML `sld` do slide-fonte, criação de slide novo
-    via add_slide(layout) e reorganização em `sldIdLst` para posicionar o duplicado
-    em `target_idx`. python-pptx não oferece API nativa para isso.
-
-    Após a chamada:
-      - prs.slides[target_idx] é a cópia (shapes e layout do source).
-      - Os slides que estavam em [target_idx..] movem-se um para a direita.
-      - O slide original em source_idx permanece (deslocado se target_idx <= source_idx).
+    Técnica: cria um novo slide a partir do mesmo layout, LIMPA os shapes do layout
+    para evitar duplicação, e deep-copia os shapes do slide fonte. python-pptx
+    não oferece API nativa.
     """
     source_slide = prs.slides[source_idx]
     layout = source_slide.slide_layout
     new_slide = prs.slides.add_slide(layout)
 
+    spTree = new_slide.shapes._spTree
+    _SHAPE_TAGS = {"sp", "pic", "graphicFrame", "grpSp", "cxnSp"}
+    for sp in list(spTree):
+        tag = sp.tag.split("}", 1)[-1]
+        if tag in _SHAPE_TAGS:
+            spTree.remove(sp)
+
     for shape in source_slide.shapes:
         new_el = deepcopy(shape.element)
-        new_slide.shapes._spTree.insert_element_before(new_el, "p:extLst")
+        spTree.insert_element_before(new_el, "p:extLst")
+
+    sldIdLst = prs.slides._sldIdLst
+    slides_list = list(sldIdLst)
+    new_sld = slides_list[-1]
+    sldIdLst.remove(new_sld)
+    sldIdLst.insert(target_idx, new_sld)
+
+
+def insert_blank_slide_at(prs, source_idx: int, target_idx: int) -> None:
+    """Insere um slide EM BRANCO em `target_idx`, usando o mesmo layout de `source_idx`
+    para preservar o visual de fundo mas removendo todos os shapes (título, bullets, etc).
+
+    Uso: criar slots para o usuário posicionar imagens manualmente após o build.
+    """
+    source_slide = prs.slides[source_idx]
+    layout = source_slide.slide_layout
+    new_slide = prs.slides.add_slide(layout)
+
+    spTree = new_slide.shapes._spTree
+    _SHAPE_TAGS = {"sp", "pic", "graphicFrame", "grpSp", "cxnSp"}
+    for sp in list(spTree):
+        tag = sp.tag.split("}", 1)[-1]
+        if tag in _SHAPE_TAGS:
+            spTree.remove(sp)
 
     sldIdLst = prs.slides._sldIdLst
     slides_list = list(sldIdLst)
@@ -345,47 +379,13 @@ def process_slide_with_image(
     return logs
 
 
-def process_slide_12(slide, content: SlideContent, slide_width: int, slide_height: int) -> list[str]:
-    """Slide 12 (ex-10 no template, agora pós-reframe): título + bullets + 2 imagens lado a lado.
-
-    Imagens vão abaixo do body_frame, largura ≈ 11 cm cada, centradas no slide.
-    slide_width/slide_height vêm do prs (int EMU).
-    Fallback: se imagem não existe no filesystem, só avisa (não falha).
-    """
-    from pptx.util import Cm
-
-    logs = process_generic_slide(slide, content)
-
-    if not content.images:
-        logs.append("nenhuma imagem no rascunho — nada a inserir")
-        return logs
-
-    img_width = Cm(11)
-    gap = Cm(0.5)
-    total = img_width + img_width + gap
-    left_start = (slide_width - total) // 2
-    top = int(slide_height * 0.55)
-
-    inserted = []
-    for i, (alt, path) in enumerate(content.images[:2]):
-        if not Path(path).is_file():
-            logs.append(f"AVISO: imagem não encontrada: {path}")
-            continue
-        left = left_start + i * (img_width + gap)
-        slide.shapes.add_picture(path, left, top, width=img_width)
-        inserted.append(Path(path).name)
-    if inserted:
-        logs.append(f"{len(inserted)} imagem(s) inserida(s): {', '.join(inserted)}")
-    return logs
-
-
 _COLS_TO_REMOVE = {"Abr", "Mai", "Jun", "Jul", "Dez"}
 _COLS_TO_KEEP = ["Ago", "Set", "Out", "Nov"]
 
 
-def process_slide_13(slide, content: SlideContent) -> list[str]:
-    """Slide 13 (ex-11 no template, agora pós-reframe): adapta a tabela — remove colunas Abr/Mai/Jun/Jul/Dez,
-    redistribui largura, preenche X conforme content.table_rows (header + atividades) do rascunho.
+def process_slide_16(slide, content: SlideContent) -> list[str]:
+    """Slide 16 (ex-13 pós-reframe): cronograma — adapta a tabela, remove colunas Abr/Mai/Jun/Jul/Dez,
+    redistribui largura, preenche X conforme content.table_rows do rascunho.
     """
     logs: list[str] = []
 
@@ -453,8 +453,8 @@ def process_slide_13(slide, content: SlideContent) -> list[str]:
 _INLINE_MARK_PAIR_RE = re.compile(r"(\*\*\*|\*\*|_|\*)([^*_]+)\1")
 
 
-def process_slide_15(slide, content: SlideContent) -> list[str]:
-    """Slide 15 (ex-13 no template, agora pós-reframe): referências ABNT com itálico/negrito preservados."""
+def process_slide_18(slide, content: SlideContent) -> list[str]:
+    """Slide 18 (ex-15 pós-reframe): referências ABNT com itálico/negrito preservados."""
     logs: list[str] = []
     title_tf, body_tf = find_title_and_body_frames(slide)
     if title_tf is not None:
@@ -557,7 +557,7 @@ def extract_text_per_slide(pptx_path: Path) -> dict[int, list[str]]:
 
 
 # Slides onde o `heading` do rascunho é organizacional (não é o título visível no deck).
-_HEADING_IS_ORGANIZATIONAL = {1, 2, 7, 16}
+_HEADING_IS_ORGANIZATIONAL = {1, 2, 7, 19}
 # Slide 5 usa heading substituído ("Pergunta de pesquisa") — tratado abaixo separadamente.
 
 
@@ -623,7 +623,7 @@ def diff_rascunho_vs_output(
     Para cada slide, verifica se CADA string esperada aparece como substring de ALGUMA linha
     do actual (comparação relaxada: template pode agrupar bullets em um parágrafo só, etc).
 
-    Slides 13 (cronograma — truncamento aceitável) e 15 (referências — parágrafo
+    Slides 16 (cronograma — truncamento aceitável) e 18 (referências — parágrafo
     editorial não renderizado) e qualquer linha contendo "[FALTA" só geram warning.
     """
     errors: list[str] = []
@@ -635,7 +635,7 @@ def diff_rascunho_vs_output(
             if exp in act_joined:
                 continue
             msg = f"Slide {num}: texto esperado NÃO encontrado: {exp!r}"
-            if num in (13, 15) or "[FALTA" in exp:
+            if num in (16, 18) or "[FALTA" in exp:
                 warnings.append(msg)
             else:
                 errors.append(msg)
@@ -688,11 +688,8 @@ def run_self_tests() -> int:
         _test_parse_rascunho_detecta_16_slides,
         _test_parse_rascunho_slide_3_tem_4_bullets,
         _test_parse_rascunho_slide_1_tem_blockquote,
-        _test_parse_rascunho_slide_13_tem_tabela,
-        _test_parse_rascunho_slide_12_tem_duas_imagens,
+        _test_parse_rascunho_slide_16_tem_tabela,
         _test_parse_rascunho_slide_4_tem_uma_imagem_placeholder,
-        _test_parse_rascunho_slide_10_tem_imagem_arquitetura,
-        _test_parse_rascunho_slide_11_tem_imagem_fluxo,
         _test_parse_rascunho_detecta_falta,
         _test_strip_inline_marks_bold,
         _test_strip_inline_marks_italic,
@@ -717,7 +714,8 @@ def run_self_tests() -> int:
 def _test_parse_rascunho_detecta_16_slides() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
     assert len(slides) == 16, f"esperado 16 slides, obtido {len(slides)}"
-    assert set(slides.keys()) == set(range(1, 17)), f"keys: {sorted(slides.keys())}"
+    expected_indices = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 17, 18, 19}
+    assert set(slides.keys()) == expected_indices, f"keys: {sorted(slides.keys())}"
 
 
 def _test_parse_rascunho_slide_3_tem_4_bullets() -> None:
@@ -734,24 +732,15 @@ def _test_parse_rascunho_slide_1_tem_blockquote() -> None:
     assert "Pedro Henrique Teixeira" in "\n".join(s1.blockquote)
 
 
-def _test_parse_rascunho_slide_13_tem_tabela() -> None:
+def _test_parse_rascunho_slide_16_tem_tabela() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s13 = slides[13]
-    assert len(s13.table_rows) >= 2, "tabela do slide 13 deveria ter header + linhas"
-    header = s13.table_rows[0]
+    s16 = slides[16]
+    assert len(s16.table_rows) >= 2, "tabela do slide 16 deveria ter header + linhas"
+    header = s16.table_rows[0]
     assert header == ["Atividades", "Ago", "Set", "Out", "Nov"], f"header: {header}"
-    sus_row = next((r for r in s13.table_rows if "SUS" in r[0]), None)
+    sus_row = next((r for r in s16.table_rows if "SUS" in r[0]), None)
     assert sus_row is not None, "linha SUS não encontrada"
     assert sus_row[4] == "X", "SUS deve ter X em Nov"
-
-
-def _test_parse_rascunho_slide_12_tem_duas_imagens() -> None:
-    slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s12 = slides[12]
-    assert len(s12.images) == 2, f"esperado 2 imagens no slide 12: {s12.images}"
-    paths = [p for _, p in s12.images]
-    assert all("aluno-" in p for p in paths), f"paths inesperados: {paths}"
-    assert all(p.endswith(".png") for p in paths)
 
 
 def _test_parse_rascunho_slide_4_tem_uma_imagem_placeholder() -> None:
@@ -762,25 +751,10 @@ def _test_parse_rascunho_slide_4_tem_uma_imagem_placeholder() -> None:
     assert "as-is" in path or "to-be" in path, f"path inesperado para V1: {path}"
 
 
-def _test_parse_rascunho_slide_10_tem_imagem_arquitetura() -> None:
-    slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s10 = slides[10]
-    assert len(s10.images) == 1, f"esperado 1 imagem no slide 10 (V2 arquitetura): {s10.images}"
-    assert "arquitetura" in s10.images[0][1].lower()
-
-
-def _test_parse_rascunho_slide_11_tem_imagem_fluxo() -> None:
-    slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s11 = slides[11]
-    assert len(s11.images) == 1, f"esperado 1 imagem no slide 11 (V3 fluxo): {s11.images}"
-    path = s11.images[0][1].lower()
-    assert "fluxo" in path or "emissao" in path, f"path inesperado para V3: {path}"
-
-
 def _test_parse_rascunho_detecta_falta() -> None:
     slides = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
-    s15 = slides[15]
-    assert s15.has_falta, "slide 15 deveria ter has_falta=True (regulamento FMPFM)"
+    s18 = slides[18]
+    assert s18.has_falta, "slide 18 deveria ter has_falta=True (regulamento FMPFM)"
 
 
 def _test_strip_inline_marks_bold() -> None:
@@ -812,24 +786,32 @@ def main() -> int:
     slides_content = parse_rascunho(RASCUNHO_PATH.read_text(encoding="utf-8"))
     prs = Presentation(str(TEMPLATE_PATH))
 
-    # Expansão para 16 slides: o template Muller tem 14. Duplicamos duas vezes o layout
-    # do slide 9 (Metodologia — título + bullets) para criar os slots 10 (Arquitetura)
-    # e 11 (Fluxo de emissão). O conteúdo é substituído pelos handlers abaixo.
-    # source_idx=8 (0-based) = slide 9. target_idx=9 insere no slot 10 (1-based).
-    # A segunda chamada repete para o slot 11.
-    # Após as duplicações: slides originais 10..14 ficam deslocados para 12..16.
-    duplicate_slide_at(prs, source_idx=8, target_idx=9)
-    duplicate_slide_at(prs, source_idx=8, target_idx=10)
-    assert len(prs.slides) == 16, f"após duplicação esperávamos 16 slides, temos {len(prs.slides)}"
+    # Expansão para 19 slides: o template Muller tem 14. Duplicamos o layout do slide 9
+    # (Metodologia — título + bullets) para criar os slots 10 (Arquitetura) e 12 (Fluxo).
+    # Inserimos slots EM BRANCO em 11 (p/ V2), 13 (p/ V3) e 15 (p/ screenshots do portal)
+    # para o usuário posicionar as imagens manualmente após o build.
+    # source_idx=8 (0-based) = slide 9 Metodologia — fica estável durante todas as inserções
+    # porque todas acontecem em target_idx >= 9.
+    # Após as duplicações: slides originais 10..14 ficam deslocados para 14..19 (índices 1-based).
+    duplicate_slide_at(prs, source_idx=8, target_idx=9)       # cria slot 10 (Arquitetura)
+    insert_blank_slide_at(prs, source_idx=8, target_idx=10)   # cria slot 11 (vazio p/ V2)
+    duplicate_slide_at(prs, source_idx=8, target_idx=11)      # cria slot 12 (Fluxo)
+    insert_blank_slide_at(prs, source_idx=8, target_idx=12)   # cria slot 13 (vazio p/ V3)
+    insert_blank_slide_at(prs, source_idx=8, target_idx=14)   # cria slot 15 (vazio p/ screenshots)
+    assert len(prs.slides) == 19, f"após duplicação esperávamos 19 slides, temos {len(prs.slides)}"
 
-    GENERIC_SLIDES = {3, 6, 8, 9, 14}
-    BLOCKQUOTE_SLIDES = {1, 2, 5, 7, 16}
-    SLIDES_WITH_IMAGE = {4, 10, 11}
+    GENERIC_SLIDES = {3, 6, 8, 9, 10, 12, 14, 17}
+    BLOCKQUOTE_SLIDES = {1, 2, 5, 7, 19}
+    SLIDES_WITH_IMAGE = {4}
+    EMPTY_SLOTS = {11, 13, 15}
 
     slide_width = prs.slide_width
     slide_height = prs.slide_height
 
     for idx, slide in enumerate(prs.slides, start=1):
+        if idx in EMPTY_SLOTS:
+            print(f"Slide {idx}: slot vazio reservado para posicionamento manual.")
+            continue
         content = slides_content.get(idx)
         if content is None:
             print(f"Slide {idx}: SEM conteúdo no rascunho — mantido como no template.")
@@ -840,12 +822,10 @@ def main() -> int:
             logs = process_blockquote_slide(slide, content)
         elif idx in SLIDES_WITH_IMAGE:
             logs = process_slide_with_image(slide, content, slide_width, slide_height)
-        elif idx == 12:
-            logs = process_slide_12(slide, content, slide_width, slide_height)
-        elif idx == 13:
-            logs = process_slide_13(slide, content)
-        elif idx == 15:
-            logs = process_slide_15(slide, content)
+        elif idx == 16:
+            logs = process_slide_16(slide, content)
+        elif idx == 18:
+            logs = process_slide_18(slide, content)
         else:
             logs = [f"ERRO: slide {idx} sem handler mapeado"]
         print(f"Slide {idx}: {'; '.join(logs) if logs else '(nada)'}")
