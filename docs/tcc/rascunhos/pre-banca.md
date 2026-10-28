@@ -30,12 +30,12 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 - A integralização desses certificados em carga horária é **condição para colação de grau**.
 - Em IES de pequeno e médio porte, a gestão do ciclo de vida do certificado — **emitir, receber, validar, consolidar** — permanece **manual**.
 
-## Slide 4 — Problema · As-Is × To-Be
+## Slide 4 — Problema · Atual × Proposto
 
 - **Duas pontas, uma dor comum:** falta de ciclo digital do certificado.
 - Aluno **descobre lacunas no fechamento curricular** às vésperas da colação.
 
-![Diagrama As-Is vs To-Be — duas pontas (emissão/recepção), dois estados (hoje/plataforma)](./img/as-is-vs-to-be.png)
+![Diagrama Atual × Proposto — duas pontas (emissão/recepção), dois estados (hoje/plataforma)](./img/as-is-vs-to-be.png)
 
 ## Slide 5 — Pergunta de pesquisa
 
@@ -57,7 +57,7 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
 ## Slide 8 — Objetivos · Específicos
 
-- **Mapear** o fluxo vigente (As-Is) de **emissão** e de **recepção/validação** de certificados na FMPFM e definir a matriz de regras por categoria.
+- **Mapear** o fluxo atual de **emissão** e de **recepção/validação** de certificados na FMPFM e definir a matriz de regras por categoria.
 - **Prototipar** a arquitetura utilizando desenvolvimento acelerado com ferramentas web modernas e banco de dados relacional.
 - **Implementar** as áreas de emissão (eventos, participantes, geração de PDF), recepção (envio de certificados externos pelo aluno), avaliação (análise pela coordenação, aplicação das regras), consolidação (soma da carga horária) e emissão de documentos oficiais.
 - **Avaliar** o protótipo quanto à usabilidade (questionário SUS) e ao tempo de execução — comparando o processo atual e o processo com a plataforma, nos dois cenários (emissão e validação).
@@ -102,7 +102,7 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 | Prototipagem — recepção e validação | X | X | X | |
 | Prototipagem — emissão de certificados | | | X | X |
 | Testes de usabilidade (SUS) | | | | X |
-| Medição As-Is × To-Be (emissão e validação) | | | | X |
+| Medição atual × proposto (emissão e validação) | | | | X |
 | Escrita — Introdução e Fundamentação | X | | | |
 | Escrita — Metodologia | | X | | |
 | Escrita — Resultados e discussão | | | X | X |
@@ -110,7 +110,7 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
 ## Slide 17 — Considerações parciais
 
-- O mapeamento do As-Is confirmou **duas dores no ciclo de vida do certificado**: emissão ausente em eventos próprios da FMPFM e validação lenta de certificados externos.
+- O mapeamento do processo atual confirmou **duas dores no ciclo de vida do certificado**: emissão ausente em eventos próprios da FMPFM e validação lenta de certificados externos.
 - A opção por **ferramentas modernas como "desenvolvimento acelerado"** se mostrou viável em prazo acadêmico — fluxo de recepção e validação entregue em 2 meses (9 áreas no servidor e o portal do aluno).
 - Decisões estruturantes consolidadas: separação entre site e servidor, histórico de auditoria preservado contra alteração, e envio seguro de arquivos direto para o armazenamento.
 - **Próximos passos até a defesa:** implementar a área de **emissão** (cadastro de eventos, geração do PDF e entrega no portal do aluno), aplicar o questionário SUS e comparar o tempo do processo atual com o processo pela plataforma **nos dois cenários**.
@@ -156,7 +156,7 @@ Lacunas `[FALTA: ...]` ficam em branco no slide — rastreio em [[dominio/penden
 
 - [[tcc/visao-geral]] — identificação, objetivos e título do TCC.
 - [[tcc/estrutura-artigo]] — estrutura canônica das 5 seções do artigo.
-- [[tcc/metodologia]] — detalhamento do método (fases, SUS, As-Is × To-Be nos dois cenários).
+- [[tcc/metodologia]] — detalhamento do método (fases, SUS, comparação atual × proposto nos dois cenários).
 - [[tcc/cronograma]] — plano temporal de 5 meses.
 - [[tcc/rascunhos/01-introducao]] — rascunho da introdução.
 - [[tcc/trabalhos-correlatos]] — material da seção 2 (impacta slide 15 Referências).
