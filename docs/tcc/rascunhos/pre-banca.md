@@ -5,7 +5,7 @@ status: v2-reframe
 
 # TCC — Pré-banca (rascunho — reframe 2026-10-27 com slots vazios)
 
-Esqueleto da pré-banca sob o reframe para emissão + validação de certificados. 19 slides físicos: 16 com conteúdo (declarados abaixo) + 3 slots vazios (11, 13, 15) reservados para posicionamento manual dos diagramas V2/V3 e dos screenshots do portal. Formato compatível com o script `scripts/build-pre-banca.py` (dispatch por `## Slide N — ...`).
+Esqueleto da pré-banca sob o reframe para emissão e validação de certificados. 19 slides físicos: 16 com conteúdo (declarados abaixo) e 3 slots vazios (11, 13, 15) reservados para posicionamento manual dos diagramas e dos screenshots do portal. Formato compatível com o script `scripts/build-pre-banca.py` (dispatch por `## Slide N — ...`).
 
 Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
@@ -45,9 +45,9 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
 ## Slide 6 — Justificativa
 
-- Digitalização de fluxos acadêmicos é vetor reconhecido de **ganho de eficiência e transparência** em secretarias (literatura de BPM/BPA em IES).
+- Digitalizar fluxos acadêmicos é um caminho reconhecido para **ganhar eficiência e transparência** em secretarias de instituições de ensino.
 - A **ausência de emissão oficial** de certificados em eventos próprios de IES de pequeno/médio porte tira do aluno a prova material da própria formação — vazio documental com consequência direta no fechamento curricular.
-- Frameworks modernos (NestJS, Next.js, Prisma, Postgres) permitem **protótipos funcionais em prazo acadêmico** sem abrir mão de qualidade técnica.
+- Ferramentas atuais de desenvolvimento web permitem **construir protótipos funcionais em prazo acadêmico** sem abrir mão de qualidade técnica.
 - Trabalhos correlatos cobrem **partes isoladas** do problema — faltam soluções **integradas** tratando emissão **e** validação sob o mesmo ciclo, com **avaliação formal de usabilidade**.
 
 ## Slide 7 — Objetivos · Geral
@@ -58,41 +58,40 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 ## Slide 8 — Objetivos · Específicos
 
 - **Mapear** o fluxo vigente (As-Is) de **emissão** e de **recepção/validação** de certificados na FMPFM e definir a matriz de regras por categoria.
-- **Prototipar** a arquitetura utilizando desenvolvimento acelerado com stack moderna (NestJS, Next.js, Prisma, PostgreSQL).
-- **Implementar** os módulos de emissão (eventos, participantes, geração de PDF), recepção (submissão de certificados externos), avaliação (revisão pela coordenação, aplicação da matriz), consolidação (carga horária) e emissão de documentos oficiais.
-- **Avaliar** o protótipo quanto à usabilidade (SUS) e ao desempenho operacional — latência As-Is × To-Be, medida separadamente para emissão e para validação.
+- **Prototipar** a arquitetura utilizando desenvolvimento acelerado com ferramentas web modernas e banco de dados relacional.
+- **Implementar** as áreas de emissão (eventos, participantes, geração de PDF), recepção (envio de certificados externos pelo aluno), avaliação (análise pela coordenação, aplicação das regras), consolidação (soma da carga horária) e emissão de documentos oficiais.
+- **Avaliar** o protótipo quanto à usabilidade (questionário SUS) e ao tempo de execução — comparando o processo atual e o processo com a plataforma, nos dois cenários (emissão e validação).
 
 ## Slide 9 — Metodologia
 
 - **Tipo de pesquisa:** aplicada, quanti-qualitativa, experimental, estudo de caso.
-- **Fase 1 — Levantamento:** mapeamento As-Is das duas pontas (emissão e recepção), regulamento, requisitos funcionais e não funcionais.
-- **Fase 2 — Modelagem:** schema Prisma, arquitetura em módulos, definição de papéis (aluno, coordenação).
-- **Fase 3 — Prototipagem acelerada:** interfaces (Next.js) e automações (NestJS) em ciclos curtos.
-- **Fase 4 — Avaliação:** usabilidade (SUS, 10 itens Likert; faixa ≥ 68 = acima da média) + medição de latência As-Is × To-Be em dois cenários (emissão de certificado em evento próprio; validação de certificado externo).
+- **Fase 1 — Levantamento:** mapeamento do processo atual nas duas pontas (emissão e recepção), regulamento da instituição e lista de requisitos.
+- **Fase 2 — Modelagem:** desenho do banco de dados, arquitetura em módulos, definição dos papéis (aluno e coordenação).
+- **Fase 3 — Prototipagem acelerada:** telas do site e automações do servidor, construídas em ciclos curtos.
+- **Fase 4 — Avaliação:** usabilidade pelo questionário SUS (10 perguntas; nota 68 ou mais é considerada acima da média) e comparação de tempo entre o processo atual e o processo com a plataforma, nos dois cenários (emissão de certificado em evento próprio e validação de certificado externo).
 
 ## Slide 10 — Arquitetura
 
-- **Separação estrita `web ↔ api`:** interface não acessa banco; API não serve HTML.
-- **Dois caminhos para o certificado**: um emitido pela FMPFM, outro trazido pelo aluno — convergem no mesmo ciclo de validação.
+- **Separação entre a parte visual (site) e a parte servidora (regras e dados):** o site não acessa o banco direto, o servidor não entrega páginas.
+- **Dois caminhos para o certificado**: um emitido pela própria FMPFM, outro trazido pelo aluno — ambos passam pelo mesmo processo de validação.
 - Diagrama no slide seguinte.
 
 ## Slide 12 — Fluxo caminho feliz da emissão
 
-- 6 passos: evento → participantes → PDF → storage → notificação → horas.
-- Ramificações (reemissão, correção) tratadas no sistema mas fora deste slide.
+- 6 passos: cadastrar o evento, registrar os participantes, gerar o certificado em PDF, guardar o arquivo, avisar o aluno e somar as horas na ficha dele.
+- Variações do fluxo (segunda via, correção) são tratadas pelo sistema, mas não aparecem neste slide.
 - Diagrama no slide seguinte.
 
 ## Slide 14 — Resultados preliminares
 
-> _Qualificação — protótipo em andamento, SUS/As-Is ainda não executados._
+> _Qualificação — protótipo em andamento; avaliação de usabilidade e medição de tempo ainda não executadas._
 
-- **Mapeamento As-Is da FMPFM concluído** — baseline documentado para a Fase 4.
-- **Schema de dados modelado** em Prisma 6 (usuários, submissões, documentos, categorias, matriz, eventos, auditoria).
-- **Backend NestJS 11** — 9 módulos; fluxo de **recepção e validação** ponta a ponta, com máquina de estados da submissão formalmente definida (`AWAITING_UPLOAD → PENDING → UNDER_REVIEW → APPROVED | REJECTED | CORRECTION_REQUESTED`).
-- **Upload direto ao storage** via POST policy (RF-06).
-- **Portal do aluno** (Next.js 15 + React 19): autenticação real, half-circle de progresso, consumo de `GET /categorias`.
-- **Em desenvolvimento até a defesa:** módulo de **emissão** (eventos → geração de PDF → portal do aluno).
-- Screenshots no slide seguinte.
+- **Processo atual da FMPFM mapeado** e documentado como ponto de partida da avaliação.
+- **Banco de dados projetado** cobrindo alunos, envios, documentos, categorias, regras, eventos e histórico.
+- **Servidor da aplicação pronto** com 9 áreas; fluxo completo de recepção e validação de certificado externo, com ciclo definido: aguardando envio, aguardando análise, em análise, aprovado, recusado ou pedido de correção.
+- **Portal do aluno em funcionamento**: login, indicador de progresso de horas e consulta de categorias.
+- **Em desenvolvimento até a defesa:** área de emissão de certificados para eventos próprios da FMPFM.
+- Telas do portal no slide seguinte.
 
 ## Slide 16 — Cronograma
 
@@ -112,9 +111,9 @@ Spec: [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 ## Slide 17 — Considerações parciais
 
 - O mapeamento do As-Is confirmou **duas dores no ciclo de vida do certificado**: emissão ausente em eventos próprios da FMPFM e validação lenta de certificados externos.
-- A opção por **stack moderna como "desenvolvimento acelerado"** se mostrou viável em prazo acadêmico — fluxo de recepção/validação entregue em 2 meses (9 módulos backend + portal do aluno).
-- Decisões estruturantes consolidadas: separação estrita `web ↔ api`, `AuditLog` append-only, upload direto ao storage via POST policy.
-- **Próximos passos até a defesa:** implementar o módulo de **emissão** (eventos → PDF → portal), executar SUS e medir As-Is × To-Be **nos dois cenários**.
+- A opção por **ferramentas modernas como "desenvolvimento acelerado"** se mostrou viável em prazo acadêmico — fluxo de recepção e validação entregue em 2 meses (9 áreas no servidor e o portal do aluno).
+- Decisões estruturantes consolidadas: separação entre site e servidor, histórico de auditoria preservado contra alteração, e envio seguro de arquivos direto para o armazenamento.
+- **Próximos passos até a defesa:** implementar a área de **emissão** (cadastro de eventos, geração do PDF e entrega no portal do aluno), aplicar o questionário SUS e comparar o tempo do processo atual com o processo pela plataforma **nos dois cenários**.
 
 ## Slide 18 — Referências
 
@@ -145,9 +144,9 @@ Para gerar (ou regerar após editar este rascunho) a apresentação:
 python3 scripts/build-pre-banca.py
 ```
 
-O arquivo gerado é `~/Downloads/pre-banca.pptx` com **19 slides**. Os slots 11, 13 e 15 ficam vazios por construção — o autor posiciona manualmente ali o diagrama de arquitetura (V2), o fluxograma de emissão (V3) e os screenshots do portal do aluno.
+O arquivo gerado é `~/Downloads/pre-banca.pptx` com **19 slides**. Os slots 11, 13 e 15 ficam vazios por construção — o autor posiciona manualmente ali o diagrama de arquitetura, o fluxograma de emissão e os screenshots do portal do aluno.
 
-Lacunas `[FALTA: ...]` ficam em branco no slide — rastreio em [[dominio/pendencias]]. Imagem placeholder do slide 4 (V1 As-Is × To-Be) ainda é inserida automaticamente pelo handler quando o arquivo existir; se ausente, o build loga aviso e segue.
+Lacunas `[FALTA: ...]` ficam em branco no slide — rastreio em [[dominio/pendencias]]. Imagem placeholder do slide 4 (diagrama Antes × Depois) ainda é inserida automaticamente pelo handler quando o arquivo existir; se ausente, o build loga aviso e segue.
 
 **Spec:** [[superpowers/specs/2026-10-27-pre-banca-reframe-certificados-design]].
 
