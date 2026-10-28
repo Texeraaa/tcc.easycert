@@ -1,12 +1,16 @@
-%% Diagrama V3 — Slot 13 (vazio) — Fluxo caminho feliz da emissão
+%% Diagrama V3 — Slot 13 (vazio) — Fluxo caminho feliz da emissão (com atores)
 %% Renderizar em https://mermaid.live, exportar PNG, colar manualmente no slide 13.
 
-flowchart LR
-    A["<b>1.</b><br/>FMPFM cadastra<br/>o evento"] --> B["<b>2.</b><br/>Registra os<br/>participantes"]
-    B --> C["<b>3.</b><br/>Sistema gera<br/>o certificado<br/>em PDF"]
-    C --> D["<b>4.</b><br/>Arquivo guardado<br/>com segurança"]
-    D --> E["<b>5.</b><br/>Aluno é avisado<br/>(portal e e-mail)"]
-    E --> F["<b>6.</b><br/>Horas somadas<br/>na ficha do aluno"]
+sequenceDiagram
+    actor COORD as Coordenação (FMPFM)
+    participant SIS as Sistema (easycert)
+    actor ALUNO as Aluno
 
-    classDef passo fill:#eafaf1,stroke:#1e8449,color:#000;
-    class A,B,C,D,E,F passo;
+    COORD->>SIS: 1. Cadastra o evento
+    COORD->>SIS: 2. Registra os participantes
+    Note over SIS: 3. Gera o certificado em PDF
+    Note over SIS: 4. Guarda o arquivo com segurança
+    SIS->>ALUNO: 5. Avisa (portal e e-mail)
+    Note over SIS: 6. Soma as horas na ficha do aluno
+    ALUNO->>SIS: Baixa o certificado pelo portal
+    SIS-->>ALUNO: Entrega o PDF
