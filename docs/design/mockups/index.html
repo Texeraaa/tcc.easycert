@@ -1,397 +1,856 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light" data-density="comfortable">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>easycert · Design mockups</title>
-  <script>
-    (() => {
-      try {
-        const stored = localStorage.getItem("easycert.theme");
-        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", stored || sys);
-      } catch { document.documentElement.setAttribute("data-theme", "light"); }
-    })();
-  </script>
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
-  <link rel="stylesheet" href="_shared.css" />
-  <style>
-    .thumb {
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-      color: var(--muted-foreground);
-      font-family: var(--font-mono);
-    }
-    .group-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted-foreground);
-      font-weight: 600;
-      margin: 0 0 12px;
-    }
-    /* mini-mockups dentro das thumbs */
-    .mini {
-      width: 100%; height: 100%;
-      padding: 10px;
-      display: flex; flex-direction: column;
-      gap: 6px;
-      background: var(--card);
-      box-shadow: inset 0 0 0 1px var(--border);
-    }
-    .mini__bar {
-      height: 8px;
-      background: var(--muted);
-      border-radius: 2px;
-    }
-    .mini__accent { background: var(--accent); }
-    .mini__row {
-      display: flex; gap: 4px;
-    }
-    .mini__row > * { flex: 1; }
-    .mini__card {
-      background: var(--muted);
-      border-radius: 3px;
-      height: 24px;
-    }
-    .mini__title {
-      height: 12px; width: 50%;
-      background: var(--foreground);
-      opacity: 0.75;
-      border-radius: 2px;
-    }
-    .mini__input {
-      height: 14px;
-      background: var(--background);
-      box-shadow: inset 0 0 0 1px var(--border);
-      border-radius: 2px;
-    }
-    .mini__btn {
-      height: 14px; width: 48px;
-      background: var(--accent);
-      border-radius: 3px;
-    }
-    .mini__table {
-      flex: 1;
-      background: var(--muted);
-      border-radius: 3px;
-      display: flex; flex-direction: column;
-      gap: 2px; padding: 4px;
-    }
-    .mini__trow {
-      height: 6px;
-      background: var(--card);
-      border-radius: 1px;
-    }
-    .mini__trow--sel { background: var(--accent-muted-strong); }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>easycert - protótipo</title>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+<style>
+:root{
+  --background:#fafafa;--foreground:#09090b;--muted:#f4f4f5;--muted-foreground:#71717a;
+  --border:#e4e4e7;--input:#e4e4e7;--accent:#27592e;--accent-foreground:#fafafa;
+  --accent-muted:rgba(39,89,46,.10);--destructive:#dc2626;--warning:#d97706;--ring:#27592e;
+  --card:#ffffff;
+  --shadow-sm:0 1px 2px rgba(24,24,27,.05);--shadow-md:0 4px 12px rgba(24,24,27,.08);--shadow-lg:0 12px 32px rgba(24,24,27,.12);
+  --ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1);
+  --font-sans:"Satoshi",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --row-y:12px;--row-x:16px;
+}
+[data-theme=dark]{
+  --background:#09090b;--foreground:#fafafa;--muted:#18181b;--muted-foreground:#a1a1aa;
+  --border:#27272a;--input:#27272a;--accent:#4a9b58;--accent-foreground:#09090b;
+  --accent-muted:rgba(74,155,88,.15);--destructive:#ef4444;--warning:#f59e0b;--ring:#4a9b58;
+  --card:#0e0e11;
+}
+[data-density=compact]{--row-y:8px;--row-x:12px}
+*{box-sizing:border-box}
+html{color-scheme:light}
+[data-theme=dark]{color-scheme:dark}
+body{margin:0;background:var(--background);color:var(--foreground);font-family:var(--font-sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100dvh}
+h1,h2,h3,p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+.ph,.ph-fill{display:inline-block;vertical-align:-.125em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.skip{position:absolute;left:8px;top:-60px;background:var(--accent);color:var(--accent-foreground);padding:8px 12px;border-radius:6px;z-index:100}
+.skip:focus{top:8px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:6px;border:1px solid transparent;background:transparent;font-weight:500;cursor:pointer;white-space:nowrap;transition:transform 160ms var(--ease-out),background-color 150ms ease,border-color 150ms ease,color 150ms ease}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.6;cursor:not-allowed}
+.btn i{font-size:16px}
+.btn-primary{background:var(--accent);color:var(--accent-foreground)}
+.btn-outline{border-color:var(--border);background:var(--background)}
+.btn-ghost{color:var(--muted-foreground)}
+.btn-destructive{border-color:var(--border);color:var(--destructive);background:var(--background)}
+.btn-lg{height:44px;padding:0 20px;font-size:15px}
+.btn-icon{width:32px;height:32px;padding:0}
+@media (hover:hover) and (pointer:fine){
+  .btn-primary:hover{background:color-mix(in srgb,var(--accent) 88%,#000)}
+  .btn-outline:hover,.btn-ghost:hover{background:var(--muted);color:var(--foreground)}
+  .btn-destructive:hover{background:rgba(220,38,38,.08)}
+}
+.spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* shell */
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100dvh;transition:grid-template-columns 240ms var(--ease-drawer)}
+.shell.collapsed{grid-template-columns:60px 1fr}
+.side{position:sticky;top:0;height:100dvh;border-right:1px solid var(--border);background:var(--background);display:flex;flex-direction:column;padding:12px 8px;gap:4px;overflow:hidden}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 10px 14px;font-weight:700;font-size:17px;letter-spacing:-.01em;white-space:nowrap}
+.brand i{color:var(--accent);font-size:22px}
+.nav-item{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:6px;color:var(--muted-foreground);background:none;border:0;cursor:pointer;width:100%;text-align:left;white-space:nowrap;font-weight:500;transition:background-color 150ms ease,color 150ms ease}
+.nav-item i{font-size:20px;flex:none}
+.nav-item[aria-current=page]{background:var(--accent-muted);color:var(--accent)}
+.nav-count{margin-left:auto;font-size:12px}
+@media (hover:hover) and (pointer:fine){.nav-item:hover{background:var(--muted);color:var(--foreground)}.nav-item[aria-current=page]:hover{background:var(--accent-muted);color:var(--accent)}}
+.collapsed .lbl,.collapsed .nav-count,.collapsed .side-foot .seg,.collapsed .who-text{display:none}
+.side-sp{flex:1}
+.side-foot{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--border);padding-top:10px}
+.seg{display:flex;flex-direction:column;gap:2px;padding:4px;background:var(--muted);border-radius:6px}
+.seg-title{font-size:12px;color:var(--muted-foreground);padding:2px 6px}
+.seg button{height:28px;border:0;background:none;border-radius:4px;text-align:left;padding:0 8px;cursor:pointer;color:var(--muted-foreground);font-weight:500}
+.seg button[aria-pressed=true]{background:var(--background);color:var(--foreground);box-shadow:var(--shadow-sm)}
+.who{display:flex;align-items:center;gap:10px;padding:6px 8px}
+.avatar{width:28px;height:28px;border-radius:9999px;background:var(--accent-muted);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.main{min-width:0}
+.topbar{display:none}
+.mock-chip{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:9999px;background:var(--muted);color:var(--muted-foreground);font-family:var(--font-mono);font-size:12px}
+
+/* page */
+.page{margin:0 auto;padding:32px 24px 48px;max-width:64rem}
+.page.wide{max-width:none}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
+.page h1{font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-.015em}
+.page h1.hero{font-size:30px}
+.lede{color:var(--muted-foreground);max-width:65ch;margin-top:4px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.coord .stack{gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:6px}
+.card-pad{padding:20px}
+h2{font-size:18px;font-weight:700;line-height:1.3}
+h3{font-size:16px;font-weight:700}
+.muted{color:var(--muted-foreground)}
+
+/* forms */
+.grid-form{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:500}
+.hint{font-size:12px;color:var(--muted-foreground)}
+.input,select.input,textarea.input{height:40px;border:1px solid var(--input);border-radius:6px;background:var(--background);padding:0 12px;width:100%;transition:border-color 150ms ease}
+textarea.input{height:88px;padding:10px 12px;resize:vertical}
+.input:focus-visible{outline:2px solid var(--ring);outline-offset:0;border-color:var(--ring)}
+.input[aria-invalid=true]{border-color:var(--destructive)}
+.err{display:none;align-items:center;gap:6px;color:var(--destructive);font-size:13px}
+.err.show{display:flex}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.drop{border:1px dashed var(--input);border-radius:6px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;cursor:pointer;background:var(--muted);transition:border-color 150ms ease,background-color 150ms ease}
+.drop i{font-size:24px;color:var(--muted-foreground)}
+.drop.has{border-style:solid;background:var(--accent-muted);border-color:var(--accent)}
+.drop.has i{color:var(--accent)}
+@media (hover:hover){.drop:hover{border-color:var(--muted-foreground)}}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;padding-top:4px}
+
+/* progress */
+.bar{height:8px;background:var(--muted);border-radius:9999px;overflow:hidden}
+.bar>span{display:block;height:100%;background:var(--accent);border-radius:9999px}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+
+/* badge */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:9999px;font-size:12px;font-weight:500;white-space:nowrap;background:var(--muted);color:var(--muted-foreground)}
+.badge i{font-size:14px}
+.b-Pendente{color:var(--warning);background:color-mix(in srgb,var(--warning) 12%,transparent)}
+.b-Aprovada,.b-Emitido{color:var(--accent);background:var(--accent-muted)}
+.b-Indeferida{color:var(--destructive);background:color-mix(in srgb,var(--destructive) 10%,transparent)}
+.b-Emanalise,.b-Rascunho{color:var(--muted-foreground)}
+.t-Pendente{color:var(--warning)}.t-Aprovada{color:var(--accent)}.t-Indeferida{color:var(--destructive)}
+
+/* submissions list */
+.sub{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:14px 16px;align-items:center}
+.sub+.sub{border-top:1px solid var(--border)}
+.sub .t{font-weight:500}
+.sub .meta{font-size:12px;color:var(--muted-foreground);display:flex;gap:12px;flex-wrap:wrap}
+.reason{grid-column:1/-1;font-size:13px;color:var(--muted-foreground);display:flex;gap:6px;align-items:flex-start}
+
+/* declaration document */
+.doc{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow-md);display:grid;grid-template-columns:1fr 172px;gap:28px;padding:32px;position:relative}
+.doc-head{display:flex;align-items:center;gap:10px;color:var(--accent);margin-bottom:20px}
+.doc-head i{font-size:28px}
+.doc h2{font-size:20px;color:var(--foreground)}
+.doc p.body{max-width:65ch;font-size:16px;line-height:1.65}
+.doc dl{display:grid;grid-template-columns:auto 1fr;gap:6px 20px;margin:20px 0 0;font-size:14px}
+.doc dt{color:var(--muted-foreground)}
+.doc dd{margin:0}
+.qr{background:#fafafa;border:1px solid var(--border);border-radius:6px;padding:10px;width:172px}
+.qr svg{display:block;width:100%;height:auto}
+.qr-cap{font-size:12px;color:var(--muted-foreground);margin-top:8px;text-align:center}
+.qr-code{font-family:var(--font-mono);font-size:12px;text-align:center;margin-top:2px}
+.doc-foot{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
+
+/* coord */
+.banner{display:none;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;background:color-mix(in srgb,var(--warning) 10%,transparent);color:var(--foreground);border:1px solid color-mix(in srgb,var(--warning) 35%,transparent)}
+.banner i{color:var(--warning);font-size:20px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--muted-foreground);font-weight:500;cursor:pointer;white-space:nowrap;transition:color 150ms ease}
+.tab[aria-selected=true]{color:var(--foreground);border-bottom-color:var(--accent)}
+.tab .n{font-size:12px;background:var(--muted);border-radius:9999px;padding:0 7px;color:var(--muted-foreground)}
+@media (hover:hover){.tab:hover{color:var(--foreground)}}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search{position:relative;width:340px;max-width:100%}
+.search i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted-foreground);font-size:16px}
+.search .input{height:34px;padding-left:34px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:9999px;border:1px solid var(--border);background:var(--background);cursor:pointer;font-weight:500;font-size:13px;color:var(--muted-foreground);transition:background-color 150ms ease,color 150ms ease,border-color 150ms ease}
+.chip[aria-pressed=true]{background:var(--accent-muted);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.tbl-wrap{border:1px solid var(--border);border-radius:6px;overflow:auto;background:var(--card)}
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;font-weight:500;color:var(--muted-foreground);padding:10px var(--row-x);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+td{padding:var(--row-y) var(--row-x);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background-color 150ms ease}
+tbody tr.sel{background:var(--accent-muted)}
+[data-input=kbd] tbody tr{transition:none}
+@media (hover:hover) and (pointer:fine){tbody tr:hover{background:color-mix(in srgb,var(--muted) 50%,transparent)}tbody tr.sel:hover{background:var(--accent-muted)}}
+.r{text-align:right}.c{text-align:center}
+.who2{display:flex;flex-direction:column;line-height:1.35}
+.who2 b{font-weight:500}
+.who2 span{font-size:12px;color:var(--muted-foreground)}
+.row-actions{display:flex;gap:4px;justify-content:flex-end;opacity:0;transition:opacity 150ms ease}
+tr:hover .row-actions,tr.sel .row-actions,tr:focus-within .row-actions{opacity:1}
+.cb{appearance:none;width:16px;height:16px;border:1px solid var(--muted-foreground);border-radius:4px;background:var(--background);cursor:pointer;display:grid;place-content:center;margin:0}
+.cb:checked{background:var(--accent);border-color:var(--accent)}
+.cb:checked::after{content:"";width:8px;height:4px;border-left:2px solid var(--accent-foreground);border-bottom:2px solid var(--accent-foreground);transform:rotate(-45deg) translate(1px,-1px)}
+.empty{padding:48px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.empty i{font-size:24px;color:var(--muted-foreground)}
+.cards-m{display:none}
+.kbd-hint{font-size:12px;color:var(--muted-foreground);display:flex;gap:12px;flex-wrap:wrap}
+kbd{font-family:var(--font-mono);font-size:11px;border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--muted)}
+
+/* sheet and dialog */
+.scrim{position:fixed;inset:0;background:rgba(9,9,11,.28);opacity:0;pointer-events:none;transition:opacity 180ms ease;z-index:40}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:480px;max-width:100%;background:var(--background);border-left:1px solid var(--border);box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform 180ms var(--ease-drawer);z-index:50;display:flex;flex-direction:column}
+.sheet.open{transform:none;transition-duration:240ms}
+.sheet-head{display:flex;justify-content:space-between;gap:12px;padding:20px;border-bottom:1px solid var(--border)}
+.sheet-body{padding:20px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:20px}
+.sheet-foot{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.pdf{aspect-ratio:16/9;border:1px solid var(--border);border-radius:6px;background:var(--muted);display:grid;place-items:center;color:var(--muted-foreground);text-align:center;font-size:13px}
+.pdf i{font-size:32px;display:block;margin:0 auto 4px}
+.dl{display:grid;grid-template-columns:120px 1fr;gap:8px 12px;margin:0}
+.dl dt{color:var(--muted-foreground)}.dl dd{margin:0}
+[data-input=kbd] .sheet,[data-input=kbd] .scrim,[data-input=kbd] .dialog{transition-duration:0s!important}
+.dialog{position:fixed;left:50%;top:50%;width:440px;max-width:calc(100% - 32px);background:var(--background);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow-lg);padding:20px;z-index:60;opacity:0;transform:translate(-50%,-50%) scale(.95);pointer-events:none;transition:opacity 120ms var(--ease-out),transform 120ms var(--ease-out)}
+.dialog.open{opacity:1;transform:translate(-50%,-50%);pointer-events:auto;transition-duration:200ms}
+.dialog .form-actions{padding-top:16px}
+
+/* toast */
+.toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:80}
+.toast{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--foreground);color:var(--background);border-radius:8px;box-shadow:var(--shadow-lg);animation:tin 300ms var(--ease-out)}
+.toast.out{opacity:0;transform:translateY(6px);transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out)}
+.toast button{background:none;border:0;color:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+@keyframes tin{from{opacity:0;transform:translateY(8px) scale(.95)}}
+
+/* admin */
+.next{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px;border-radius:6px;border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:var(--accent-muted)}
+.next h2{font-size:20px}
+.admin-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.legend-row{display:grid;grid-template-columns:110px 1fr 44px;gap:12px;align-items:center;font-size:13px;padding:5px 0}
+.legend-row .bar{height:10px}
+.chart text{font-family:var(--font-mono);font-size:11px;fill:var(--muted-foreground)}
+.old-list{display:flex;flex-direction:column}
+.old-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0}
+.old-item+.old-item{border-top:1px solid var(--border)}
+
+/* mobile nav */
+.tabbar{display:none}
+@media (max-width:1023px){
+  .banner{display:flex}
+  .coord .btn-lg{height:40px}
+  .coord-actions{display:none!important}
+}
+@media (max-width:767px){
+  .shell,.shell.collapsed{display:block}
+  .side{position:fixed;left:0;top:0;bottom:0;width:272px;transform:translateX(-100%);transition:transform 240ms var(--ease-drawer);z-index:70;box-shadow:var(--shadow-lg)}
+  .side.open{transform:none}
+  .shell.collapsed .lbl,.shell.collapsed .nav-count,.shell.collapsed .side-foot .seg,.shell.collapsed .who-text{display:revert}
+  .shell.collapsed .nav-count{display:inline}
+  .collapse-btn{display:none!important}
+  .topbar{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--background);z-index:30}
+  .page{padding:20px 16px 88px}
+  .page-head{flex-direction:column}
+  .grid-form,.admin-grid{grid-template-columns:1fr}
+  .row2{grid-template-columns:1fr}
+  .doc{grid-template-columns:1fr;padding:20px}
+  .qr{width:160px}
+  .next{flex-direction:column;align-items:stretch}
+  .tbl-wrap{display:none}
+  .cards-m{display:flex;flex-direction:column;gap:8px}
+  .mcard{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;align-items:flex-start}
+  .tabbar{display:grid;grid-template-columns:1fr 1fr;position:fixed;left:0;right:0;bottom:0;background:var(--background);border-top:1px solid var(--border);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+  .tabbar button{height:56px;background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--muted-foreground);font-weight:500}
+  .tabbar button i{font-size:22px}
+  .tabbar button[aria-current=page]{color:var(--accent)}
+  .toasts{left:16px;right:16px;bottom:72px}
+  .search{width:100%}
+  .doc-foot .btn{flex:1}
+  .legend-row{grid-template-columns:90px 1fr 40px}
+}
+
+/* certificados */
+.shell.pub,.shell.pub.collapsed{display:block}
+.pub .side,.pub .topbar,.pub .tabbar{display:none}
+.pubwrap{max-width:36rem;margin:0 auto;padding:24px 20px 64px}
+.pubhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+.pubwrap h1{font-size:24px;font-weight:700;letter-spacing:-.015em}
+.verdict{display:flex;gap:12px;align-items:flex-start}
+.verdict i{font-size:28px;color:var(--destructive);flex:none}
+.verdict.ok i{color:var(--accent)}
+.card.bad{border-color:color-mix(in srgb,var(--destructive) 40%,transparent)}
+.list-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:16px;align-items:center;padding:14px 16px;cursor:pointer;transition:background-color 150ms ease}
+.list-row+.list-row{border-top:1px solid var(--border)}
+@media (hover:hover) and (pointer:fine){.list-row:hover{background:color-mix(in srgb,var(--muted) 50%,transparent)}}
+.list-row .t{font-weight:500}
+.list-row .meta{font-size:12px;color:var(--muted-foreground);display:flex;gap:12px}
+.ico{width:36px;height:36px;border-radius:6px;background:var(--accent-muted);color:var(--accent);display:grid;place-items:center;font-size:20px}
+.step-i{display:grid;grid-template-columns:auto 1fr;gap:10px;color:var(--muted-foreground)}
+.step-i i{font-size:20px;color:var(--accent)}
+.items{list-style:none;padding:0;margin:16px 0 0;max-width:65ch;display:flex;flex-direction:column;gap:6px}
+.items li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--border)}
+.tabbar[hidden]{display:none!important}
+@media (max-width:767px){.hide-m{display:none}.list-row{grid-template-columns:auto 1fr auto}.pubhead{margin-bottom:24px}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .sheet,.dialog{transform:none}
+  .sheet:not(.open){visibility:hidden}
+}
+</style>
 </head>
 <body>
-  <header class="app-header">
-    <div class="app-header__inner">
-      <a class="brand" href="index.html">
-        <span class="brand__mark">e</span>
-        easycert
-        <span class="badge badge--muted" style="margin-left:8px">mockups</span>
-      </a>
-      <nav class="app-nav">
-        <a class="app-nav__link" aria-current="page" href="index.html">Galeria</a>
-        <a class="app-nav__link" href="componentes.html">Componentes</a>
-        <a class="app-nav__link" href="estados-ui.html">Estados</a>
-      </nav>
-      <div class="row">
-        <button class="btn btn--ghost btn--sm" data-theme-toggle aria-pressed="false">
-          <i data-theme-icon class="ph ph-moon"></i>
-          <span data-theme-label>Escuro</span>
-        </button>
+<a class="skip" href="#main">Pular para o conteúdo</a>
+<div class="shell" id="shell">
+  <aside class="side" id="side" aria-label="Navegação principal"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="btn btn-ghost btn-icon" id="menuBtn" aria-label="Abrir menu"><i class="ph ph-list"></i></button>
+      <span class="brand" style="padding:0"><i class="ph-fill ph-certificate"></i>easycert</span>
+      <span style="width:32px"></span>
+    </div>
+    <main id="main" tabindex="-1"></main>
+  </div>
+</div>
+<nav class="tabbar" id="tabbar" aria-label="Navegação do aluno"></nav>
+<div class="scrim" id="scrim"></div>
+<aside class="sheet" id="sheet" aria-label="Detalhe da submissão" aria-hidden="true"></aside>
+<div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle"></div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const ic=(n,fill)=>`<i class="${fill?'ph-fill':'ph'} ph-${n}" aria-hidden="true"></i>`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TODAY=new Date(2026,9,27);
+const dt=s=>{const[d,m,y]=s.split('/').map(Number);return new Date(y,m-1,d)};
+const age=s=>Math.round((TODAY-dt(s))/864e5);
+
+/* preferências em cookie (easycert.theme, easycert.density) */
+function getCookie(k){try{const m=document.cookie.match(new RegExp('(?:^|; )'+k.replace('.','\\.')+'=([^;]*)'));return m?decodeURIComponent(m[1]):null}catch(e){return null}}
+function setCookie(k,v){try{document.cookie=`${k}=${encodeURIComponent(v)}; Path=/; Max-Age=31536000; SameSite=Lax`}catch(e){}}
+
+const STATUS={
+  'Rascunho':{icon:'pencil-simple',fill:false,cls:'Rascunho'},
+  'Pendente':{icon:'clock',fill:false,cls:'Pendente'},
+  'Em análise':{icon:'magnifying-glass',fill:false,cls:'Emanalise'},
+  'Aprovada':{icon:'check-circle',fill:true,cls:'Aprovada'},
+  'Indeferida':{icon:'x-circle',fill:true,cls:'Indeferida'},
+  'Emitido':{icon:'certificate',fill:true,cls:'Emitido'}
+};
+const badge=s=>{const c=STATUS[s];return `<span class="badge b-${c.cls}">${ic(c.icon,c.fill)}${s}</span>`};
+const CATS=['Ensino','Pesquisa','Extensão','Eventos'];
+
+/* solicitações na fila do coordenador */
+const ROWS=[
+ {id:1,aluno:'Ana Oliveira',mat:'2023.1.0142',curso:'Sistemas de Informação',ativ:'Minicurso de React avançado',cat:'Extensão',h:20,env:'14/10/2026',st:'Pendente'},
+ {id:2,aluno:'Carlos Mendes',mat:'2022.2.0310',curso:'Ciência da Computação',ativ:'Monitoria de Cálculo I',cat:'Ensino',h:40,env:'12/10/2026',st:'Pendente'},
+ {id:3,aluno:'Beatriz Souza',mat:'2023.1.0087',curso:'Sistemas de Informação',ativ:'Semana de Tecnologia 2026',cat:'Eventos',h:12,env:'19/10/2026',st:'Em análise',mine:true},
+ {id:4,aluno:'Rafael Lima',mat:'2021.2.0455',curso:'Engenharia de Software',ativ:'Iniciação científica em visão computacional',cat:'Pesquisa',h:60,env:'16/10/2026',st:'Pendente'},
+ {id:5,aluno:'Juliana Costa',mat:'2023.2.0021',curso:'Sistemas de Informação',ativ:'Oficina de robótica',cat:'Extensão',h:16,env:'23/10/2026',st:'Pendente'},
+ {id:6,aluno:'Marcos Pereira',mat:'2022.1.0199',curso:'Ciência da Computação',ativ:'Palestra sobre ética em IA',cat:'Eventos',h:4,env:'24/10/2026',st:'Pendente'},
+ {id:7,aluno:'Camila Rocha',mat:'2022.2.0276',curso:'Engenharia de Software',ativ:'Curso de inglês B2',cat:'Ensino',h:30,env:'10/10/2026',st:'Pendente'},
+ {id:8,aluno:'Gustavo Alves',mat:'2023.1.0360',curso:'Sistemas de Informação',ativ:'Hackathon universitário',cat:'Eventos',h:24,env:'26/10/2026',st:'Pendente'},
+ {id:9,aluno:'Fernanda Dias',mat:'2021.1.0118',curso:'Ciência da Computação',ativ:'Projeto de extensão: horta comunitária',cat:'Extensão',h:45,env:'21/10/2026',st:'Em análise',mine:true},
+ {id:10,aluno:'Lucas Martins',mat:'2022.1.0402',curso:'Engenharia de Software',ativ:'Apresentação em congresso de pesquisa',cat:'Pesquisa',h:30,env:'18/10/2026',st:'Pendente'}
+];
+
+/* certificados emitidos pela faculdade (registro) */
+const SI='Sistemas de Informação',CC='Ciência da Computação',ES='Engenharia de Software';
+const CERTS=[
+ {code:'EC-7F3K-92QD',aluno:'Ana Oliveira',mat:'2023.1.0142',curso:SI,titulo:'Semana de Tecnologia 2026',cat:'Eventos',h:12,em:'03/09/2026'},
+ {code:'EC-2M8P-41XA',aluno:'Ana Oliveira',mat:'2023.1.0142',curso:SI,titulo:'Monitoria de Cálculo I',cat:'Ensino',h:40,em:'15/07/2026'},
+ {code:'EC-9D5R-70LT',aluno:'Ana Oliveira',mat:'2023.1.0142',curso:SI,titulo:'Curso de extensão: Git e GitHub',cat:'Extensão',h:8,em:'20/04/2026'},
+ {code:'EC-4H6W-18ZB',aluno:'Ana Oliveira',mat:'2023.1.0142',curso:SI,titulo:'Relatório consolidado',cat:'Consolidado',h:60,em:'27/10/2026',itens:['EC-7F3K-92QD','EC-2M8P-41XA','EC-9D5R-70LT']},
+ {code:'EC-5N1V-33QK',aluno:'Beatriz Souza',mat:'2023.1.0087',curso:SI,titulo:'Congresso de iniciação científica',cat:'Pesquisa',h:20,em:'12/08/2026'},
+ {code:'EC-8C3J-26FE',aluno:'Rafael Lima',mat:'2021.2.0455',curso:ES,titulo:'Monitoria de Algoritmos',cat:'Ensino',h:30,em:'30/06/2026'},
+ {code:'EC-1Z7B-59HM',aluno:'Carlos Mendes',mat:'2022.2.0310',curso:CC,titulo:'Semana de Tecnologia 2026',cat:'Eventos',h:12,em:'03/09/2026'},
+ {code:'EC-6T2G-84RY',aluno:'Juliana Costa',mat:'2023.2.0021',curso:SI,titulo:'Projeto de extensão: robótica',cat:'Extensão',h:36,em:'18/09/2026'},
+ {code:'EC-3Y9S-07DN',aluno:'Marcos Pereira',mat:'2022.1.0199',curso:CC,titulo:'Hackathon universitário 2025',cat:'Eventos',h:24,em:'14/11/2025'},
+ {code:'EC-0A4L-62UP',aluno:'Camila Rocha',mat:'2022.2.0276',curso:ES,titulo:'Curso de extensão: Python básico',cat:'Extensão',h:20,em:'09/05/2026'}
+];
+const certBy=c=>CERTS.find(x=>x.code===c);
+const ALPHA='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const genCode=()=>{const p=n=>Array.from({length:n},()=>ALPHA[Math.floor(Math.random()*ALPHA.length)]).join('');return `EC-${p(4)}-${p(4)}`};
+
+/* solicitações da Ana (aluna logada) */
+const MINE=[
+ {t:'Minicurso de React avançado',cat:'Extensão',h:20,env:'14/10/2026',st:'Pendente'},
+ {t:'Feira de profissões',cat:'Eventos',h:4,env:'02/04/2026',st:'Indeferida',motivo:'Não encontramos o seu nome na lista de presença. Anexe o comprovante de participação e solicite novamente.'},
+ {t:'Workshop de UX para iniciantes',cat:'Eventos',h:6,env:'',st:'Rascunho'}
+];
+
+const S={
+  role:'aluno',view:'certificados',param:null,collapsed:false,theme:'system',density:'comfortable',
+  tab:'todas',q:'',cats:new Set(),sel:-1,checked:new Set(),open:null,file:null,
+  lq:'',lcats:new Set(),rq:'',rcats:new Set()
+};
+const NAV={aluno:['certificados','solicitar'],coord:['fila','registro'],admin:['painel','fila','registro'],publico:[]};
+const VIEWS={aluno:['certificados','solicitar','certificado'],coord:['fila','registro'],admin:['painel','fila','registro'],publico:['verificar']};
+const FIRST={aluno:'certificados',coord:'fila',admin:'painel',publico:'verificar'};
+
+function applyTheme(){
+  const dark=S.theme==='dark'||(S.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.dataset.theme=dark?'dark':'light';
+  document.documentElement.dataset.density=S.density;
+}
+function toggleTheme(){const cur=document.documentElement.dataset.theme;S.theme=cur==='dark'?'light':'dark';setCookie('easycert.theme',S.theme);applyTheme();renderSide()}
+function toggleDensity(){S.density=S.density==='compact'?'comfortable':'compact';setCookie('easycert.density',S.density);applyTheme();renderSide()}
+
+function toast(msg,action){
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<span>${esc(msg)}</span>`;
+  const rm=()=>{t.classList.add('out');setTimeout(()=>t.remove(),200)};
+  if(action){const b=document.createElement('button');b.textContent=action.label;b.onclick=()=>{action.fn();rm()};t.appendChild(b)}
+  $('#toasts').appendChild(t);
+  setTimeout(rm,action?6000:3500);
+}
+
+/* shell */
+const ALL={certificados:['certificate','Meus certificados'],solicitar:['file-plus','Solicitar certificado'],fila:['tray','Fila de análise'],registro:['files','Certificados emitidos'],painel:['chart-line-up','Painel gerencial']};
+function renderSide(){
+  const dark=document.documentElement.dataset.theme==='dark';
+  const nm={aluno:'Ana Oliveira',coord:'Prof. Henrique Duarte',admin:'Marina Teixeira'}[S.role];
+  const init={aluno:'AO',coord:'HD',admin:'MT'}[S.role];
+  const pend=ROWS.filter(r=>r.st==='Pendente'||r.st==='Em análise').length;
+  const cur=S.view==='certificado'?'certificados':S.view;
+  $('#shell').classList.toggle('pub',S.role==='publico');
+  $('#shell').classList.toggle('collapsed',S.collapsed);
+  if(S.role==='publico'){$('#side').innerHTML='';$('#tabbar').innerHTML='';$('#tabbar').hidden=true;return}
+  $('#side').innerHTML=`
+    <div class="brand">${ic('certificate',true)}<span class="lbl">easycert</span></div>
+    ${NAV[S.role].map(v=>`<button class="nav-item" data-go="${v}" ${cur===v?'aria-current="page"':''} title="${ALL[v][1]}">${ic(ALL[v][0],cur===v)}<span class="lbl">${ALL[v][1]}</span>${v==='fila'?`<span class="nav-count mono">${pend}</span>`:''}</button>`).join('')}
+    <div class="side-sp"></div>
+    <div class="side-foot">
+      <div class="seg" role="group" aria-label="Visualizar como"><span class="seg-title">Visualizar como [mock]</span>
+        ${[['aluno','Aluno'],['coord','Coordenador'],['admin','Administrador'],['publico','Visitante (QRCode)']].map(([k,l])=>`<button data-role="${k}" aria-pressed="${S.role===k}">${l}</button>`).join('')}
       </div>
-    </div>
-  </header>
+      <button class="nav-item" id="themeBtn" title="Alternar tema">${ic(dark?'sun':'moon')}<span class="lbl">${dark?'Tema claro':'Tema escuro'}</span></button>
+      ${S.role!=='aluno'?`<button class="nav-item" id="densBtn" title="Densidade">${ic('rows')}<span class="lbl">${S.density==='compact'?'Confortável':'Compacto'}</span></button>`:''}
+      <button class="nav-item collapse-btn" id="colBtn" title="Recolher menu" aria-expanded="${!S.collapsed}">${ic('sidebar-simple')}<span class="lbl">Recolher menu</span></button>
+      <div class="who"><span class="avatar">${init}</span><span class="who-text lbl">${nm}</span></div>
+    </div>`;
+  const tb=$('#tabbar');
+  if(S.role==='aluno'){tb.innerHTML=`<button data-go="certificados" ${cur==='certificados'?'aria-current="page"':''}>${ic('certificate',cur==='certificados')}Certificados</button><button data-go="solicitar" ${cur==='solicitar'?'aria-current="page"':''}>${ic('file-plus',cur==='solicitar')}Solicitar</button>`;tb.hidden=false}
+  else{tb.innerHTML='';tb.hidden=true}
+}
+function setHash(){history.replaceState(null,'','#'+S.role+'/'+S.view+(S.param?'/'+S.param:''))}
+function go(v,param){
+  S.view=v;S.param=param||null;closeSheet();renderSide();renderView();
+  $('#side').classList.remove('open');setHash();window.scrollTo(0,0);
+}
+function setRole(r){S.role=r;go(FIRST[r])}
+function openVerify(code){S.role='publico';go('verificar',code)}
 
-  <main class="page__main">
-    <div class="container stack-6">
-      <!-- Hero -->
-      <section>
-        <h1 class="text-3xl font-bold" style="margin:0;letter-spacing:-0.02em">Design mockups do easycert</h1>
-        <p class="text-base text-muted prose" style="margin:12px 0 0">
-          Protótipos HTML dos fluxos críticos do sistema: autenticação, portal do aluno, painel do coordenador e visão administrativa. Aplicam o design system de <a href="../DESIGN.md" class="text-accent" style="text-decoration:underline;text-underline-offset:3px">docs/design/DESIGN.md</a> (tokens, tipografia Satoshi + JetBrains Mono, motion do Emil Kowalski, verde institucional <span class="font-mono">#27592e</span>). Alterne o tema no header pra validar nos dois modos.
-        </p>
-      </section>
+function renderView(){
+  const m=$('#main');
+  m.className=S.role==='aluno'?'aluno':S.role==='publico'?'public':'coord';
+  ({certificados:vCertificados,solicitar:vSolicitar,certificado:vCertificado,fila:vFila,registro:vRegistro,painel:vPainel,verificar:vVerificar}[S.view])(m);
+}
 
-      <!-- Autenticação -->
-      <section>
-        <h2 class="group-title">Autenticação</h2>
-        <div class="gallery">
-          <a class="gallery__card" href="login.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini" style="padding:16px;align-items:center;justify-content:center">
-                <div style="width:100%;max-width:70%;background:var(--card);box-shadow:0 1px 2px rgba(24,24,27,0.06);border:1px solid var(--border);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:6px">
-                  <div class="mini__title" style="width:30%"></div>
-                  <div class="mini__input"></div>
-                  <div class="mini__input"></div>
-                  <div class="mini__btn" style="width:100%"></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Login</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Email institucional + senha. Local JWT.</p>
-            </div>
-          </a>
+/* ---------- aluno: meus certificados ---------- */
+function libList(){
+  const q=S.lq.trim().toLowerCase();
+  return CERTS.filter(c=>c.mat==='2023.1.0142'&&(!S.lcats.size||S.lcats.has(c.cat))&&(!q||(c.titulo+' '+c.code).toLowerCase().includes(q)))
+    .sort((a,b)=>dt(b.em)-dt(a.em));
+}
+function drawLib(){
+  const l=libList();const a=$('#libArea');
+  if(!l.length){a.innerHTML=`<div class="card empty">${ic('certificate')}<h3>Nenhum certificado encontrado</h3><p class="muted">Ajuste a busca ou os filtros. Para pedir um novo certificado, use Solicitar certificado.</p></div>`;return}
+  a.innerHTML=`<div class="card">${l.map(c=>`
+    <div class="list-row" tabindex="0" role="link" data-cert="${c.code}" aria-label="Abrir ${esc(c.titulo)}">
+      <span class="ico">${ic(c.itens?'files':'certificate',true)}</span>
+      <div><div class="t">${esc(c.titulo)}</div><div class="meta"><span>${c.cat}</span><span class="mono">${c.h} h</span></div></div>
+      <div class="r hide-m"><div class="mono">${c.code}</div><div class="mono muted" style="font-size:12px">${c.em}</div></div>
+      <button class="btn btn-ghost btn-icon" data-dl="${c.code}" aria-label="Baixar PDF de ${esc(c.titulo)}">${ic('download-simple')}</button>
+    </div>`).join('')}</div>`;
+  a.querySelectorAll('[data-cert]').forEach(r=>{
+    r.onclick=e=>{if(e.target.closest('[data-dl]'))return;go('certificado',r.dataset.cert)};
+    r.onkeydown=e=>{if(e.key==='Enter')go('certificado',r.dataset.cert)};
+  });
+  a.querySelectorAll('[data-dl]').forEach(b=>b.onclick=()=>toast('Download iniciado.'));
+}
+function vCertificados(m){
+  m.innerHTML=`<div class="page"><div class="page-head"><div>
+    <h1 class="hero">Meus certificados</h1>
+    <p class="lede">Os certificados emitidos para você e o andamento das suas solicitações.</p></div>
+    <button class="btn btn-primary btn-lg" data-go="solicitar">${ic('file-plus')}Solicitar certificado</button></div>
+    <div class="stack">
+      <section class="stack" style="gap:12px">
+        <div class="toolbar">
+          <div class="search">${ic('magnifying-glass')}<label class="sr" for="lq">Buscar</label><input class="input" id="lq" placeholder="Buscar por título ou código" value="${esc(S.lq)}" autocomplete="off"></div>
+          ${ic('funnel')}${CATS.map(k=>`<button class="chip" data-lcat="${k}" aria-pressed="${S.lcats.has(k)}">${k}</button>`).join('')}
         </div>
+        <div id="libArea"></div>
       </section>
+      <section class="stack" style="gap:12px">
+        <div class="page-head" style="margin-bottom:0"><h2>Minhas solicitações</h2><span class="mono muted">${MINE.length}</span></div>
+        <div class="card">${MINE.map(x=>`
+          <div class="sub">
+            <div><div class="t">${esc(x.t)}</div>
+              <div class="meta"><span>${x.cat}</span><span class="mono">${x.h} h</span>${x.env?`<span class="mono">${x.env}</span>`:''}</div></div>
+            ${badge(x.st)}
+            ${x.motivo?`<div class="reason">${ic('chat-circle')}<span>${esc(x.motivo)}</span></div>`:''}
+          </div>`).join('')}</div>
+      </section>
+    </div></div>`;
+  drawLib();
+  $('#lq').oninput=e=>{S.lq=e.target.value;drawLib()};
+  m.querySelectorAll('[data-lcat]').forEach(b=>b.onclick=()=>{const k=b.dataset.lcat;S.lcats.has(k)?S.lcats.delete(k):S.lcats.add(k);vCertificados(m)});
+}
 
-      <!-- Aluno -->
-      <section>
-        <h2 class="group-title">Portal do aluno</h2>
-        <div class="gallery">
-          <a class="gallery__card" href="aluno-dashboard.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini">
-                <div class="mini__title"></div>
-                <div class="mini__row">
-                  <div class="mini__card"></div>
-                  <div class="mini__card"></div>
-                  <div class="mini__card"></div>
-                </div>
-                <div class="mini__row">
-                  <div class="mini__bar"></div>
-                </div>
-                <div class="mini__table">
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow"></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Visão geral</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Progresso total + categorias + submissões recentes.</p>
-            </div>
-          </a>
-
-          <a class="gallery__card" href="aluno-submissoes.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini">
-                <div class="mini__title"></div>
-                <div class="mini__row" style="gap:6px">
-                  <div class="mini__input" style="height:12px"></div>
-                  <div class="mini__btn" style="width:40px;height:12px"></div>
-                </div>
-                <div class="mini__card" style="height:38px"></div>
-                <div class="mini__card" style="height:38px"></div>
-                <div class="mini__card" style="height:38px"></div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Minhas submissões</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Cards empilhados com filtros por status.</p>
-            </div>
-          </a>
-
-          <a class="gallery__card" href="aluno-nova-submissao.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini">
-                <div class="mini__title"></div>
-                <div class="mini__card" style="height:40px;background:var(--muted)"></div>
-                <div class="mini__row">
-                  <div class="mini__input"></div>
-                  <div class="mini__input"></div>
-                </div>
-                <div class="mini__input"></div>
-                <div class="mini__row" style="justify-content:flex-end;gap:4px">
-                  <div class="mini__btn" style="background:var(--muted);width:50px"></div>
-                  <div class="mini__btn" style="width:60px"></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Nova submissão</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Upload PDF + metadados + confirmação.</p>
-            </div>
-          </a>
+/* ---------- aluno: solicitar ---------- */
+function vSolicitar(m){
+  m.innerHTML=`<div class="page"><div class="page-head"><div>
+    <h1>Solicitar certificado</h1>
+    <p class="lede">Informe a atividade que você concluiu na faculdade. A coordenação confere e, aprovado, o certificado é emitido com código de verificação.</p></div></div>
+    <div class="grid-form">
+      <form class="card card-pad stack" id="upForm" novalidate style="gap:20px">
+        <div class="field"><label for="f-titulo">Atividade</label>
+          <input class="input" id="f-titulo" aria-describedby="e-titulo" placeholder="Ex.: Semana de Tecnologia 2026">
+          <div class="err" id="e-titulo" role="alert">${ic('warning-circle')}Informe o nome da atividade.</div></div>
+        <div class="row2">
+          <div class="field"><label for="f-cat">Categoria</label>
+            <select class="input" id="f-cat" aria-describedby="e-cat"><option value="">Selecione</option>${CATS.map(c=>`<option>${c}</option>`).join('')}</select>
+            <div class="err" id="e-cat" role="alert">${ic('warning-circle')}Escolha uma categoria.</div></div>
+          <div class="field"><label for="f-h">Carga horária (horas)</label>
+            <input class="input mono" id="f-h" type="number" min="1" placeholder="12">
+            <span class="hint">Se souber. A coordenação confirma.</span></div>
         </div>
-      </section>
-
-      <!-- Coordenador -->
-      <section>
-        <h2 class="group-title">Painel do coordenador</h2>
-        <div class="gallery">
-          <a class="gallery__card" href="coord-fila.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini">
-                <div class="mini__title"></div>
-                <div class="mini__row">
-                  <div class="mini__card" style="height:14px"></div>
-                  <div class="mini__card" style="height:14px"></div>
-                  <div class="mini__input" style="width:40%;flex:none"></div>
-                </div>
-                <div class="mini__table">
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow mini__trow--sel"></div>
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow"></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Fila</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Tabela densa, atalhos <span class="font-mono">j/k/Enter/R</span>.</p>
-            </div>
-          </a>
-
-          <a class="gallery__card" href="coord-detalhe-pedido.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini" style="padding:0">
-                <div style="display:grid;grid-template-columns:1fr 40%;height:100%;gap:0">
-                  <div style="padding:8px;display:flex;flex-direction:column;gap:4px">
-                    <div class="mini__title" style="width:30%"></div>
-                    <div class="mini__table" style="flex:1">
-                      <div class="mini__trow"></div>
-                      <div class="mini__trow mini__trow--sel"></div>
-                      <div class="mini__trow"></div>
-                      <div class="mini__trow"></div>
-                      <div class="mini__trow"></div>
-                    </div>
-                  </div>
-                  <div style="background:var(--card);border-left:1px solid var(--border);padding:8px;display:flex;flex-direction:column;gap:4px">
-                    <div class="mini__title" style="width:60%"></div>
-                    <div class="mini__card" style="height:60%;flex:none"></div>
-                    <div class="mini__input"></div>
-                    <div style="display:flex;gap:4px">
-                      <div class="mini__btn" style="width:30%;background:var(--muted)"></div>
-                      <div class="mini__btn" style="width:30%"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Detalhe (side panel)</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Pedido abre em Sheet 480px. Aprovar ou rejeitar inline.</p>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <!-- Admin -->
-      <section>
-        <h2 class="group-title">Administração</h2>
-        <div class="gallery">
-          <a class="gallery__card" href="admin-dashboard.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini">
-                <div class="mini__title"></div>
-                <div class="mini__row">
-                  <div class="mini__card"></div>
-                  <div class="mini__card"></div>
-                  <div class="mini__card"></div>
-                </div>
-                <div class="mini__row">
-                  <div style="flex:1;background:var(--muted);height:60px;border-radius:3px;padding:4px;display:flex;align-items:end;gap:2px">
-                    <span style="flex:1;height:30%;background:var(--accent-muted-strong);border-radius:1px"></span>
-                    <span style="flex:1;height:60%;background:var(--accent-muted-strong);border-radius:1px"></span>
-                    <span style="flex:1;height:45%;background:var(--accent-muted-strong);border-radius:1px"></span>
-                    <span style="flex:1;height:80%;background:var(--accent-muted-strong);border-radius:1px"></span>
-                    <span style="flex:1;height:65%;background:var(--accent-muted-strong);border-radius:1px"></span>
-                    <span style="flex:1;height:100%;background:var(--accent-muted-strong);border-radius:1px"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Dashboard</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Métricas: concluídos, tempo médio, categorias, tendência.</p>
-            </div>
-          </a>
-
-          <a class="gallery__card" href="admin-matriz.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini">
-                <div class="mini__title"></div>
-                <div class="mini__card" style="height:30px"></div>
-                <div class="mini__card" style="height:30px"></div>
-                <div class="mini__card" style="height:30px"></div>
-                <div class="mini__card" style="height:30px"></div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Matriz curricular</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Categorias, limites, descrição exibida ao aluno.</p>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <!-- Sistema -->
-      <section>
-        <h2 class="group-title">Sistema</h2>
-        <div class="gallery">
-          <a class="gallery__card" href="estados-ui.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini" style="justify-content:center;align-items:center">
-                <div style="width:60%;display:flex;flex-direction:column;align-items:center;gap:4px">
-                  <div style="width:24px;height:24px;background:var(--muted);border-radius:9999px"></div>
-                  <div class="mini__title" style="width:60%"></div>
-                  <div class="mini__btn" style="width:50%;background:var(--muted)"></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Estados de UI</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Empty · Loading · Error · Offline · 403.</p>
-            </div>
-          </a>
-
-          <a class="gallery__card" href="componentes.html">
-            <div class="gallery__thumb thumb">
-              <div class="mini">
-                <div class="mini__row">
-                  <div class="mini__btn" style="width:40px"></div>
-                  <div class="mini__btn" style="width:40px;background:var(--muted)"></div>
-                </div>
-                <div class="mini__input"></div>
-                <div class="mini__row">
-                  <div class="mini__btn" style="width:48px;background:var(--accent-muted-strong);height:10px;border-radius:9999px"></div>
-                  <div class="mini__btn" style="width:48px;background:var(--warning-muted);height:10px;border-radius:9999px"></div>
-                </div>
-                <div class="mini__table">
-                  <div class="mini__trow"></div>
-                  <div class="mini__trow"></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-base font-bold" style="margin:0">Componentes</h3>
-              <p class="text-xs text-muted" style="margin:4px 0 0">Sampler de botões, inputs, badges, tabs, dropdown, toast, modal.</p>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <!-- Notas finais -->
-      <section class="card" style="padding:20px 24px">
-        <div class="row" style="gap:12px;align-items:start">
-          <div style="width:28px;height:28px;background:var(--accent-muted);color:var(--accent);border-radius:var(--radius-sm);display:grid;place-items:center;flex-shrink:0">
-            <i class="ph ph-info"></i>
+        <div class="field"><label for="f-data">Data de realização</label>
+          <input class="input mono" id="f-data" type="date" style="max-width:220px"></div>
+        <div class="field"><span style="font-weight:500">Comprovante de participação <span class="muted">(opcional)</span></span>
+          <div class="drop ${S.file?'has':''}" id="drop" tabindex="0" role="button">
+            ${ic(S.file?'file-pdf':'upload-simple',!!S.file)}
+            <span>${S.file?`<b class="mono">${esc(S.file)}</b>`:'Arraste o arquivo ou clique para escolher'}</span>
+            <span class="hint">${S.file?'Clique para trocar o arquivo':'Somente PDF, até 10 MB'}</span>
           </div>
-          <div class="prose">
-            <h3 class="text-base font-bold" style="margin:0 0 4px">Como usar estes mockups</h3>
-            <p class="text-sm text-muted" style="margin:0">
-              São HTML estático navegável. Toda interação (toggles, dropdowns, side panels, atalhos de teclado, toasts) é vanilla JS em
-              <span class="font-mono">_shared.js</span>. Design tokens e componentes em <span class="font-mono">_shared.css</span>. Não representa a stack final (Next.js 15 + Tailwind v4 + shadcn/ui) nem substitui code review: serve para alinhar linguagem visual, estados e densidade antes da implementação em produção.
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
+          <input type="file" id="fileIn" accept="application/pdf" hidden>
+          ${S.file?'':`<button type="button" class="btn btn-ghost" id="sample" style="align-self:flex-start;height:28px;padding:0 8px">Usar arquivo de exemplo</button>`}</div>
+        <div class="field"><label for="f-obs">Observações <span class="muted">(opcional)</span></label><textarea class="input" id="f-obs"></textarea></div>
+        <div class="form-actions"><button type="button" class="btn btn-outline btn-lg" id="draft">Salvar rascunho</button><button type="submit" class="btn btn-primary btn-lg" id="send">Enviar pedido</button></div>
+      </form>
+      <div class="card card-pad stack" style="gap:16px"><h3>Depois do envio</h3>
+        <div class="step-i">${ic('clock')}<span>A coordenação analisa o pedido. Você acompanha o status em Meus certificados.</span></div>
+        <div class="step-i">${ic('certificate')}<span>Aprovado o pedido, o certificado é emitido com código e QRCode.</span></div>
+        <div class="step-i">${ic('qr-code')}<span>Qualquer pessoa confere se o certificado é verdadeiro pelo código.</span></div>
+      </div>
+    </div></div>`;
+  const f=$('#upForm'),drop=$('#drop'),fi=$('#fileIn');
+  drop.onclick=()=>fi.click();
+  drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click()}};
+  fi.onchange=()=>{if(fi.files[0]){S.file=fi.files[0].name;keep()}};
+  const sm=$('#sample');if(sm)sm.onclick=()=>{S.file='lista-de-presenca.pdf';keep()};
+  function keep(){const ids=['f-titulo','f-cat','f-h','f-data','f-obs'];const v=ids.map(i=>$('#'+i).value);vSolicitar(m);ids.forEach((i,k)=>$('#'+i).value=v[k])}
+  $('#draft').onclick=()=>toast('Rascunho salvo.');
+  f.onsubmit=e=>{
+    e.preventDefault();
+    const chk=[['f-titulo','e-titulo',!!$('#f-titulo').value.trim()],['f-cat','e-cat',!!$('#f-cat').value]];
+    let ok=true;
+    chk.forEach(([i,er,v])=>{$('#'+er).classList.toggle('show',!v);$('#'+i).setAttribute('aria-invalid',!v);if(!v)ok=false});
+    if(!ok){f.querySelector('[aria-invalid=true]').focus();return}
+    const b=$('#send');b.disabled=true;b.setAttribute('aria-busy','true');b.innerHTML=`${ic('spinner')}Enviando...`;b.querySelector('i').classList.add('spin');
+    setTimeout(()=>{
+      MINE.unshift({t:$('#f-titulo').value.trim(),cat:$('#f-cat').value,h:+$('#f-h').value||0,env:'27/10/2026',st:'Pendente'});
+      S.file=null;toast('Pedido enviado.');go('certificados');
+    },900);
+  };
+}
 
-  <script src="_shared.js"></script>
+/* ---------- certificado (detalhe com QRCode) ---------- */
+function qrSvg(seed){
+  const N=25;let s=seed;const rnd=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296};
+  const g=Array.from({length:N},()=>Array.from({length:N},()=>rnd()>.5));
+  const fin=(x,y)=>{for(let i=-1;i<8;i++)for(let j=-1;j<8;j++){const X=x+i,Y=y+j;if(X<0||Y<0||X>=N||Y>=N)continue;
+    const edge=i===-1||j===-1||i===7||j===7;const ring=i===0||j===0||i===6||j===6;const core=i>=2&&i<=4&&j>=2&&j<=4;g[Y][X]=edge?false:(ring||core)}};
+  fin(0,0);fin(N-7,0);fin(0,N-7);
+  let d='';for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(g[y][x])d+=`M${x} ${y}h1v1h-1z`;
+  return `<svg viewBox="0 0 ${N} ${N}" role="img" aria-label="QRCode de verificação" shape-rendering="crispEdges"><path d="${d}" fill="#09090b"/></svg>`;
+}
+const seedOf=c=>[...c].reduce((a,ch)=>(a*31+ch.charCodeAt(0))>>>0,7);
+function vCertificado(m){
+  const c=certBy(S.param)||CERTS[0];
+  const body=c.itens
+    ?`Este relatório reúne os certificados emitidos para <b>${esc(c.aluno)}</b>, matrícula <span class="mono">${c.mat}</span>, do curso de ${c.curso}: <b class="mono">${c.itens.length}</b> certificados, somando <b class="mono">${c.h} horas</b>.`
+    :`A coordenação do curso de ${c.curso} certifica que <b>${esc(c.aluno)}</b>, matrícula <span class="mono">${c.mat}</span>, concluiu a atividade <b>${esc(c.titulo)}</b>, com carga horária de <b class="mono">${c.h} horas</b>.`;
+  m.innerHTML=`<div class="page">
+    <button class="btn btn-ghost" id="back" style="margin:-8px 0 16px -10px">${ic('caret-left')}Meus certificados</button>
+    <article class="doc" aria-label="Certificado">
+      <div>
+        <div class="doc-head">${ic('certificate',true)}<h2>${esc(c.titulo)}</h2></div>
+        <p class="body">${body}</p>
+        ${c.itens?`<ul class="items">${c.itens.map(k=>{const x=certBy(k);return `<li><span>${esc(x.titulo)}</span><span class="mono muted">${x.h} h</span></li>`}).join('')}</ul>`:''}
+        <dl>
+          <dt>Emitido em</dt><dd class="mono">${c.em}</dd>
+          <dt>Situação</dt><dd>${badge('Emitido')}</dd>
+          <dt>Categoria</dt><dd>${c.cat==='Consolidado'?'Relatório consolidado':c.cat}</dd>
+        </dl>
+        <div class="doc-foot"><button class="btn btn-primary btn-lg" id="dlBtn">${ic('download-simple')}Baixar PDF</button>
+          <button class="btn btn-outline btn-lg" id="vfBtn">${ic('qr-code')}Ver verificação</button></div>
+      </div>
+      <div>
+        <div class="qr">${qrSvg(seedOf(c.code))}</div>
+        <p class="qr-cap">Escaneie para verificar</p>
+        <p class="qr-code">${c.code}</p>
+      </div>
+    </article></div>`;
+  $('#back').onclick=()=>go('certificados');
+  $('#dlBtn').onclick=()=>toast('Download iniciado.');
+  $('#vfBtn').onclick=()=>openVerify(c.code);
+}
+
+/* ---------- coord: fila ---------- */
+const late=r=>(r.st==='Pendente')&&age(r.env)>5;
+function filtered(){
+  let r=ROWS.filter(x=>x.st==='Pendente'||x.st==='Em análise');
+  if(S.tab==='atrasadas')r=r.filter(late);
+  if(S.tab==='minha')r=r.filter(x=>x.mine);
+  if(S.cats.size)r=r.filter(x=>S.cats.has(x.cat));
+  const q=S.q.trim().toLowerCase();
+  if(q)r=r.filter(x=>(x.aluno+' '+x.ativ+' '+x.mat).toLowerCase().includes(q));
+  return r.sort((a,b)=>dt(a.env)-dt(b.env));
+}
+function counts(){const open=ROWS.filter(x=>x.st==='Pendente'||x.st==='Em análise');return{todas:open.length,atrasadas:open.filter(late).length,minha:open.filter(x=>x.mine).length}}
+function vFila(m){
+  const c=counts();
+  m.innerHTML=`<div class="page wide"><div class="stack">
+    <div class="page-head" style="margin-bottom:0"><div><h1>Fila de análise</h1>
+      <p class="lede">Solicitações de certificado aguardando decisão, das mais antigas para as mais recentes.</p></div></div>
+    <div class="banner" role="note">${ic('desktop')}<span>Requer desktop com 1024 px ou mais. Neste tamanho a fila é somente leitura.</span></div>
+    <div class="tabs" role="tablist" aria-label="Visões salvas">
+      ${[['todas','Todas'],['atrasadas','Pendentes há mais de 5 dias'],['minha','Minha fila']].map(([k,l])=>`<button class="tab" role="tab" data-tab="${k}" aria-selected="${S.tab===k}">${l}<span class="n mono">${c[k]}</span></button>`).join('')}
+    </div>
+    <div class="toolbar">
+      <div class="search">${ic('magnifying-glass')}<label class="sr" for="q">Buscar</label><input class="input" id="q" placeholder="Buscar aluno, matrícula ou certificado" value="${esc(S.q)}" autocomplete="off"></div>
+      ${ic('funnel')}${CATS.map(k=>`<button class="chip" data-cat="${k}" aria-pressed="${S.cats.has(k)}">${k}</button>`).join('')}
+      ${(S.cats.size||S.q)?`<button class="btn btn-ghost" id="clr" style="height:30px">Limpar filtros</button>`:''}
+    </div>
+    <div id="tblArea"></div>
+    <div class="kbd-hint coord-actions"><span><kbd>j</kbd> <kbd>k</kbd> navegar</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span><span><kbd>R</kbd> indeferir</span></div>
+  </div></div>`;
+  drawTable();
+  $('#q').oninput=e=>{S.q=e.target.value;S.sel=-1;drawTable();const had=$('#clr');if(!!had!==!!(S.cats.size||S.q))keepFocus()};
+  m.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;S.sel=-1;vFila(m)});
+  m.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{const k=b.dataset.cat;S.cats.has(k)?S.cats.delete(k):S.cats.add(k);S.sel=-1;vFila(m)});
+  const cl=$('#clr');if(cl)cl.onclick=()=>{S.q='';S.cats.clear();vFila(m)};
+}
+function keepFocus(){const p=$('#q').selectionStart;vFila($('#main'));const q=$('#q');q.focus();q.setSelectionRange(p,p)}
+function drawTable(){
+  const rows=filtered();const area=$('#tblArea');
+  if(!rows.length){area.innerHTML=`<div class="card empty">${ic('tray')}<h3>Nenhuma solicitação nesta visão</h3><p class="muted">Ajuste os filtros ou escolha outra visão para ver mais itens.</p></div>`;return}
+  area.innerHTML=`
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:40px"><input class="cb coord-actions" type="checkbox" id="all" aria-label="Selecionar todas"></th><th>Aluno</th><th>Certificado</th><th class="r">Solicitado em</th><th class="c">Status</th><th class="r"><span class="sr">Ações</span></th></tr></thead>
+    <tbody>${rows.map((r,i)=>`<tr data-id="${r.id}" class="${i===S.sel?'sel':''}" tabindex="-1">
+      <td><input class="cb coord-actions" type="checkbox" data-ck="${r.id}" aria-label="Selecionar ${esc(r.aluno)}" ${S.checked.has(r.id)?'checked':''}></td>
+      <td><div class="who2"><b>${esc(r.aluno)}</b><span class="mono">${r.mat}</span></div></td>
+      <td><div class="who2"><b>${esc(r.ativ)}</b><span>${r.cat}, <span class="mono">${r.h} h</span></span></div></td>
+      <td class="r mono">${r.env}</td>
+      <td class="c">${badge(r.st)}</td>
+      <td class="r"><div class="row-actions coord-actions"><button class="btn btn-ghost btn-icon" data-ap="${r.id}" aria-label="Aprovar ${esc(r.aluno)}">${ic('check')}</button><button class="btn btn-ghost btn-icon" data-rj="${r.id}" aria-label="Indeferir ${esc(r.aluno)}">${ic('x')}</button></div></td>
+    </tr>`).join('')}</tbody></table></div>
+  <div class="cards-m">${rows.map(r=>`<div class="card mcard" data-id="${r.id}"><div class="who2"><b>${esc(r.aluno)}</b><span>${esc(r.ativ)}</span><span class="mono">${r.env}</span></div>${badge(r.st)}</div>`).join('')}</div>`;
+  area.querySelectorAll('tbody tr, .mcard').forEach(tr=>tr.onclick=e=>{
+    if(e.target.closest('button,input'))return;
+    S.sel=filtered().findIndex(x=>x.id==tr.dataset.id);openSheet(+tr.dataset.id,false)});
+  area.querySelectorAll('[data-ap]').forEach(b=>b.onclick=()=>approve(+b.dataset.ap));
+  area.querySelectorAll('[data-rj]').forEach(b=>b.onclick=()=>openReject(+b.dataset.rj));
+  area.querySelectorAll('[data-ck]').forEach(b=>b.onchange=()=>{b.checked?S.checked.add(+b.dataset.ck):S.checked.delete(+b.dataset.ck)});
+  const all=$('#all');if(all)all.onchange=()=>{rows.forEach(r=>all.checked?S.checked.add(r.id):S.checked.delete(r.id));area.querySelectorAll('[data-ck]').forEach(b=>b.checked=all.checked)};
+}
+function refresh(){renderSide();if(S.view==='fila')vFila($('#main'))}
+
+function openSheet(id,kbd){
+  const r=ROWS.find(x=>x.id===id);if(!r)return;S.open=id;
+  document.documentElement.dataset.input=kbd?'kbd':'mouse';
+  const sh=$('#sheet');
+  sh.innerHTML=`
+    <div class="sheet-head"><div class="who2"><h2>${esc(r.aluno)}</h2><span class="mono">${r.mat}</span></div>
+      <button class="btn btn-ghost btn-icon" id="shClose" aria-label="Fechar">${ic('x')}</button></div>
+    <div class="sheet-body">
+      <div>${badge(r.st)}</div>
+      <dl class="dl"><dt>Certificado</dt><dd>${esc(r.ativ)}</dd><dt>Categoria</dt><dd>${r.cat}</dd><dt>Curso</dt><dd>${r.curso}</dd><dt>Carga horária</dt><dd class="mono">${r.h} h</dd><dt>Solicitado em</dt><dd class="mono">${r.env}</dd></dl>
+      <div class="pdf"><div>${ic('file-pdf')}comprovante-de-participacao.pdf<br><span class="mono">1 página, 240 KB [mock]</span></div></div>
+      <div class="field coord-actions"><label for="aceita">Carga horária no certificado</label><input class="input mono" id="aceita" type="number" min="1" value="${r.h}" style="max-width:160px"><span class="hint">Valor informado pelo aluno. Ajuste se necessário.</span></div>
+    </div>
+    <div class="sheet-foot coord-actions"><button class="btn btn-destructive" id="shRj">${ic('x')}Indeferir</button><button class="btn btn-primary" id="shAp">${ic('check')}Aprovar</button></div>`;
+  sh.setAttribute('aria-hidden','false');
+  requestAnimationFrame(()=>{sh.classList.add('open');$('#scrim').classList.add('open')});
+  $('#shClose').onclick=closeSheet;$('#scrim').onclick=()=>{if(!$('#dialog').classList.contains('open'))closeSheet()};
+  $('#shAp').onclick=()=>approve(id,+$('#aceita').value);$('#shRj').onclick=()=>openReject(id);
+  document.querySelectorAll('tbody tr').forEach(tr=>tr.classList.toggle('sel',tr.dataset.id==id));
+}
+function closeSheet(){S.open=null;const sh=$('#sheet');sh.classList.remove('open');sh.setAttribute('aria-hidden','true');$('#scrim').classList.remove('open')}
+function approve(id,h){
+  const r=ROWS.find(x=>x.id===id);const prev=r.st;r.st='Aprovada';
+  const cert={code:genCode(),aluno:r.aluno,mat:r.mat,curso:r.curso,titulo:r.ativ,cat:r.cat,h:h||r.h,em:'27/10/2026'};
+  CERTS.push(cert);
+  closeSheet();S.sel=-1;refresh();
+  toast(`Aprovada: certificado emitido para ${r.aluno}.`,{label:'Desfazer',fn:()=>{r.st=prev;CERTS.splice(CERTS.indexOf(cert),1);refresh()}});
+}
+function openReject(id){
+  const r=ROWS.find(x=>x.id===id);const d=$('#dialog');
+  d.innerHTML=`<h2 id="dlgTitle">Indeferir solicitação</h2>
+    <p class="muted" style="margin-top:4px">${esc(r.aluno)}, ${esc(r.ativ)}. O aluno verá o motivo na página dele.</p>
+    <div class="field" style="margin-top:16px"><label for="motivo">Motivo</label><textarea class="input" id="motivo" aria-describedby="e-mot"></textarea>
+      <div class="err" id="e-mot" role="alert">${ic('warning-circle')}Escreva o motivo do indeferimento.</div></div>
+    <div class="form-actions"><button class="btn btn-outline" id="dlgNo">Cancelar</button><button class="btn btn-destructive" id="dlgOk">Indeferir</button></div>`;
+  d.classList.add('open');$('#scrim').classList.add('open');
+  setTimeout(()=>$('#motivo').focus(),0);
+  $('#dlgNo').onclick=closeDialog;
+  $('#dlgOk').onclick=()=>{
+    if(!$('#motivo').value.trim()){$('#e-mot').classList.add('show');$('#motivo').setAttribute('aria-invalid','true');return}
+    const prev=r.st;r.st='Indeferida';closeDialog();closeSheet();S.sel=-1;refresh();
+    toast(`Indeferida: ${r.aluno}.`,{label:'Desfazer',fn:()=>{r.st=prev;refresh()}});
+  };
+}
+function closeDialog(){$('#dialog').classList.remove('open');if(!S.open)$('#scrim').classList.remove('open')}
+
+document.addEventListener('pointerdown',()=>{document.documentElement.dataset.input='mouse'});
+document.addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  const typing=/INPUT|TEXTAREA|SELECT/.test(e.target.tagName);
+  if(e.key==='Escape'){
+    document.documentElement.dataset.input='kbd';
+    if($('#dialog').classList.contains('open')){closeDialog();return}
+    if(S.open){closeSheet();return}
+    $('#side').classList.remove('open');return;
+  }
+  if(typing||S.view!=='fila'||innerWidth<1024)return;
+  const rows=filtered();
+  if(e.key==='j'||e.key==='k'){
+    e.preventDefault();document.documentElement.dataset.input='kbd';
+    S.sel=Math.max(0,Math.min(rows.length-1,S.sel+(e.key==='j'?1:-1)));
+    document.querySelectorAll('tbody tr').forEach((tr,i)=>tr.classList.toggle('sel',i===S.sel));
+    const el=document.querySelectorAll('tbody tr')[S.sel];if(el)el.scrollIntoView({block:'nearest'});
+    if(S.open&&rows[S.sel])openSheet(rows[S.sel].id,true);
+  }else if(e.key==='Enter'&&S.sel>=0&&!S.open&&rows[S.sel]){e.preventDefault();openSheet(rows[S.sel].id,true)}
+  else if((e.key==='r'||e.key==='R')&&(S.open||S.sel>=0)){e.preventDefault();document.documentElement.dataset.input='kbd';openReject(S.open||rows[S.sel].id)}
+});
+
+/* ---------- coord/admin: certificados emitidos ---------- */
+function regList(){
+  const q=S.rq.trim().toLowerCase();
+  return CERTS.filter(c=>!c.itens&&(!S.rcats.size||S.rcats.has(c.cat))&&(!q||(c.aluno+' '+c.titulo+' '+c.code+' '+c.mat).toLowerCase().includes(q)))
+    .sort((a,b)=>dt(b.em)-dt(a.em));
+}
+function drawReg(){
+  const l=regList();const a=$('#regArea');
+  if(!l.length){a.innerHTML=`<div class="card empty">${ic('files')}<h3>Nenhum certificado encontrado</h3><p class="muted">Confira o código, o nome do aluno ou remova os filtros.</p></div>`;return}
+  a.innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr><th>Aluno</th><th>Certificado</th><th class="r">Emitido em</th><th class="r">Código</th><th class="r"><span class="sr">Ações</span></th></tr></thead>
+    <tbody>${l.map(c=>`<tr style="cursor:default"><td><div class="who2"><b>${esc(c.aluno)}</b><span class="mono">${c.mat}</span></div></td>
+      <td><div class="who2"><b>${esc(c.titulo)}</b><span>${c.cat}, <span class="mono">${c.h} h</span></span></div></td>
+      <td class="r mono">${c.em}</td><td class="r mono">${c.code}</td>
+      <td class="r"><div class="row-actions"><button class="btn btn-ghost btn-icon" data-vf="${c.code}" aria-label="Ver verificação de ${esc(c.code)}">${ic('qr-code')}</button><button class="btn btn-ghost btn-icon" data-dl="${c.code}" aria-label="Baixar PDF de ${esc(c.code)}">${ic('download-simple')}</button></div></td></tr>`).join('')}</tbody></table></div>
+    <div class="cards-m">${l.map(c=>`<div class="card mcard"><div class="who2"><b>${esc(c.aluno)}</b><span>${esc(c.titulo)}</span><span class="mono">${c.code}</span></div>${badge('Emitido')}</div>`).join('')}</div>`;
+  a.querySelectorAll('[data-vf]').forEach(b=>b.onclick=()=>openVerify(b.dataset.vf));
+  a.querySelectorAll('[data-dl]').forEach(b=>b.onclick=()=>toast('Download iniciado.'));
+}
+function vRegistro(m){
+  m.innerHTML=`<div class="page wide"><div class="stack">
+    <div class="page-head" style="margin-bottom:0"><div><h1>Certificados emitidos</h1>
+      <p class="lede">Registro de todos os certificados emitidos pela faculdade. Busque por aluno, matrícula ou código.</p></div></div>
+    <div class="toolbar">
+      <div class="search">${ic('magnifying-glass')}<label class="sr" for="rq">Buscar</label><input class="input" id="rq" placeholder="Buscar aluno, certificado ou código" value="${esc(S.rq)}" autocomplete="off"></div>
+      ${ic('funnel')}${CATS.map(k=>`<button class="chip" data-rcat="${k}" aria-pressed="${S.rcats.has(k)}">${k}</button>`).join('')}
+    </div>
+    <div id="regArea"></div></div></div>`;
+  drawReg();
+  $('#rq').oninput=e=>{S.rq=e.target.value;drawReg()};
+  m.querySelectorAll('[data-rcat]').forEach(b=>b.onclick=()=>{const k=b.dataset.rcat;S.rcats.has(k)?S.rcats.delete(k):S.rcats.add(k);vRegistro(m)});
+}
+
+/* ---------- admin: painel ---------- */
+function vPainel(m){
+  const late5=ROWS.filter(late).sort((a,b)=>dt(a.env)-dt(b.env));
+  const oldest=late5[0];
+  const weeks=['08/09','15/09','22/09','29/09','06/10','13/10','20/10','27/10'];
+  const tempo=[4.8,4.2,5.1,3.9,3.6,3.8,3.1,2.9];
+  const W=600,H=200,pl=34,pb=24,pt=10,pr=14;
+  const xs=i=>pl+i*(W-pl-pr)/(tempo.length-1);
+  const ys=v=>pt+(1-(v-2)/(6-2))*(H-pt-pb);
+  const pts=tempo.map((v,i)=>`${xs(i)},${ys(v)}`).join(' ');
+  const cat=[['Extensão',38],['Eventos',27],['Ensino',21],['Pesquisa',14]];
+  const mes=[['mai',14],['jun',22],['jul',18],['ago',31],['set',27],['out',19]];
+  const bw=44,gap=(W-pl-pr-mes.length*bw)/(mes.length-1);
+  const by=v=>pt+(1-v/40)*(H-pt-pb);
+  const ver=[['EC-7F3K-92QD',true,'há 2 horas'],['EC-5N1V-33QK',true,'ontem'],['EC-0000-0000',false,'ontem'],['EC-8C3J-26FE',true,'25/10/2026'],['EC-6T2G-84RY',true,'24/10/2026']];
+  m.innerHTML=`<div class="page wide" style="max-width:80rem;margin:0"><div class="stack">
+    <div class="page-head" style="margin-bottom:0"><div><h1>Painel gerencial</h1><p class="lede">O que precisa de atenção e a evolução das emissões.</p></div><span class="mock-chip">dados [mock]</span></div>
+    <section class="next" aria-label="Próxima ação">
+      <div><h2>${late5.length} solicitações aguardam há mais de 5 dias</h2>
+      <p class="muted" style="margin-top:4px">${oldest?`A mais antiga foi feita por ${esc(oldest.aluno)} em ${oldest.env}.`:'Nada atrasado.'}</p></div>
+      <button class="btn btn-primary btn-lg" id="openQ">Abrir fila</button>
+    </section>
+    <div class="admin-grid">
+      <section class="card card-pad stack" style="gap:12px"><div><h2>Certificados emitidos por mês</h2><p class="muted">Quantidade de certificados emitidos</p></div>
+        <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Emissões por mês: maio 14, junho 22, julho 18, agosto 31, setembro 27, outubro 19" style="width:100%;height:auto">
+          ${[0,10,20,30,40].map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${by(v)}" y2="${by(v)}" stroke="var(--border)"/><text x="${pl-8}" y="${by(v)+4}" text-anchor="end">${v}</text>`).join('')}
+          ${mes.map(([k,v],i)=>{const x=pl+i*(bw+gap);return `<rect x="${x}" y="${by(v)}" width="${bw}" height="${by(0)-by(v)}" rx="3" fill="var(--accent)"/><text x="${x+bw/2}" y="${by(v)-6}" text-anchor="middle">${v}</text><text x="${x+bw/2}" y="${H-6}" text-anchor="middle">${k}</text>`}).join('')}
+        </svg></section>
+      <section class="card card-pad stack" style="gap:8px"><div><h2>Categorias mais solicitadas</h2><p class="muted">Parte dos pedidos</p></div>
+        ${cat.map(([k,v])=>`<div class="legend-row"><span>${k}</span><div class="bar"><span style="width:${v/38*100}%"></span></div><span class="mono r">${v}%</span></div>`).join('')}</section>
+    </div>
+    <div class="admin-grid">
+      <section class="card card-pad stack" style="gap:12px"><div><h2>Tempo médio de análise</h2><p class="muted">Em dias, por semana de solicitação</p></div>
+        <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tempo médio de análise caiu de 4,8 para 2,9 dias em oito semanas" style="width:100%;height:auto">
+          ${[2,3,4,5,6].map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${ys(v)}" y2="${ys(v)}" stroke="var(--border)"/><text x="${pl-8}" y="${ys(v)+4}" text-anchor="end">${v}</text>`).join('')}
+          ${weeks.map((w,i)=>i%2===0||i===weeks.length-1?`<text x="${xs(i)}" y="${H-6}" text-anchor="${i===weeks.length-1?'end':'middle'}">${w}</text>`:'').join('')}
+          <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          ${tempo.map((v,i)=>`<circle cx="${xs(i)}" cy="${ys(v)}" r="3" fill="var(--accent)"/>`).join('')}
+        </svg></section>
+      <section class="card card-pad stack" style="gap:4px"><div><h2>Verificações recentes</h2><p class="muted">Consultas pela página pública</p></div>
+        <div class="old-list">${ver.map(([c,ok,q])=>`<div class="old-item"><div><div class="mono">${c}</div><div class="hint">${q}</div></div><span class="badge ${ok?'b-Aprovada':'b-Indeferida'}">${ic(ok?'seal-check':'warning-circle',true)}${ok?'Válido':'Não encontrado'}</span></div>`).join('')}</div></section>
+    </div>
+  </div></div>`;
+  $('#openQ').onclick=()=>{S.tab='atrasadas';go('fila')};
+}
+
+/* ---------- público: verificação ---------- */
+function vVerificar(m){
+  const code=(S.param||'').toUpperCase();
+  m.innerHTML=`<div class="pubwrap">
+    <div class="pubhead"><span class="brand" style="padding:0">${ic('certificate',true)}easycert</span><button class="btn btn-ghost" id="exitPub">Sair da visão pública [mock]</button></div>
+    <h1>Verificar certificado</h1>
+    <p class="lede">Digite o código impresso no certificado ou escaneie o QRCode. A consulta confirma se a faculdade emitiu o documento.</p>
+    <form id="vf" novalidate class="stack" style="margin-top:24px;gap:12px">
+      <div class="field"><label for="vc">Código do certificado</label>
+        <input class="input mono" id="vc" value="${esc(code)}" placeholder="EC-XXXX-XXXX" autocomplete="off" spellcheck="false" aria-describedby="e-vc">
+        <div class="err" id="e-vc" role="alert">${ic('warning-circle')}Informe o código do certificado.</div></div>
+      <div><button class="btn btn-primary btn-lg" type="submit">Verificar</button></div>
+    </form>
+    <div id="vres" aria-live="polite" style="margin-top:24px"></div>
+    <p class="hint" style="margin-top:32px">Exemplos [mock]: <button class="btn btn-ghost" data-ex="EC-7F3K-92QD" style="height:24px;padding:0 6px">código válido</button><button class="btn btn-ghost" data-ex="EC-0000-0000" style="height:24px;padding:0 6px">código inexistente</button></p>
+  </div>`;
+  const run=v=>{
+    v=v.trim().toUpperCase();
+    $('#e-vc').classList.toggle('show',!v);$('#vc').setAttribute('aria-invalid',!v);
+    if(!v){$('#vres').innerHTML='';return}
+    S.param=v;setHash();
+    const c=certBy(v);
+    $('#vres').innerHTML=c?`<div class="card card-pad stack" style="gap:16px">
+        <div class="verdict ok">${ic('seal-check',true)}<div><h2>Certificado válido</h2><p class="muted">Emitido pela faculdade e registrado no easycert.</p></div></div>
+        <dl class="dl"><dt>Titular</dt><dd>${esc(c.aluno)}</dd><dt>Certificado</dt><dd>${esc(c.titulo)}</dd><dt>Curso</dt><dd>${c.curso}</dd><dt>Carga horária</dt><dd class="mono">${c.h} h</dd><dt>Emitido em</dt><dd class="mono">${c.em}</dd><dt>Código</dt><dd class="mono">${c.code}</dd></dl></div>`
+      :`<div class="card card-pad stack bad" style="gap:8px"><div class="verdict">${ic('warning-circle',true)}<div><h2>Código não encontrado</h2><p class="muted">Confira se digitou todos os caracteres, com hífens e sem espaços. Se o erro continuar, fale com a secretaria do curso.</p></div></div></div>`;
+  };
+  $('#vf').onsubmit=e=>{e.preventDefault();run($('#vc').value)};
+  m.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{$('#vc').value=b.dataset.ex;run(b.dataset.ex)});
+  $('#exitPub').onclick=()=>setRole('aluno');
+  if(code)run(code);
+}
+
+/* eventos globais da shell */
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return}
+  const r=e.target.closest('[data-role]');if(r){setRole(r.dataset.role);return}
+  if(e.target.closest('#themeBtn')){toggleTheme();return}
+  if(e.target.closest('#densBtn')){toggleDensity();return}
+  if(e.target.closest('#colBtn')){S.collapsed=!S.collapsed;renderSide();return}
+  if(e.target.closest('#menuBtn')){$('#side').classList.toggle('open');return}
+});
+
+(function init(){
+  const th=getCookie('easycert.theme'),dn=getCookie('easycert.density');
+  if(th)S.theme=th;if(dn)S.density=dn;
+  const h=location.hash.replace('#','').split('/');
+  if(VIEWS[h[0]]){S.role=h[0];S.view=VIEWS[h[0]].includes(h[1])?h[1]:FIRST[h[0]];S.param=h[2]||null}
+  const qp=new URLSearchParams(location.search);
+  if(qp.get('theme'))S.theme=qp.get('theme');if(qp.get('density'))S.density=qp.get('density');
+  applyTheme();renderSide();renderView();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{applyTheme();renderSide()});
+})();
+})();
+</script>
 </body>
 </html>
