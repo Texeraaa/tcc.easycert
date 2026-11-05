@@ -40,7 +40,7 @@ Fluxo canônico fim-a-fim:
 ## Decisões arquiteturais
 
 - Monorepo com pnpm + Turborepo.
-- Separação estrita web/api; nada de Server Actions tocando banco direto — toda escrita passa pelo NestJS.
+- Separação estrita web/api; nada de Server Actions tocando banco direto — toda escrita passa pelo NestJS. Ver [[decisions/ADR-0005-separacao-web-api]].
 - Prisma como ORM; schema único em `packages/db`.
 - Contratos compartilhados em `packages/types` para evitar divergência entre web e api.
 - Autenticação, storage e biblioteca de UI = decisões em aberto. Ver [[pendencias]].

@@ -17,6 +17,7 @@ Sempre que você fizer uma mudança **doc-worthy** no projeto, invoque o subagen
 - Decisão de produto tomada ou mudada.
 - Pendência aberta (algo que bloqueia implementação) ou resolvida.
 - Integração externa configurada (banco, auth, email, storage).
+- Decisão arquitetural que (a) impõe invariante no código, (b) teve alternativas seriamente consideradas ou (c) é cara de reverter — vira ADR em `docs/decisions/`. Delegar ao `docs-curator` com o contexto da decisão (o "por quê"). Padrão definido em `docs/superpowers/specs/2026-11-04-esquema-adr-design.md`.
 
 O agente **propõe** mudanças antes de aplicar; aguarde a aprovação do usuário antes de pedir ao agente para executar. Não escreva em `docs/` diretamente — passe pelo `docs-curator`.
 

@@ -30,10 +30,10 @@ Decisões de tecnologia do **easycert** e por quê. Esta nota registra escolhas 
 ## Autenticação
 
 - **Login próprio local + JWT** via NestJS Passport (`@nestjs/passport`) com strategy local (`passport-local`) para login e JWT para sessão. Admin cria o aluno; aluno define senha no primeiro acesso.
-- **Hash de senha:** argon2id via `@node-rs/argon2` (binding Rust via napi-rs, zero node-gyp). Parâmetros default: m=19456, t=2, p=1. Ratificado em 2026-10-22.
-- **Transporte do JWT:** Cookie HttpOnly SameSite=Lax com nome `easycert_session`. `Secure` em prod, `Secure=false` em dev. Browser anexa automaticamente — JavaScript cliente não acessa o token (resistência a XSS).
-- **Mitigação CSRF:** `csrf-csrf` (fork mantido do `csurf` deprecado) com padrão double-submit cookie. Middleware NestJS valida header `X-CSRF-Token` contra cookie `csrf-token` em todas as mutations. Rota `GET /auth/csrf-token` emite o token.
-- Decisão ratificada pelo autor em 2026-10-22. Ver [[dominio/pendencias#Resolvidas após ratificação (2026-10-20+)]] e [[superpowers/specs/2026-10-22-plano-mes-2]].
+- **Hash de senha:** argon2id via `@node-rs/argon2` (binding Rust via napi-rs, zero node-gyp). Parâmetros default: m=19456, t=2, p=1. Ver [[decisions/ADR-0002-argon2id-senha]].
+- **Transporte do JWT:** Cookie HttpOnly SameSite=Lax com nome `easycert_session`. `Secure` em prod, `Secure=false` em dev. Browser anexa automaticamente — JavaScript cliente não acessa o token (resistência a XSS). Ver [[decisions/ADR-0003-jwt-cookie-httponly]].
+- **Mitigação CSRF:** `csrf-csrf` (fork mantido do `csurf` deprecado) com padrão double-submit cookie. Middleware NestJS valida header `X-CSRF-Token` contra cookie `csrf-token` em todas as mutations. Rota `GET /auth/csrf-token` emite o token. Ver [[decisions/ADR-0004-csrf-double-submit]].
+- Decisões ratificadas em 2026-10-22; capturadas em [[decisions/ADR-0002-argon2id-senha]], [[decisions/ADR-0003-jwt-cookie-httponly]] e [[decisions/ADR-0004-csrf-double-submit]]. Contexto adicional em [[superpowers/specs/2026-10-22-plano-mes-2]].
 - SSO institucional e OAuth externo ficam como trabalho futuro ([[dominio/visao-geral#Não-objetivos da v1]]).
 
 ## Banco de dados
@@ -64,7 +64,7 @@ Postgres via `docker-compose.yml`. ORM: Prisma 6. Detalhes em [[DATABASE]].
 ## CSRF & Segurança
 
 - **Mitigação CSRF:** `csrf-csrf` (fork mantido do `csurf` deprecado) com padrão **double-submit cookie**. Middleware NestJS valida header `X-CSRF-Token` contra cookie `csrf-token` em todas as mutations (POST, PATCH, DELETE).
-- **Rotas exempt:** `POST /auth/login` (primeiro turno, usuário sem cookie CSRF ainda), `POST /auth/logout` (cookie pode estar expirado), `GET /auth/csrf-token` (GET é isento por natureza; listado para clareza). Fluxo primeiro-login: POST `/auth/login` sem CSRF → sessão criada → GET `/auth/csrf-token` seta cookie `csrf-token` → próximas mutations incluem header `X-CSRF-Token`. Ratificado em 2026-10-22.
+- **Rotas exempt:** `POST /auth/login` (primeiro turno, usuário sem cookie CSRF ainda), `POST /auth/logout` (cookie pode estar expirado), `GET /auth/csrf-token` (GET é isento por natureza; listado para clareza). Fluxo primeiro-login: POST `/auth/login` sem CSRF → sessão criada → GET `/auth/csrf-token` seta cookie `csrf-token` → próximas mutations incluem header `X-CSRF-Token`.
 - **Postgres role em runtime:** aplicação roda com `easycert_app` (sem permissão UPDATE/DELETE em `audit_log`). Migrations rodam com `easycert_owner`; duas `DATABASE_URL` distintas em `.env.local` (`DATABASE_URL` para runtime, `DATABASE_URL_MIGRATE` para Prisma Migrate).
 - **`User.role` único por usuário:** campo `role: Role` enum (`ALUNO | COORDENADOR | ADMIN`) em `User` — um usuário tem exatamente um papel. Eventos de auditoria `role.assigned` / `role.revoked` representam mudança desse valor único (não acúmulo de papéis). Ratificado em 2026-10-22.
 
